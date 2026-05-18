@@ -1,7 +1,11 @@
 # LunaProxy
 
+
+
 LunaProxy is a local reverse proxy that exposes Qwen's web chat as a fully OpenAI-compatible API. It handles credential management, multi-account concurrency, session persistence, and prompt overflow — all from a single process with a built-in React admin UI served on the same port.
 Designed for local development and controlled routing. No cloud dependency, no third-party relay — just a direct bridge between your OpenAI-compatible tooling and Qwen.
+
+---
 
 > [!WARNING]
 >  # **Disclaimer**
