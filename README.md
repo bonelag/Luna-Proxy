@@ -32,8 +32,8 @@ Designed for local development and controlled routing. No cloud dependency, no t
 
 ## Requirements
 
-- [Bun](https://bun.sh) — primary runtime and dev workflow
-- [Node.js](https://nodejs.org) / npm — for TypeScript checks and production builds
+- [Node.js](https://nodejs.org) 18+ (for npm/pnpm/bun compatibility)
+- One package manager: [npm](https://www.npmjs.com), [pnpm](https://pnpm.io), or [Bun](https://bun.sh)
 - Qwen credentials — configured via the admin UI or environment variables
 - Chrome / Chromium — only needed for the automatic OAuth capture flow
 
@@ -41,7 +41,22 @@ Designed for local development and controlled routing. No cloud dependency, no t
 
 ## Quick Start
 
+Choose one package manager:
+
 ```bash
+# npm
+npm install
+npm run dev
+```
+
+```bash
+# pnpm
+pnpm install
+pnpm run dev
+```
+
+```bash
+# bun
 bun install
 bun run dev
 ```
@@ -123,6 +138,13 @@ curl -X POST http://127.0.0.1:8080/api/provider/oauth/capture \
 If the browser is not found automatically, set the path explicitly:
 
 ```bash
+# npm
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium npm run dev
+
+# pnpm
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium pnpm run dev
+
+# bun
 PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium bun run dev
 ```
 
@@ -368,19 +390,35 @@ LunaProxy/
 
 ```bash
 # Start dev server
+npm run dev
+# or
+pnpm run dev
+# or
 bun run dev
 
 # Watch mode
 npm run dev:watch
+# or
+pnpm run dev:watch
+# or
+bun run dev:watch
 
 # Type check
 npm run typecheck
+# or
+pnpm run typecheck
+# or
+bun run typecheck
 
 # Build
 npm run build
+# or
+pnpm run build
+# or
+bun run build
 ```
 
-Both `bun run dev` and `npm run dev` execute `bun ./src/dev.ts`. TypeScript build output goes to `lib/`.
+`npm run dev`, `pnpm run dev`, and `bun run dev` all execute `bun ./src/dev.ts`. TypeScript build output goes to `lib/`.
 
 The frontend source lives in `frontend/`. The backend serves the pre-built static UI from `public/`. To rebuild the UI, run the frontend build separately and copy the output to `public/`.
 
