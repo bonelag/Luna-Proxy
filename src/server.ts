@@ -29,7 +29,6 @@ import axios from 'axios';
 import * as querystring from 'querystring';
 import {qwenAiConfig} from './main/providers/builtin/qwen-ai';
 import {isAssistantFailureEcho, stripThinkingBlocks, messageSimilarity} from './main/proxy/overflowSanitizer';
-import {injectContractIntoPrompt} from './main/proxy/clineXmlContract';
 import {getWorkers, upsertWorker, deleteWorker, verifyWorkerIp} from './modules/workers';
 import {analyzeResponseXml} from './modules/responseAnalyzer';
 import {extractText} from './modules/textUtils';
@@ -74,6 +73,7 @@ export class SimpleProxyServer {
   private setupRoutes() {
     // serve static frontend (package public directory)
     const publicDir = path.join(__dirname, '..', 'public');
+    const frontendIndex = path.join(publicDir, 'index.html');
     console.log('[SimpleProxyServer] serving static from', publicDir);
     this.app.use(koaStatic(publicDir));
 
@@ -315,6 +315,55 @@ export class SimpleProxyServer {
         providerId: 'qwen-ai',
         items: configStore.getModels(),
         updatedAt: config.modelsUpdatedAt || null,
+      };
+    });
+
+    this.router.get('/v1/models', async ctx => {
+      const config = configStore.getConfig();
+      const requiredProxyKey = String(config.proxy?.key || '').trim();
+      if (requiredProxyKey) {
+        const authHeader = String(ctx.headers.authorization || '');
+        const xProxyKey = String(ctx.headers['x-proxy-key'] || '');
+        const bearer = authHeader.toLowerCase().startsWith('bearer ')
+          ? authHeader.slice(7).trim()
+          : '';
+        const providedKey = bearer || xProxyKey;
+        if (providedKey !== requiredProxyKey) {
+          ctx.status = 401;
+          ctx.body = {error: {message: 'Unauthorized: invalid proxy key'}};
+          return;
+        }
+      }
+
+      const created = config.modelsUpdatedAt
+        ? Math.floor(config.modelsUpdatedAt / 1000)
+        : 0;
+      const data = configStore.getModels()
+        .map(model => {
+          const id = String(model.id || model.name || '').trim();
+          if (!id) {
+            return null;
+          }
+          return {
+            id,
+            object: 'model',
+            created,
+            owned_by: 'qwen-ai',
+            name: model.name || id,
+          };
+        })
+        .filter((model): model is {
+          id: string;
+          object: 'model';
+          created: number;
+          owned_by: string;
+          name: string;
+        } => Boolean(model));
+
+      ctx.set('Cache-Control', 'no-store');
+      ctx.body = {
+        object: 'list',
+        data,
       };
     });
 
@@ -1179,7 +1228,7 @@ export class SimpleProxyServer {
       const model = body.model || 'Qwen3';
       const messages = body.messages || [];
 
-      
+
       const capturedPromptMessages: Array<Record<string, any>> = [];
       if (Array.isArray(messages)) {
         messages.forEach((m: any, i: number) => {
@@ -1388,11 +1437,8 @@ export class SimpleProxyServer {
         }
       }
 
-      const xmlPassthroughEnabled = true;
-      const overflowPromptReplaced = overflowResult.sanitizerMeta?.mode === 'raw-full-prompt';
-      if (xmlPassthroughEnabled && !overflowPromptReplaced) {
-        processedMessages = injectContractIntoPrompt(processedMessages);
-      }
+      const promptContractInjected = false;
+      const responseXmlPassthroughEnabled = true;
 
       // Create run with full metadata
       const currentRun = runStore.createRun({
@@ -1684,7 +1730,7 @@ export class SimpleProxyServer {
 
         if (stream) {
           const handler = new QwenAiStreamHandler(model, async sid => {});
-          handler.xmlPassthrough = xmlPassthroughEnabled;
+          handler.xmlPassthrough = responseXmlPassthroughEnabled;
           const transformed = await handler.handleStream(response.data);
 
           ctx.status = 200;
@@ -1708,7 +1754,7 @@ export class SimpleProxyServer {
                   persistSessionMessages(currentSession.id, messages, parsed, overflowResult, { runId: currentRun.id, providerId, accountId: account.id, providerSessionId: chatId });
                 } finally { releaseSessionWriteLock(currentSession.id); }
               }
-              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(parsed?.choices?.[0]?.message?.content), providerToolMode: 'disabled', xmlPassthroughContract: xmlPassthroughEnabled, response: parsed, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(parsed?.choices?.[0]?.message?.content), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: parsed, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
               await finalizeRun('completed', { providerChatId: chatId });
             } catch (err) {
               if (currentSession) {
@@ -1717,7 +1763,7 @@ export class SimpleProxyServer {
                   persistSessionMessages(currentSession.id, messages, capturedResponse, overflowResult, { runId: currentRun.id, providerId, accountId: account.id, providerSessionId: chatId });
                 } finally { releaseSessionWriteLock(currentSession.id); }
               }
-              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(capturedResponse), providerToolMode: 'disabled', xmlPassthroughContract: xmlPassthroughEnabled, response: capturedResponse, responseParseError: err instanceof Error ? err.message : String(err), prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(capturedResponse), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: capturedResponse, responseParseError: err instanceof Error ? err.message : String(err), prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
               await finalizeRun('completed', { providerChatId: chatId });
             }
           };
@@ -1750,7 +1796,7 @@ export class SimpleProxyServer {
           if (chatId) ctx.set('x-luna-provider-session-id', chatId);
         }
         const resultContent = result?.choices?.[0]?.message?.content;
-        buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(resultContent), providerToolMode: 'disabled', xmlPassthroughContract: xmlPassthroughEnabled, response: result, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+        buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(resultContent), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: result, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
         await finalizeRun('completed', { providerChatId: chatId });
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
@@ -1767,6 +1813,20 @@ export class SimpleProxyServer {
 
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
+    this.app.use(async ctx => {
+      if (ctx.method !== 'GET' || ctx.status !== 404) return;
+      const requestPath = ctx.path || '';
+      const isApiPath =
+        requestPath.startsWith('/api/') ||
+        requestPath.startsWith('/v1/') ||
+        requestPath.startsWith('/auth/') ||
+        requestPath.startsWith('/assets/');
+      const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(requestPath);
+      if (isApiPath || hasFileExtension || !fs.existsSync(frontendIndex)) return;
+      ctx.status = 200;
+      ctx.type = 'html';
+      ctx.body = fs.createReadStream(frontendIndex);
+    });
   }
 
   async start(port: number = 8080, host: string = '127.0.0.1') {

@@ -6,7 +6,16 @@
     <title>Luna Proxy UI</title>
     <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
-    <script type="module" crossorigin src="/assets/index-D6w6AveW.js"></script>
+    <script>
+      window.addEventListener('error', function (event) {
+        var root = document.getElementById('root');
+        if (!root || root.childNodes.length > 0) return;
+        root.innerHTML = '<div style="padding:24px;font-family:sans-serif;color:#b42318"><h1>Proxy-Luna UI failed to load</h1><pre style="white-space:pre-wrap">' +
+          String(event.message || 'Unknown script error') +
+          '</pre></div>';
+      });
+    </script>
+    <script type="module" crossorigin src="/assets/proxy-luna-app.js"></script>
   </head>
   <body>
     <div id="root"></div>

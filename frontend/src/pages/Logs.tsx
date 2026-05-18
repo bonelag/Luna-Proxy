@@ -11,6 +11,30 @@ function parseLog(log: LogItem): Record<string, any> {
   }
 }
 
+function formatLogText(value: unknown): string {
+  if (value === undefined || value === null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (Array.isArray(value)) {
+    return value.map((item) => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object') {
+        const role = (item as any).role ? `${(item as any).role}: ` : '';
+        const content = (item as any).content;
+        if (typeof content === 'string') return `${role}${content}`;
+        return `${role}${JSON.stringify(content ?? item)}`;
+      }
+      return String(item);
+    }).join('\n');
+  }
+  if (typeof value === 'object') {
+    const content = (value as any).content;
+    if (typeof content === 'string') return content;
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
 export default function Logs() {
   const [logs, setLogs] = useState<LogItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,8 +51,13 @@ export default function Logs() {
     try {
       const res = await fetch('/api/logs?limit=200');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setLogs(await res.json());
+      const data = await res.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid logs response');
+      }
+      setLogs(data);
     } catch (error) {
+      setLogs([]);
       setMessage(error instanceof Error ? error.message : 'Failed to load logs');
     } finally {
       setLoading(false);
@@ -167,7 +196,7 @@ export default function Logs() {
                   <td>{meta.path || '-'}</td>
                   <td>{meta.status || '-'}</td>
                   <td>{meta.model || '-'}</td>
-                  <td className="log-message">{meta.prompt || meta.error || meta.message || log.message}</td>
+                  <td className="log-message">{formatLogText(meta.prompt || meta.prompt_messages || meta.error || meta.message || log.message)}</td>
                   <td>{typeof meta.durationMs === 'number' ? `${meta.durationMs}ms` : '-'}</td>
                 </tr>
               );
@@ -232,7 +261,7 @@ export default function Logs() {
                   <dt>Session provider ID</dt><dd>{selectedMeta.session?.providerSessionId || '-'}</dd>
                   <dt>Dedupe meta</dt><dd>{selectedMeta.sanitizerMeta?.persistSkipped ? `skipped=${selectedMeta.sanitizerMeta.persistSkipped.skipped} persisted=${selectedMeta.sanitizerMeta.persistSkipped.persisted}` : '-'}</dd>
                   <dt>Latency</dt><dd>{typeof selectedMeta.durationMs === 'number' ? `${selectedMeta.durationMs}ms` : '-'}</dd>
-                  <dt>Prompt</dt><dd>{selectedMeta.prompt || selectedMeta.error || selectedMeta.message || selectedLog.message}</dd>
+                  <dt>Prompt</dt><dd>{formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message)}</dd>
                 </dl>
               ) : null}
               {activeTab === 'prompt' ? (

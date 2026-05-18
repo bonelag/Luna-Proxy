@@ -1,16 +1,17 @@
 # Proxy-Luna
 
 Proxy-Luna is a standalone local proxy for Qwen web/API workflows. It exposes an
-OpenAI-compatible `/v1/chat/completions` endpoint, forwards requests to Qwen,
-serves a local admin UI, and keeps local state for providers, accounts, sessions,
-runs, overflow files, and logs.
+OpenAI-compatible `/v1/chat/completions` and `/v1/models` endpoints, forwards
+requests to Qwen, serves a local admin UI, and keeps local state for providers,
+accounts, sessions, runs, overflow files, and logs.
 
 The proxy is designed for local development and controlled routing. Runtime data
 is stored on disk under `data/`.
 
 ## Features
 
-- OpenAI-compatible chat endpoint at `/v1/chat/completions`.
+- OpenAI-compatible chat and model-list endpoints at `/v1/chat/completions` and
+  `/v1/models`.
 - Streaming and non-streaming chat responses.
 - Qwen account and credential management.
 - Admin UI served from the same host and port as the API.
@@ -60,7 +61,98 @@ Local configuration is stored in:
 data/config.json
 ```
 
-You can configure credentials from the admin UI or by API:
+## Usage
+
+1. Start the proxy:
+
+```bash
+bun run dev
+```
+
+2. Open the admin UI:
+
+```text
+http://127.0.0.1:8080/
+```
+
+3. Configure a Qwen provider account from the Providers page.
+
+4. Validate the credentials in the UI.
+
+5. Send OpenAI-compatible requests to:
+
+```text
+http://127.0.0.1:8080/v1/chat/completions
+```
+
+## Login And Credentials
+
+Proxy-Luna supports two practical ways to configure Qwen credentials:
+
+- automatic login capture through the admin UI/API
+- manual token and cookie input
+
+### Automatic Login Capture
+
+Use this when you want Proxy-Luna to open a browser window and capture the Qwen
+web credentials after you log in.
+
+Requirements:
+
+- A desktop/browser-capable environment.
+- Chrome or Chromium installed, or `PUPPETEER_EXECUTABLE_PATH` pointing to a
+  browser executable.
+- Access to `https://chat.qwen.ai`.
+
+From the admin UI:
+
+1. Open `http://127.0.0.1:8080/`.
+2. Go to `Providers`.
+3. Select `qwen-ai`.
+4. Open the `OAuth` tab.
+5. Click `Start OAuth`.
+6. Log in to Qwen in the browser window.
+7. Wait for Proxy-Luna to capture and validate the token.
+8. Save the credentials if the UI does not already save them.
+
+Equivalent API call:
+
+```bash
+curl -X POST http://127.0.0.1:8080/api/provider/oauth/capture \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "providerId": "qwen-ai",
+    "timeout": 300000
+  }'
+```
+
+The capture flow reads a valid Qwen token from browser Local Storage or cookies,
+collects the cookie header, validates the credentials, and stores them in
+`data/config.json`.
+
+If automatic capture fails, check that a real browser is available. You can
+force the browser path with:
+
+```bash
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium bun run dev
+```
+
+### Manual Token And Cookie Input
+
+Use this when you already have a valid Qwen web token and/or cookie header.
+
+From the admin UI:
+
+1. Open `http://127.0.0.1:8080/`.
+2. Go to `Providers`.
+3. Select `qwen-ai`.
+4. Open the `Config` tab.
+5. Paste the token into the token field.
+6. Paste the full cookie header into the cookie field.
+7. Click `Validate`.
+8. Click `Save`.
+
+Manual API configuration:
 
 ```bash
 curl -X POST http://127.0.0.1:8080/api/provider/token \
@@ -74,6 +166,26 @@ curl -X POST http://127.0.0.1:8080/api/provider/token \
   }'
 ```
 
+Credential validation API:
+
+```bash
+curl -X POST http://127.0.0.1:8080/api/provider/validate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "providerId": "qwen-ai",
+    "credentials": {
+      "token": "YOUR_QWEN_TOKEN",
+      "cookies": "YOUR_QWEN_COOKIES"
+    }
+  }'
+```
+
+Provider status API:
+
+```bash
+curl 'http://127.0.0.1:8080/api/provider/status?providerId=qwen-ai'
+```
+
 The server also checks these environment variables as fallback credentials:
 
 ```text
@@ -82,7 +194,7 @@ QWEN_AI_COOKIES
 ```
 
 If `proxy.key` is set in `data/config.json`, requests to
-`/v1/chat/completions` must include either:
+`/v1/chat/completions` and `/v1/models` must include either:
 
 ```text
 Authorization: Bearer <proxy-key>
@@ -95,6 +207,30 @@ x-proxy-key: <proxy-key>
 ```
 
 ## Chat API
+
+List configured models:
+
+```bash
+curl -sS http://127.0.0.1:8080/v1/models
+```
+
+This returns the same model list used by the Models page in the admin UI, using
+OpenAI-compatible list format:
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "Qwen3.6-Plus",
+      "object": "model",
+      "created": 0,
+      "owned_by": "qwen-ai",
+      "name": "Qwen3.6 Plus"
+    }
+  ]
+}
+```
 
 Endpoint:
 
@@ -212,6 +348,7 @@ Common endpoints:
 
 ```text
 GET    /health
+GET    /v1/models
 GET    /api/config
 POST   /api/config
 GET    /api/models

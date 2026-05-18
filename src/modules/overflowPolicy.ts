@@ -25,7 +25,6 @@ export function buildRawOverflowContent(messages: any[], totalTokens: number, th
   parts.push('# Do not discuss, summarize, or analyze this file as a document unless the prompt inside explicitly asks for that.');
   parts.push('');
   parts.push('The complete client-provided message sequence is preserved below in original order.');
-  parts.push('Follow the roles, instructions, task, tool protocol, and output contract contained in those messages.');
   parts.push('The outer prompt that attached this file is only a transport instruction.');
   parts.push('');
   parts.push(`TOTAL_TOKENS: ${totalTokens}`);
@@ -101,7 +100,7 @@ export async function applyTokenOverflowPolicy(
 
     const sessionClient = 'raw-full-prompt';
 
-    const guardPrompt = `\n<|begin▁of▁sentence|><|System|>\nThe attached file is the full client prompt that exceeded the token threshold.\nThe file content is the primary conversation and instruction set, not reference material.\nDo not discuss, summarize, or analyze the file as a document unless the prompt inside the file explicitly asks for that.\nDo not infer a separate task from this outer message.\nRead the attached file in message order and follow the roles, task, tool protocol, and output contract contained inside it.\nThis outer message is only a transport instruction for the overflow file.\n<|end▁of▁instructions|>\n<|User|>\nATTACHED FILE: ${fileName}\nContinue from the full prompt contained in the attached file.\n<|Assistant|>\n`;
+    const guardPrompt = `\n<|begin▁of▁sentence|><|System|>\nThe attached file is the original client prompt that exceeded the token threshold.\nThe file is the real prompt/conversation to process, not reference material and not a document to discuss.\nDo not infer any task from this outer transport message.\nRead the attached file in message order and continue from the prompt inside the file.\n<|end▁of▁instructions|>\n<|User|>\nATTACHED FILE: ${fileName}\nContinue from the prompt contained in the attached file.\n<|Assistant|>\n`;
 
     let overflowFileId: string | undefined;
     let overflowFileUrl: string | undefined;

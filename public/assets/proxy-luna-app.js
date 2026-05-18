@@ -27667,6 +27667,35 @@ function parseLog2(log) {
     return { message: log.message };
   }
 }
+function formatLogText(value) {
+  if (value === void 0 || value === null)
+    return "";
+  if (typeof value === "string")
+    return value;
+  if (typeof value === "number" || typeof value === "boolean")
+    return String(value);
+  if (Array.isArray(value)) {
+    return value.map((item) => {
+      if (typeof item === "string")
+        return item;
+      if (item && typeof item === "object") {
+        const role = item.role ? `${item.role}: ` : "";
+        const content = item.content;
+        if (typeof content === "string")
+          return `${role}${content}`;
+        return `${role}${JSON.stringify(content ?? item)}`;
+      }
+      return String(item);
+    }).join("\n");
+  }
+  if (typeof value === "object") {
+    const content = value.content;
+    if (typeof content === "string")
+      return content;
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
 function Logs() {
   const [logs, setLogs] = (0, import_react7.useState)([]);
   const [loading, setLoading] = (0, import_react7.useState)(true);
@@ -27815,7 +27844,7 @@ function Logs() {
               /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.path || "-" }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.status || "-" }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.model || "-" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "log-message", children: meta.prompt || meta.error || meta.message || log.message }),
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "log-message", children: formatLogText(meta.prompt || meta.prompt_messages || meta.error || meta.message || log.message) }),
               /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: typeof meta.durationMs === "number" ? `${meta.durationMs}ms` : "-" })
             ]
           },
@@ -27910,7 +27939,7 @@ function Logs() {
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Latency" }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: typeof selectedMeta.durationMs === "number" ? `${selectedMeta.durationMs}ms` : "-" }),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Prompt" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.prompt || selectedMeta.error || selectedMeta.message || selectedLog.message })
+          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message) })
         ] }) : null,
         activeTab === "prompt" ? (() => {
           const promptItems = selectedMeta ? parsePromptMessages(selectedMeta) : [{ role: "user", content: "" }];

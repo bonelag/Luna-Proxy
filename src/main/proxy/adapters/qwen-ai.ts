@@ -16,7 +16,7 @@ const QWEN_AI_BASE = 'https://chat.qwen.ai';
 
 const DEFAULT_HEADERS = {
 	Accept: 'application/json',
-	'Accept-Language': 'zh-CN,zh;q=0.9',
+	'Accept-Language': 'en-US,en;q=0.9',
 	'Content-Type': 'application/json',
 	source: 'web',
 	'User-Agent':
@@ -24,7 +24,7 @@ const DEFAULT_HEADERS = {
 	'sec-ch-ua':
 		'"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
 	'sec-ch-ua-mobile': '?0',
-	'sec-ch-ua-platform': '"macOS"',
+	'sec-ch-ua-platform': '"Linux"',
 	'Sec-Fetch-Dest': 'empty',
 	'Sec-Fetch-Mode': 'cors',
 	'Sec-Fetch-Site': 'same-origin',
