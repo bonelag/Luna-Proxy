@@ -256,6 +256,27 @@ TypeScript build output is written to:
 lib/
 ```
 
+## Frontend Source And Static UI
+
+The frontend source lives in:
+
+```text
+frontend/
+```
+
+The backend does not serve `frontend/` directly. It serves the built/static UI
+from:
+
+```text
+public/
+```
+
+This keeps the proxy runtime easy to read:
+
+- `src/` is the backend proxy.
+- `frontend/` is the React admin UI source.
+- `public/` is the static UI currently served by Koa.
+
 ## Project Structure
 
 See [STRUCTURE.md](./STRUCTURE.md) for the directory map and module ownership
@@ -272,6 +293,9 @@ scripts/    local helper scripts
 data/       local runtime state and logs
 lib/        TypeScript build output
 ```
+
+`tests/` contains source tests for the backend modules. It is intentionally kept
+as project source, not treated as runtime output.
 
 ## Troubleshooting
 

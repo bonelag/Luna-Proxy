@@ -90,6 +90,8 @@ frontend/
 ├── index.html                # UI HTML shell
 ├── README.md                 # UI-specific notes
 ├── tsconfig.json             # UI TypeScript config
+├── dist/                     # Frontend build output, generated
+├── node_modules/             # Frontend dependencies, generated
 └── src/
     ├── App.tsx               # App router and shell
     ├── main.tsx              # React entry point
@@ -98,6 +100,23 @@ frontend/
     ├── design/               # Design tokens
     └── pages/                # Dashboard, providers, logs, sessions, etc.
 ```
+
+The backend serves `public/`, not `frontend/`. `frontend/` is kept as source so
+the proxy runtime remains centered on `src/` plus the static files in `public/`.
+
+## Tests
+
+```text
+tests/
+├── overflowSanitizer.test.ts # Overflow sanitizer behavior tests
+├── providerRouter.test.ts    # Provider/account selection tests
+├── runtimeLocks.test.ts      # Lock manager tests
+├── runtimeScheduler.test.ts  # Scheduler/concurrency tests
+├── sessionStore.test.ts      # Session persistence tests
+└── utils.ts                  # Minimal test harness helpers
+```
+
+`tests/` is source code and should stay visible in the project tree.
 
 ## Runtime Data
 
@@ -110,4 +129,5 @@ data/
 └── wire-logs/                # Provider wire/stream logs
 ```
 
-The `data/`, `lib/`, and `node_modules/` directories are generated or local runtime artifacts.
+The `data/`, `lib/`, `node_modules/`, `frontend/dist/`, and
+`frontend/node_modules/` directories are generated or local runtime artifacts.
