@@ -90,28 +90,33 @@ button.danger:hover { background: #b42318; color: white; border-color: #b42318; 
   transition: background-color 400ms ease, color 400ms ease, border-color 400ms ease;
 }
 .page-panel h2 { margin: 0; text-align: left; }
-.page-panel:hover {
+.page-panel:not(.modal-open):hover {
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   border-color: var(--color-accent-contrast);
 }
-.page-panel:hover .muted,
-.page-panel:hover .eyebrow,
-.page-panel:hover .provider-credentials {
+.page-panel:not(.modal-open):hover .muted,
+.page-panel:not(.modal-open):hover .eyebrow,
+.page-panel:not(.modal-open):hover .provider-credentials {
   color: rgba(255,255,255,0.72);
 }
-.page-panel:hover .surface-card,
-.page-panel:hover .metric-card,
-.page-panel:hover .model-item,
-.page-panel:hover .data-table {
+.page-panel:not(.modal-open):hover .surface-card,
+.page-panel:not(.modal-open):hover .metric-card,
+.page-panel:not(.modal-open):hover .model-item,
+.page-panel:not(.modal-open):hover .data-table {
   background: white;
   color: var(--color-text-tertiary);
 }
-.page-panel:hover .surface-card .muted,
-.page-panel:hover .metric-card .muted,
-.page-panel:hover .model-item .muted,
-.page-panel:hover .data-table .muted {
+.page-panel:not(.modal-open):hover .surface-card .muted,
+.page-panel:not(.modal-open):hover .metric-card .muted,
+.page-panel:not(.modal-open):hover .model-item .muted,
+.page-panel:not(.modal-open):hover .data-table .muted {
   color: var(--color-text-secondary);
+}
+.page-panel.modal-open {
+  background: white;
+  color: var(--color-text-tertiary);
+  border-color: var(--color-accent);
 }
 .page-heading {
   display: flex;

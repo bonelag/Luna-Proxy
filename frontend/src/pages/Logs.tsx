@@ -303,10 +303,10 @@ export default function Logs() {
                 })()
               ) : null}
               {activeTab === 'requestHeaders'
-                ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, 'Chưa có request headers trong log hiện tại. Có thể bổ sung backend capture sau.')
+                ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, 'Log này chưa có request headers.')
                 : null}
               {activeTab === 'responseHeaders'
-                ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, 'Chưa có response headers trong log hiện tại. Có thể bổ sung backend capture sau.')
+                ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, 'Log này chưa có response headers.')
                 : null}
               {activeTab === 'response'
                 ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, 'Chưa có response body trong log hiện tại. Có thể bổ sung backend capture sau.')

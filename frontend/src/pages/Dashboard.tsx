@@ -10,6 +10,23 @@ type ConfigData = {
 
 type LogItem = {level: string; message: string; timestamp: number};
 type LogStats = {total: number; errors: number; chatRequests: number};
+type RuntimeRun = {
+  id: string;
+  status: string;
+  providerId?: string;
+  accountId?: string;
+  providerChatId?: string;
+  sessionId?: string;
+  workerId?: string;
+  startedAt?: number;
+};
+type RuntimeData = {
+  config?: Record<string, any>;
+  locks?: Record<string, {locked?: boolean; ownerId?: string; capacity?: number; capacityMax?: number; queued?: number}>;
+  activeRuns?: RuntimeRun[];
+  leases?: Array<{runId: string; capacityKeys: string[]; lockKeys: string[]; released: boolean}>;
+  workers?: Array<{id: string; providerId?: string; status?: string; lastVerifiedIp?: string}>;
+};
 
 function parseLog(log: LogItem): Record<string, any> {
   try {
@@ -23,6 +40,7 @@ export default function Dashboard() {
   const [config, setConfig] = useState<ConfigData | null>(null);
   const [logs, setLogs] = useState<LogItem[]>([]);
   const [logStats, setLogStats] = useState<LogStats>({total: 0, errors: 0, chatRequests: 0});
+  const [runtime, setRuntime] = useState<RuntimeData | null>(null);
   const [health, setHealth] = useState<'online' | 'offline' | 'checking'>('checking');
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
@@ -33,15 +51,17 @@ export default function Dashboard() {
     requestInFlight.current = true;
     if (initial) setLoading(true);
     try {
-      const [configRes, logsRes, statsRes, healthRes] = await Promise.all([
+      const [configRes, logsRes, statsRes, runtimeRes, healthRes] = await Promise.all([
         fetch('/api/config'),
         fetch('/api/logs?limit=20'),
         fetch('/api/logs/stats'),
+        fetch('/api/runtime'),
         fetch('/health'),
       ]);
       if (configRes.ok) setConfig(await configRes.json());
       if (logsRes.ok) setLogs(await logsRes.json());
       if (statsRes.ok) setLogStats(await statsRes.json());
+      if (runtimeRes.ok) setRuntime(await runtimeRes.json());
       setHealth(healthRes.ok ? 'online' : 'offline');
       setLastUpdated(Date.now());
     } catch {
@@ -61,7 +81,7 @@ export default function Dashboard() {
     void tick();
     const timer = window.setInterval(() => {
       void loadDashboard();
-    }, 5000);
+    }, 2000);
     return () => {
       active = false;
       window.clearInterval(timer);
@@ -71,13 +91,19 @@ export default function Dashboard() {
   const stats = useMemo(() => {
     const providers = config?.providers || [];
     const configuredProviders = providers.filter(p => p.credentials && Object.keys(p.credentials).length > 0);
+    const activeRuns = runtime?.activeRuns || [];
+    const locks = runtime?.locks || {};
+    const queued = Object.values(locks).reduce((sum, lock) => sum + Number(lock.queued || 0), 0);
+    const activeCapacity = Object.values(locks).reduce((sum, lock) => sum + Number(lock.capacity || 0), 0);
     return {
       providers: configuredProviders.length,
-      threads: 0,
+      activeRuns: activeRuns.length,
+      queued,
+      activeCapacity,
       requests: logStats.chatRequests,
       errors: logStats.errors,
     };
-  }, [config, logStats]);
+  }, [config, logStats, runtime]);
 
   return (
     <section aria-labelledby="dashboard-title" className="page-panel dashboard-panel">
@@ -85,7 +111,7 @@ export default function Dashboard() {
         <div>
           <p className="eyebrow">Local control plane</p>
           <h2 id="dashboard-title">Dashboard</h2>
-          <p className="muted">Auto-updating every 5 seconds.</p>
+          <p className="muted">Auto-updating every 2 seconds.</p>
         </div>
         <span className={`status-pill status-${health === 'online' ? 'alive' : health === 'offline' ? 'dead' : 'warn'}`}>
           {health}
@@ -105,9 +131,18 @@ export default function Dashboard() {
           <p className="metric-value">{stats.providers}</p>
         </article>
         <article className="metric-card">
-          <h3>Threads</h3>
-          <p className="metric-value">{stats.threads}</p>
-          <p className="muted">Mocked until thread tracking is implemented.</p>
+          <h3>Active runs</h3>
+          <p className="metric-value">{stats.activeRuns}</p>
+          <p className="muted">Live scheduler state.</p>
+        </article>
+        <article className="metric-card">
+          <h3>Queued runs</h3>
+          <p className="metric-value">{stats.queued}</p>
+          <p className="muted">Waiting on capacity or locks.</p>
+        </article>
+        <article className="metric-card">
+          <h3>Capacity in use</h3>
+          <p className="metric-value">{stats.activeCapacity}</p>
         </article>
         <article className="metric-card">
           <h3>Recent requests</h3>
@@ -118,6 +153,71 @@ export default function Dashboard() {
           <p className="metric-value">{stats.errors}</p>
         </article>
       </div>
+
+      <section className="surface-card" aria-labelledby="runtime-title" style={{marginBottom: 16}}>
+        <div className="surface-card-head">
+          <h3 id="runtime-title">Runtime Scheduler</h3>
+          {lastUpdated ? <span className="muted">Updated {new Date(lastUpdated).toLocaleTimeString()}</span> : null}
+        </div>
+        {runtime?.activeRuns?.length ? (
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Run</th>
+                  <th>Status</th>
+                  <th>Provider</th>
+                  <th>Account</th>
+                  <th>Session</th>
+                  <th>Worker</th>
+                  <th>Started</th>
+                </tr>
+              </thead>
+              <tbody>
+                {runtime.activeRuns.map((run) => (
+                  <tr key={run.id}>
+                    <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{run.id.slice(0, 8)}</td>
+                    <td><span className={`status-pill status-${run.status === 'streaming' ? 'alive' : run.status === 'queued' ? 'warn' : 'alive'}`}>{run.status}</span></td>
+                    <td>{run.providerId || '-'}</td>
+                    <td>{run.accountId || '-'}</td>
+                    <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{run.sessionId ? run.sessionId.slice(0, 8) : '-'}</td>
+                    <td>{run.workerId || '-'}</td>
+                    <td>{run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="muted">No active runs.</p>
+        )}
+        {runtime?.locks && Object.keys(runtime.locks).length > 0 ? (
+          <div className="table-wrap" style={{marginTop: 16}}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Lock / capacity key</th>
+                  <th>Active</th>
+                  <th>Max</th>
+                  <th>Queued</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(runtime.locks).map(([key, lock]) => (
+                  <tr key={key}>
+                    <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{key}</td>
+                    <td>{lock.capacity || 0}</td>
+                    <td>{lock.capacityMax || '-'}</td>
+                    <td>{lock.queued || 0}</td>
+                    <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{lock.ownerId ? lock.ownerId.slice(0, 8) : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
 
       <section className="surface-card" aria-labelledby="recent-title">
         <div className="surface-card-head">

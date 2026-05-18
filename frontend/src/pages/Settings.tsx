@@ -3,25 +3,6 @@ import React, {useEffect, useState} from 'react';
 export default function Settings() {
   const [overflowEnabled, setOverflowEnabled] = useState(true);
   const [threshold, setThreshold] = useState(10000);
-  const [sanitizerEnabled, setSanitizerEnabled] = useState(true);
-  const [sanitizerMode, setSanitizerMode] = useState('generic-plus-client-rules');
-  const [stripClientToolProtocol, setStripClientToolProtocol] = useState(true);
-  const [stripAutomatedClientErrors, setStripAutomatedClientErrors] = useState(true);
-  const [stripAssistantToolFailureEcho, setStripAssistantToolFailureEcho] = useState(true);
-  const [stripAssistantThinking, setStripAssistantThinking] = useState(true);
-  const [stripAssistantContainerConfusion, setStripAssistantContainerConfusion] = useState(true);
-  const [dedupeAssistantMessages, setDedupeAssistantMessages] = useState(true);
-  const [assistantSimilarityThreshold, setAssistantSimilarityThreshold] = useState(0.85);
-  const [maxAssistantMessages, setMaxAssistantMessages] = useState(1);
-  const [prioritizeUserMessages, setPrioritizeUserMessages] = useState(true);
-  const [includeProjectSnapshot, setIncludeProjectSnapshot] = useState(true);
-  const [clientAwareResponseContract, setClientAwareResponseContract] = useState(true);
-  const [clineUseAttemptCompletion, setClineUseAttemptCompletion] = useState(true);
-  const [maxEnvironmentFileList, setMaxEnvironmentFileList] = useState(120);
-  const [maxMessageChars, setMaxMessageChars] = useState(20000);
-  const [maxToolResultChars, setMaxToolResultChars] = useState(12000);
-  const [maxToolResultCount, setMaxToolResultCount] = useState(5);
-  const [preserveRawDebugFile, setPreserveRawDebugFile] = useState(false);
   const [sessionEnabled, setSessionEnabled] = useState(true);
   const [requireExplicitId, setRequireExplicitId] = useState(true);
   const [fileBackedEnabled, setFileBackedEnabled] = useState(true);
@@ -58,26 +39,6 @@ export default function Settings() {
       const toc = data?.settings?.tokenOverflow || {};
       setOverflowEnabled(toc.enabled !== false);
       setThreshold(Number(toc.threshold || 10000));
-      const sc = toc.sanitizer || {};
-      setSanitizerEnabled(sc.enabled !== false);
-      setSanitizerMode(sc.mode || 'generic-plus-client-rules');
-      setStripClientToolProtocol(sc.stripClientToolProtocol !== false);
-      setStripAutomatedClientErrors(sc.stripAutomatedClientErrors !== false);
-      setStripAssistantToolFailureEcho(sc.stripAssistantToolFailureEcho !== false);
-      setStripAssistantThinking(sc.stripAssistantThinking !== false);
-      setStripAssistantContainerConfusion(sc.stripAssistantContainerConfusion !== false);
-      setDedupeAssistantMessages(sc.dedupeAssistantMessages !== false);
-      setAssistantSimilarityThreshold(Number(sc.assistantSimilarityThreshold || 0.85));
-      setMaxAssistantMessages(Number(sc.maxAssistantMessages || 1));
-      setPrioritizeUserMessages(sc.prioritizeUserMessages !== false);
-      setIncludeProjectSnapshot(sc.includeProjectSnapshot !== false);
-      setClientAwareResponseContract(sc.clientAwareResponseContract !== false);
-      setClineUseAttemptCompletion(sc.clineUseAttemptCompletion !== false);
-      setMaxEnvironmentFileList(Number(sc.maxEnvironmentFileList || 120));
-      setMaxMessageChars(Number(sc.maxMessageChars || 20000));
-      setMaxToolResultChars(Number(sc.maxToolResultChars || 12000));
-      setMaxToolResultCount(Number(sc.maxToolResultCount || 5));
-      setPreserveRawDebugFile(!!sc.preserveRawDebugFile);
       const ssc = data?.settings?.session || {};
       setSessionEnabled(ssc.enabled !== false);
       setRequireExplicitId(ssc.requireExplicitId !== false);
@@ -123,27 +84,6 @@ export default function Settings() {
             tokenOverflow: {
               enabled: overflowEnabled,
               threshold: Number(threshold) || 10000,
-              sanitizer: {
-                enabled: sanitizerEnabled,
-                mode: sanitizerMode,
-                stripClientToolProtocol,
-                stripAutomatedClientErrors,
-                stripAssistantToolFailureEcho,
-                stripAssistantThinking,
-                stripAssistantContainerConfusion,
-                dedupeAssistantMessages,
-                assistantSimilarityThreshold: Number(assistantSimilarityThreshold) || 0.85,
-                maxAssistantMessages: Number(maxAssistantMessages) || 1,
-                maxToolResultChars: Number(maxToolResultChars) || 12000,
-                maxToolResultCount: Number(maxToolResultCount) || 5,
-                prioritizeUserMessages,
-                includeProjectSnapshot,
-                clientAwareResponseContract,
-                clineUseAttemptCompletion,
-                maxEnvironmentFileList: Number(maxEnvironmentFileList) || 120,
-                maxMessageChars: Number(maxMessageChars) || 20000,
-                preserveRawDebugFile,
-              },
             },
             session: {
               enabled: sessionEnabled,
@@ -203,7 +143,7 @@ export default function Settings() {
               checked={overflowEnabled}
               onChange={(e) => setOverflowEnabled(e.target.checked)}
             />
-            <span>Enable token overflow to txt</span>
+            <span>Enable raw overflow file</span>
           </label>
           <label className="field">
             <span>Token threshold</span>
@@ -217,173 +157,6 @@ export default function Settings() {
           </label>
         </div>
 
-        <h4 style={{marginTop: 16, marginBottom: 8}}>Overflow Sanitizer</h4>
-        <div className="settings-grid">
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={sanitizerEnabled}
-              onChange={(e) => setSanitizerEnabled(e.target.checked)}
-            />
-            <span>Enable overflow sanitizer</span>
-          </label>
-          <label className="field">
-            <span>Sanitizer mode</span>
-            <select value={sanitizerMode} onChange={(e) => setSanitizerMode(e.target.value)}>
-              <option value="generic-plus-client-rules">Generic + client rules</option>
-              <option value="generic">Generic only</option>
-            </select>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={stripClientToolProtocol}
-              onChange={(e) => setStripClientToolProtocol(e.target.checked)}
-            />
-            <span>Strip client tool protocol</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={stripAutomatedClientErrors}
-              onChange={(e) => setStripAutomatedClientErrors(e.target.checked)}
-            />
-            <span>Strip automated client errors</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={stripAssistantToolFailureEcho}
-              onChange={(e) => setStripAssistantToolFailureEcho(e.target.checked)}
-            />
-            <span>Strip assistant tool failure echo</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={stripAssistantThinking}
-              onChange={(e) => setStripAssistantThinking(e.target.checked)}
-            />
-            <span>Strip assistant thinking blocks</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={stripAssistantContainerConfusion}
-              onChange={(e) => setStripAssistantContainerConfusion(e.target.checked)}
-            />
-            <span>Strip assistant container confusion</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={dedupeAssistantMessages}
-              onChange={(e) => setDedupeAssistantMessages(e.target.checked)}
-            />
-            <span>Deduplicate assistant messages</span>
-          </label>
-          <label className="field">
-            <span>Dedupe similarity threshold</span>
-            <input
-              type="number"
-              value={assistantSimilarityThreshold}
-              onChange={(e) => setAssistantSimilarityThreshold(Number(e.target.value))}
-              min={0.5}
-              max={1}
-              step={0.01}
-            />
-          </label>
-          <label className="field">
-            <span>Max assistant messages to keep</span>
-            <input
-              type="number"
-              value={maxAssistantMessages}
-              onChange={(e) => setMaxAssistantMessages(Number(e.target.value))}
-              min={1}
-              max={20}
-            />
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={prioritizeUserMessages}
-              onChange={(e) => setPrioritizeUserMessages(e.target.checked)}
-            />
-            <span>Prioritize user messages over assistant</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={includeProjectSnapshot}
-              onChange={(e) => setIncludeProjectSnapshot(e.target.checked)}
-            />
-            <span>Include project snapshot</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={clientAwareResponseContract}
-              onChange={(e) => setClientAwareResponseContract(e.target.checked)}
-            />
-            <span>Client-aware response contract</span>
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={clineUseAttemptCompletion}
-              onChange={(e) => setClineUseAttemptCompletion(e.target.checked)}
-            />
-            <span>Cline use attempt_completion</span>
-          </label>
-          <label className="field">
-            <span>Max environment file list</span>
-            <input
-              type="number"
-              value={maxEnvironmentFileList}
-              onChange={(e) => setMaxEnvironmentFileList(Number(e.target.value))}
-              min={10}
-              step={10}
-            />
-          </label>
-          <label className="field">
-            <span>Max message chars</span>
-            <input
-              type="number"
-              value={maxMessageChars}
-              onChange={(e) => setMaxMessageChars(Number(e.target.value))}
-              min={1000}
-              step={1000}
-            />
-          </label>
-          <label className="field">
-            <span>Max tool result chars</span>
-            <input
-              type="number"
-              value={maxToolResultChars}
-              onChange={(e) => setMaxToolResultChars(Number(e.target.value))}
-              min={1000}
-              step={1000}
-            />
-          </label>
-          <label className="field">
-            <span>Max tool result count</span>
-            <input
-              type="number"
-              value={maxToolResultCount}
-              onChange={(e) => setMaxToolResultCount(Number(e.target.value))}
-              min={1}
-              max={50}
-            />
-          </label>
-          <label className="toggle-field">
-            <input
-              type="checkbox"
-              checked={preserveRawDebugFile}
-              onChange={(e) => setPreserveRawDebugFile(e.target.checked)}
-            />
-            <span>Preserve raw debug file locally</span>
-          </label>
-        </div>
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>

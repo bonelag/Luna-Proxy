@@ -26546,6 +26546,7 @@ function Dashboard() {
   const [config, setConfig] = (0, import_react.useState)(null);
   const [logs, setLogs] = (0, import_react.useState)([]);
   const [logStats, setLogStats] = (0, import_react.useState)({ total: 0, errors: 0, chatRequests: 0 });
+  const [runtime, setRuntime] = (0, import_react.useState)(null);
   const [health, setHealth] = (0, import_react.useState)("checking");
   const [loading, setLoading] = (0, import_react.useState)(true);
   const [lastUpdated, setLastUpdated] = (0, import_react.useState)(null);
@@ -26557,10 +26558,11 @@ function Dashboard() {
     if (initial)
       setLoading(true);
     try {
-      const [configRes, logsRes, statsRes, healthRes] = await Promise.all([
+      const [configRes, logsRes, statsRes, runtimeRes, healthRes] = await Promise.all([
         fetch("/api/config"),
         fetch("/api/logs?limit=20"),
         fetch("/api/logs/stats"),
+        fetch("/api/runtime"),
         fetch("/health")
       ]);
       if (configRes.ok)
@@ -26569,6 +26571,8 @@ function Dashboard() {
         setLogs(await logsRes.json());
       if (statsRes.ok)
         setLogStats(await statsRes.json());
+      if (runtimeRes.ok)
+        setRuntime(await runtimeRes.json());
       setHealth(healthRes.ok ? "online" : "offline");
       setLastUpdated(Date.now());
     } catch {
@@ -26589,7 +26593,7 @@ function Dashboard() {
     void tick();
     const timer = window.setInterval(() => {
       void loadDashboard();
-    }, 5e3);
+    }, 2e3);
     return () => {
       active = false;
       window.clearInterval(timer);
@@ -26598,19 +26602,25 @@ function Dashboard() {
   const stats = (0, import_react.useMemo)(() => {
     const providers = config?.providers || [];
     const configuredProviders = providers.filter((p) => p.credentials && Object.keys(p.credentials).length > 0);
+    const activeRuns = runtime?.activeRuns || [];
+    const locks = runtime?.locks || {};
+    const queued = Object.values(locks).reduce((sum, lock) => sum + Number(lock.queued || 0), 0);
+    const activeCapacity = Object.values(locks).reduce((sum, lock) => sum + Number(lock.capacity || 0), 0);
     return {
       providers: configuredProviders.length,
-      threads: 0,
+      activeRuns: activeRuns.length,
+      queued,
+      activeCapacity,
       requests: logStats.chatRequests,
       errors: logStats.errors
     };
-  }, [config, logStats]);
+  }, [config, logStats, runtime]);
   return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { "aria-labelledby": "dashboard-title", className: "page-panel dashboard-panel", children: [
     /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "page-heading", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "eyebrow", children: "Local control plane" }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h2", { id: "dashboard-title", children: "Dashboard" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Auto-updating every 5 seconds." })
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Auto-updating every 2 seconds." })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health })
     ] }),
@@ -26625,9 +26635,18 @@ function Dashboard() {
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.providers })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Threads" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.threads }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Mocked until thread tracking is implemented." })
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Active runs" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.activeRuns }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Live scheduler state." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Queued runs" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.queued }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Waiting on capacity or locks." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Capacity in use" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.activeCapacity })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Recent requests" }),
@@ -26637,6 +26656,51 @@ function Dashboard() {
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Recent errors" }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.errors })
       ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { className: "surface-card", "aria-labelledby": "runtime-title", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "surface-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { id: "runtime-title", children: "Runtime Scheduler" }),
+        lastUpdated ? /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "muted", children: [
+          "Updated ",
+          new Date(lastUpdated).toLocaleTimeString()
+        ] }) : null
+      ] }),
+      runtime?.activeRuns?.length ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Run" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Status" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Provider" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Account" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Session" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Worker" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Started" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: runtime.activeRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.id.slice(0, 8) }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${run.status === "streaming" ? "alive" : run.status === "queued" ? "warn" : "alive"}`, children: run.status }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.providerId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.accountId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.sessionId ? run.sessionId.slice(0, 8) : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.workerId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : "-" })
+        ] }, run.id)) })
+      ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "No active runs." }),
+      runtime?.locks && Object.keys(runtime.locks).length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "table-wrap", style: { marginTop: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Lock / capacity key" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Active" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Max" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Queued" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Owner" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: Object.entries(runtime.locks).map(([key, lock]) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: key }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.capacity || 0 }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.capacityMax || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.queued || 0 }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: lock.ownerId ? lock.ownerId.slice(0, 8) : "-" })
+        ] }, key)) })
+      ] }) }) : null
     ] }),
     /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { className: "surface-card", "aria-labelledby": "recent-title", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "surface-card-head", children: [
@@ -27967,8 +28031,8 @@ function Logs() {
             ] }, idx)) })
           ] });
         })() : null,
-        activeTab === "requestHeaders" ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, "Ch\u01B0a c\xF3 request headers trong log hi\u1EC7n t\u1EA1i. C\xF3 th\u1EC3 b\u1ED5 sung backend capture sau.") : null,
-        activeTab === "responseHeaders" ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, "Ch\u01B0a c\xF3 response headers trong log hi\u1EC7n t\u1EA1i. C\xF3 th\u1EC3 b\u1ED5 sung backend capture sau.") : null,
+        activeTab === "requestHeaders" ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, "Log n\xE0y ch\u01B0a c\xF3 request headers.") : null,
+        activeTab === "responseHeaders" ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, "Log n\xE0y ch\u01B0a c\xF3 response headers.") : null,
         activeTab === "response" ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, "Ch\u01B0a c\xF3 response body trong log hi\u1EC7n t\u1EA1i. C\xF3 th\u1EC3 b\u1ED5 sung backend capture sau.") : null
       ] })
     ] }) }) : null
@@ -27981,25 +28045,6 @@ var import_jsx_runtime9 = __toESM(require_jsx_runtime());
 function Settings() {
   const [overflowEnabled, setOverflowEnabled] = (0, import_react8.useState)(true);
   const [threshold, setThreshold] = (0, import_react8.useState)(1e4);
-  const [sanitizerEnabled, setSanitizerEnabled] = (0, import_react8.useState)(true);
-  const [sanitizerMode, setSanitizerMode] = (0, import_react8.useState)("generic-plus-client-rules");
-  const [stripClientToolProtocol, setStripClientToolProtocol] = (0, import_react8.useState)(true);
-  const [stripAutomatedClientErrors, setStripAutomatedClientErrors] = (0, import_react8.useState)(true);
-  const [stripAssistantToolFailureEcho, setStripAssistantToolFailureEcho] = (0, import_react8.useState)(true);
-  const [stripAssistantThinking, setStripAssistantThinking] = (0, import_react8.useState)(true);
-  const [stripAssistantContainerConfusion, setStripAssistantContainerConfusion] = (0, import_react8.useState)(true);
-  const [dedupeAssistantMessages, setDedupeAssistantMessages] = (0, import_react8.useState)(true);
-  const [assistantSimilarityThreshold, setAssistantSimilarityThreshold] = (0, import_react8.useState)(0.85);
-  const [maxAssistantMessages, setMaxAssistantMessages] = (0, import_react8.useState)(1);
-  const [prioritizeUserMessages, setPrioritizeUserMessages] = (0, import_react8.useState)(true);
-  const [includeProjectSnapshot, setIncludeProjectSnapshot] = (0, import_react8.useState)(true);
-  const [clientAwareResponseContract, setClientAwareResponseContract] = (0, import_react8.useState)(true);
-  const [clineUseAttemptCompletion, setClineUseAttemptCompletion] = (0, import_react8.useState)(true);
-  const [maxEnvironmentFileList, setMaxEnvironmentFileList] = (0, import_react8.useState)(120);
-  const [maxMessageChars, setMaxMessageChars] = (0, import_react8.useState)(2e4);
-  const [maxToolResultChars, setMaxToolResultChars] = (0, import_react8.useState)(12e3);
-  const [maxToolResultCount, setMaxToolResultCount] = (0, import_react8.useState)(5);
-  const [preserveRawDebugFile, setPreserveRawDebugFile] = (0, import_react8.useState)(false);
   const [sessionEnabled, setSessionEnabled] = (0, import_react8.useState)(true);
   const [requireExplicitId, setRequireExplicitId] = (0, import_react8.useState)(true);
   const [fileBackedEnabled, setFileBackedEnabled] = (0, import_react8.useState)(true);
@@ -28034,26 +28079,6 @@ function Settings() {
       const toc = data?.settings?.tokenOverflow || {};
       setOverflowEnabled(toc.enabled !== false);
       setThreshold(Number(toc.threshold || 1e4));
-      const sc = toc.sanitizer || {};
-      setSanitizerEnabled(sc.enabled !== false);
-      setSanitizerMode(sc.mode || "generic-plus-client-rules");
-      setStripClientToolProtocol(sc.stripClientToolProtocol !== false);
-      setStripAutomatedClientErrors(sc.stripAutomatedClientErrors !== false);
-      setStripAssistantToolFailureEcho(sc.stripAssistantToolFailureEcho !== false);
-      setStripAssistantThinking(sc.stripAssistantThinking !== false);
-      setStripAssistantContainerConfusion(sc.stripAssistantContainerConfusion !== false);
-      setDedupeAssistantMessages(sc.dedupeAssistantMessages !== false);
-      setAssistantSimilarityThreshold(Number(sc.assistantSimilarityThreshold || 0.85));
-      setMaxAssistantMessages(Number(sc.maxAssistantMessages || 1));
-      setPrioritizeUserMessages(sc.prioritizeUserMessages !== false);
-      setIncludeProjectSnapshot(sc.includeProjectSnapshot !== false);
-      setClientAwareResponseContract(sc.clientAwareResponseContract !== false);
-      setClineUseAttemptCompletion(sc.clineUseAttemptCompletion !== false);
-      setMaxEnvironmentFileList(Number(sc.maxEnvironmentFileList || 120));
-      setMaxMessageChars(Number(sc.maxMessageChars || 2e4));
-      setMaxToolResultChars(Number(sc.maxToolResultChars || 12e3));
-      setMaxToolResultCount(Number(sc.maxToolResultCount || 5));
-      setPreserveRawDebugFile(!!sc.preserveRawDebugFile);
       const ssc = data?.settings?.session || {};
       setSessionEnabled(ssc.enabled !== false);
       setRequireExplicitId(ssc.requireExplicitId !== false);
@@ -28099,28 +28124,7 @@ function Settings() {
           settings: {
             tokenOverflow: {
               enabled: overflowEnabled,
-              threshold: Number(threshold) || 1e4,
-              sanitizer: {
-                enabled: sanitizerEnabled,
-                mode: sanitizerMode,
-                stripClientToolProtocol,
-                stripAutomatedClientErrors,
-                stripAssistantToolFailureEcho,
-                stripAssistantThinking,
-                stripAssistantContainerConfusion,
-                dedupeAssistantMessages,
-                assistantSimilarityThreshold: Number(assistantSimilarityThreshold) || 0.85,
-                maxAssistantMessages: Number(maxAssistantMessages) || 1,
-                maxToolResultChars: Number(maxToolResultChars) || 12e3,
-                maxToolResultCount: Number(maxToolResultCount) || 5,
-                prioritizeUserMessages,
-                includeProjectSnapshot,
-                clientAwareResponseContract,
-                clineUseAttemptCompletion,
-                maxEnvironmentFileList: Number(maxEnvironmentFileList) || 120,
-                maxMessageChars: Number(maxMessageChars) || 2e4,
-                preserveRawDebugFile
-              }
+              threshold: Number(threshold) || 1e4
             },
             session: {
               enabled: sessionEnabled,
@@ -28179,7 +28183,7 @@ function Settings() {
               onChange: (e) => setOverflowEnabled(e.target.checked)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable token overflow to txt" })
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable raw overflow file" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Token threshold" }),
@@ -28193,227 +28197,6 @@ function Settings() {
               step: 500
             }
           )
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h4", { style: { marginTop: 16, marginBottom: 8 }, children: "Overflow Sanitizer" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "settings-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: sanitizerEnabled,
-              onChange: (e) => setSanitizerEnabled(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable overflow sanitizer" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Sanitizer mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: sanitizerMode, onChange: (e) => setSanitizerMode(e.target.value), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "generic-plus-client-rules", children: "Generic + client rules" }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "generic", children: "Generic only" })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: stripClientToolProtocol,
-              onChange: (e) => setStripClientToolProtocol(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strip client tool protocol" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: stripAutomatedClientErrors,
-              onChange: (e) => setStripAutomatedClientErrors(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strip automated client errors" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: stripAssistantToolFailureEcho,
-              onChange: (e) => setStripAssistantToolFailureEcho(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strip assistant tool failure echo" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: stripAssistantThinking,
-              onChange: (e) => setStripAssistantThinking(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strip assistant thinking blocks" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: stripAssistantContainerConfusion,
-              onChange: (e) => setStripAssistantContainerConfusion(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strip assistant container confusion" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: dedupeAssistantMessages,
-              onChange: (e) => setDedupeAssistantMessages(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Deduplicate assistant messages" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Dedupe similarity threshold" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: assistantSimilarityThreshold,
-              onChange: (e) => setAssistantSimilarityThreshold(Number(e.target.value)),
-              min: 0.5,
-              max: 1,
-              step: 0.01
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Max assistant messages to keep" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: maxAssistantMessages,
-              onChange: (e) => setMaxAssistantMessages(Number(e.target.value)),
-              min: 1,
-              max: 20
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: prioritizeUserMessages,
-              onChange: (e) => setPrioritizeUserMessages(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Prioritize user messages over assistant" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: includeProjectSnapshot,
-              onChange: (e) => setIncludeProjectSnapshot(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Include project snapshot" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: clientAwareResponseContract,
-              onChange: (e) => setClientAwareResponseContract(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Client-aware response contract" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: clineUseAttemptCompletion,
-              onChange: (e) => setClineUseAttemptCompletion(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Cline use attempt_completion" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Max environment file list" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: maxEnvironmentFileList,
-              onChange: (e) => setMaxEnvironmentFileList(Number(e.target.value)),
-              min: 10,
-              step: 10
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Max message chars" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: maxMessageChars,
-              onChange: (e) => setMaxMessageChars(Number(e.target.value)),
-              min: 1e3,
-              step: 1e3
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Max tool result chars" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: maxToolResultChars,
-              onChange: (e) => setMaxToolResultChars(Number(e.target.value)),
-              min: 1e3,
-              step: 1e3
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Max tool result count" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "number",
-              value: maxToolResultCount,
-              onChange: (e) => setMaxToolResultCount(Number(e.target.value)),
-              min: 1,
-              max: 50
-            }
-          )
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
-            "input",
-            {
-              type: "checkbox",
-              checked: preserveRawDebugFile,
-              onChange: (e) => setPreserveRawDebugFile(e.target.checked)
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Preserve raw debug file locally" })
         ] })
       ] })
     ] }),
@@ -28601,6 +28384,7 @@ function NetworkProfiles() {
   const [editingProfile, setEditingProfile] = (0, import_react9.useState)(null);
   const [editingWorker, setEditingWorker] = (0, import_react9.useState)(null);
   const [directIp, setDirectIp] = (0, import_react9.useState)("");
+  const modalOpen = Boolean(editingProfile || editingWorker);
   (0, import_react9.useEffect)(() => {
     loadAll();
   }, []);
@@ -28657,7 +28441,7 @@ function NetworkProfiles() {
       return "status-dead";
     return "status-warn";
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { "aria-labelledby": "np-title", className: "page-panel", children: [
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { "aria-labelledby": "np-title", className: `page-panel${modalOpen ? " modal-open" : ""}`, children: [
     /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "page-heading", children: [
       /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "eyebrow", children: "Egress paths and remote workers" }),

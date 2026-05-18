@@ -38,6 +38,39 @@ import {persistSessionMessages} from './modules/sessionPersistence';
 import {compactSession} from './modules/sessionCompactor';
 import {uploadOverflowFileToQwen} from './modules/ossUploader';
 
+const SENSITIVE_HEADER_RE = /(authorization|cookie|token|api-key|x-proxy-key|proxy-authorization|secret|session)/i;
+
+function normalizeHeaders(headers: Record<string, any> | undefined | null): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!headers) return out;
+  for (const [key, value] of Object.entries(headers)) {
+    if (value === undefined || value === null) continue;
+    const normalizedKey = String(key).toLowerCase();
+    if (Array.isArray(value)) {
+      out[normalizedKey] = value.map(v => String(v)).join('; ');
+    } else {
+      out[normalizedKey] = String(value);
+    }
+  }
+  return out;
+}
+
+function maskHeaders(headers: Record<string, any> | undefined | null): Record<string, string> {
+  const normalized = normalizeHeaders(headers);
+  const masked: Record<string, string> = {};
+  for (const [key, value] of Object.entries(normalized)) {
+    masked[key] = SENSITIVE_HEADER_RE.test(key) ? '[redacted]' : value;
+  }
+  return masked;
+}
+
+function getClientResponseHeaders(ctx: Koa.Context): Record<string, string> {
+  const headers = maskHeaders(ctx.res.getHeaders() as Record<string, any>);
+  const type = ctx.response.type;
+  if (type && !headers['content-type']) headers['content-type'] = type;
+  return headers;
+}
+
 export class SimpleProxyServer {
   private app: Koa;
   private router: Router;
@@ -1208,6 +1241,7 @@ export class SimpleProxyServer {
 
     this.router.post('/v1/chat/completions', async ctx => {
       const startedAt = Date.now();
+      const clientRequestHeaders = maskHeaders(ctx.headers as Record<string, any>);
       const conf = configStore.getConfig();
       const requiredProxyKey = String(conf.proxy?.key || '').trim();
       if (requiredProxyKey) {
@@ -1262,7 +1296,7 @@ export class SimpleProxyServer {
       if (!providerConf) {
         ctx.status = 400;
         ctx.body = { error: { message: `Provider "${providerId}" not configured; add provider via UI or /api/provider/token` } };
-        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, prompt: capturedPromptMessages, prompt_preview: promptPreview, prompt_messages: capturedPromptMessages, error: `Provider "${providerId}" not configured`, durationMs: Date.now() - startedAt }));
+        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, prompt: capturedPromptMessages, prompt_preview: promptPreview, prompt_messages: capturedPromptMessages, requestHeaders: {client: clientRequestHeaders}, responseHeaders: {client: getClientResponseHeaders(ctx)}, error: `Provider "${providerId}" not configured`, durationMs: Date.now() - startedAt }));
         return;
       }
 
@@ -1271,7 +1305,7 @@ export class SimpleProxyServer {
       if (accounts.length === 0) {
         ctx.status = 400;
         ctx.body = { error: { message: `No accounts available for provider "${providerId}"` } };
-        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, error: `No accounts for provider "${providerId}"`, durationMs: Date.now() - startedAt }));
+        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, requestHeaders: {client: clientRequestHeaders}, responseHeaders: {client: getClientResponseHeaders(ctx)}, error: `No accounts for provider "${providerId}"`, durationMs: Date.now() - startedAt }));
         return;
       }
 
@@ -1280,7 +1314,7 @@ export class SimpleProxyServer {
       if (!account) {
         ctx.status = 400;
         ctx.body = { error: { message: `No enabled account available for provider "${providerId}"` } };
-        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, error: 'No enabled account', durationMs: Date.now() - startedAt }));
+        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, requestHeaders: {client: clientRequestHeaders}, responseHeaders: {client: getClientResponseHeaders(ctx)}, error: 'No enabled account', durationMs: Date.now() - startedAt }));
         return;
       }
 
@@ -1289,7 +1323,7 @@ export class SimpleProxyServer {
       if (!token && !cookies) {
         ctx.status = 400;
         ctx.body = { error: { message: `Token/cookies not configured for account "${account.id}"; set via /api/provider/token or QWEN_AI_TOKEN env` } };
-        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, prompt: capturedPromptMessages, prompt_preview: promptPreview, prompt_messages: capturedPromptMessages, error: `Token/cookies not configured for account "${account.id}"`, durationMs: Date.now() - startedAt }));
+        configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: ctx.status, model, stream: !!body.stream, prompt: capturedPromptMessages, prompt_preview: promptPreview, prompt_messages: capturedPromptMessages, requestHeaders: {client: clientRequestHeaders}, responseHeaders: {client: getClientResponseHeaders(ctx)}, error: `Token/cookies not configured for account "${account.id}"`, durationMs: Date.now() - startedAt }));
         return;
       }
       const stream = !!body.stream;
@@ -1549,11 +1583,22 @@ export class SimpleProxyServer {
       let adapter: QwenAiAdapter | null = null;
       let streamLogWritten = false;
       let workerChatId: string | undefined;
+      let workerResponseHeaders: Record<string, any> | undefined;
 
       const buildLogEntry = (level: 'info' | 'error', extra: Record<string, any>) => {
         const wireDebug = adapter?.getLastWireDebug?.() || null;
-        const requestHeaders = wireDebug?.requestHeaders || {};
-        const responseHeaders = wireDebug?.responseHeaders || {};
+        const providerRequestHeaders = wireDebug?.requestHeaders ? maskHeaders(wireDebug.requestHeaders) : {};
+        const providerResponseHeaders = wireDebug?.responseHeaders
+          ? maskHeaders(wireDebug.responseHeaders)
+          : maskHeaders(workerResponseHeaders);
+        const requestHeaders = {
+          client: clientRequestHeaders,
+          provider: providerRequestHeaders,
+        };
+        const responseHeaders = {
+          client: getClientResponseHeaders(ctx),
+          provider: providerResponseHeaders,
+        };
         configStore.addLog(level, JSON.stringify({
           path: '/v1/chat/completions',
           model,
@@ -1611,6 +1656,7 @@ export class SimpleProxyServer {
             { ...chatCompletionParams, signal: undefined },
             abortController.signal,
           );
+          workerResponseHeaders = workerResponse.headers;
 
           if (stream) {
             ctx.status = 200;
@@ -1673,6 +1719,9 @@ export class SimpleProxyServer {
         let directAdapter: any;
         try {
           directAdapter = createAdapter({ providerId, account, settings: conf.settings, networkProfile: undefined });
+          if (typeof directAdapter?.getLastWireDebug === 'function') {
+            adapter = directAdapter;
+          }
         } catch (e) {
           // Fallback: direct QwenAiAdapter for qwen-ai
           if (providerId === 'qwen-ai') {

@@ -34,6 +34,7 @@ export default function NetworkProfiles() {
   const [editingProfile, setEditingProfile] = useState<NetworkProfile | null>(null);
   const [editingWorker, setEditingWorker] = useState<ProviderWorker | null>(null);
   const [directIp, setDirectIp] = useState('');
+  const modalOpen = Boolean(editingProfile || editingWorker);
 
   useEffect(() => { loadAll(); }, []);
 
@@ -95,7 +96,7 @@ export default function NetworkProfiles() {
   }
 
   return (
-    <section aria-labelledby="np-title" className="page-panel">
+    <section aria-labelledby="np-title" className={`page-panel${modalOpen ? ' modal-open' : ''}`}>
       <div className="page-heading">
         <div>
           <p className="eyebrow">Egress paths and remote workers</p>

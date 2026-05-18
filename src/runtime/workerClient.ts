@@ -35,7 +35,7 @@ export class WorkerClient {
       timeout: 300000,
       signal,
     });
-    return { data: res.data };
+    return { data: res.data, headers: res.headers as Record<string, string> };
   }
 
   async cancelRun(runId: string): Promise<boolean> {

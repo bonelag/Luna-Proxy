@@ -1,32 +1,37 @@
-# Proxy-Luna
+# LunaProxy
 
-Proxy-Luna is a standalone local proxy for Qwen web/API workflows. It exposes an
-OpenAI-compatible `/v1/chat/completions` and `/v1/models` endpoints, forwards
-requests to Qwen, serves a local admin UI, and keeps local state for providers,
-accounts, sessions, runs, overflow files, and logs.
+LunaProxy transforms Qwen's web chat capabilities into a fully OpenAI-compatible local proxy. Written entirely in TypeScript with a React admin UI built-in.
 
-The proxy is designed for local development and controlled routing. Runtime data
-is stored on disk under `data/`.
+> **Disclaimer**
+>
+> This repository is provided for learning, research, personal experimentation, and internal validation only. It does not grant any commercial authorization and comes with no warranty of fitness, stability, or results.
+>
+> The author and repository maintainers are not responsible for any direct or indirect loss, account suspension, data loss, legal risk, or third-party claims arising from use, modification, distribution, deployment, or reliance on this project.
+
+---
 
 ## Features
 
-- OpenAI-compatible chat and model-list endpoints at `/v1/chat/completions` and
-  `/v1/models`.
-- Streaming and non-streaming chat responses.
-- Qwen account and credential management.
-- Admin UI served from the same host and port as the API.
-- Session persistence, provider-session binding, and run tracking.
-- Queueing and concurrency controls for providers, accounts, and workers.
-- Prompt overflow handling through file-backed context.
-- Optional worker routing and egress/IP verification.
-- Local logs and diagnostics APIs.
+- **OpenAI-compatible API** — drop-in `/v1/chat/completions` and `/v1/models` endpoints
+- **Streaming support** — SSE streaming and non-streaming responses
+- **Built-in Admin UI** — React dashboard served alongside the API on the same port
+- **Credential management** — automatic OAuth capture via Puppeteer or manual token/cookie input
+- **Multi-account routing** — queue and concurrency controls across providers, accounts, and workers
+- **Session & run tracking** — persistent sessions, run history, and thread binding
+- **Prompt overflow handling** — automatically offloads large prompts to file-backed context
+- **Worker routing** — optional egress/IP verification and worker forwarding
+- **Diagnostics APIs** — built-in logs, runtime inspection, and debug roundtrip endpoints
+
+---
 
 ## Requirements
 
-- Bun for the default development workflow.
-- Node.js/npm for TypeScript checks and builds.
-- Qwen credentials, either configured through the UI/API or environment
-  variables.
+- [Bun](https://bun.sh) — primary runtime and dev workflow
+- [Node.js](https://nodejs.org) / npm — for TypeScript checks and production builds
+- Qwen credentials — configured via the admin UI or environment variables
+- Chrome / Chromium — only needed for the automatic OAuth capture flow
+
+---
 
 ## Quick Start
 
@@ -35,11 +40,7 @@ bun install
 bun run dev
 ```
 
-Open the admin UI:
-
-```text
-http://127.0.0.1:8080/
-```
+Open the admin UI at `http://127.0.0.1:8080/`, then go to **Providers** and configure your Qwen credentials.
 
 Health check:
 
@@ -47,175 +48,27 @@ Health check:
 curl http://127.0.0.1:8080/health
 ```
 
+---
+
 ## Configuration
 
-The default proxy address is:
+The proxy listens on `127.0.0.1:8080` by default. All runtime configuration is stored at:
 
-```text
-127.0.0.1:8080
 ```
-
-Local configuration is stored in:
-
-```text
 data/config.json
 ```
 
-## Usage
+---
 
-1. Start the proxy:
+## Supported Models
 
-```bash
-bun run dev
-```
-
-2. Open the admin UI:
-
-```text
-http://127.0.0.1:8080/
-```
-
-3. Configure a Qwen provider account from the Providers page.
-
-4. Validate the credentials in the UI.
-
-5. Send OpenAI-compatible requests to:
-
-```text
-http://127.0.0.1:8080/v1/chat/completions
-```
-
-## Login And Credentials
-
-Proxy-Luna supports two practical ways to configure Qwen credentials:
-
-- automatic login capture through the admin UI/API
-- manual token and cookie input
-
-### Automatic Login Capture
-
-Use this when you want Proxy-Luna to open a browser window and capture the Qwen
-web credentials after you log in.
-
-Requirements:
-
-- A desktop/browser-capable environment.
-- Chrome or Chromium installed, or `PUPPETEER_EXECUTABLE_PATH` pointing to a
-  browser executable.
-- Access to `https://chat.qwen.ai`.
-
-From the admin UI:
-
-1. Open `http://127.0.0.1:8080/`.
-2. Go to `Providers`.
-3. Select `qwen-ai`.
-4. Open the `OAuth` tab.
-5. Click `Start OAuth`.
-6. Log in to Qwen in the browser window.
-7. Wait for Proxy-Luna to capture and validate the token.
-8. Save the credentials if the UI does not already save them.
-
-Equivalent API call:
-
-```bash
-curl -X POST http://127.0.0.1:8080/api/provider/oauth/capture \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "providerId": "qwen-ai",
-    "timeout": 300000
-  }'
-```
-
-The capture flow reads a valid Qwen token from browser Local Storage or cookies,
-collects the cookie header, validates the credentials, and stores them in
-`data/config.json`.
-
-If automatic capture fails, check that a real browser is available. You can
-force the browser path with:
-
-```bash
-PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium bun run dev
-```
-
-### Manual Token And Cookie Input
-
-Use this when you already have a valid Qwen web token and/or cookie header.
-
-From the admin UI:
-
-1. Open `http://127.0.0.1:8080/`.
-2. Go to `Providers`.
-3. Select `qwen-ai`.
-4. Open the `Config` tab.
-5. Paste the token into the token field.
-6. Paste the full cookie header into the cookie field.
-7. Click `Validate`.
-8. Click `Save`.
-
-Manual API configuration:
-
-```bash
-curl -X POST http://127.0.0.1:8080/api/provider/token \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "providerId": "qwen-ai",
-    "credentials": {
-      "token": "YOUR_QWEN_TOKEN",
-      "cookies": "YOUR_QWEN_COOKIES"
-    }
-  }'
-```
-
-Credential validation API:
-
-```bash
-curl -X POST http://127.0.0.1:8080/api/provider/validate \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "providerId": "qwen-ai",
-    "credentials": {
-      "token": "YOUR_QWEN_TOKEN",
-      "cookies": "YOUR_QWEN_COOKIES"
-    }
-  }'
-```
-
-Provider status API:
-
-```bash
-curl 'http://127.0.0.1:8080/api/provider/status?providerId=qwen-ai'
-```
-
-The server also checks these environment variables as fallback credentials:
-
-```text
-QWEN_AI_TOKEN
-QWEN_AI_COOKIES
-```
-
-If `proxy.key` is set in `data/config.json`, requests to
-`/v1/chat/completions` and `/v1/models` must include either:
-
-```text
-Authorization: Bearer <proxy-key>
-```
-
-or:
-
-```text
-x-proxy-key: <proxy-key>
-```
-
-## Chat API
-
-List configured models:
+LunaProxy exposes all models configured in the admin UI through the `/v1/models` endpoint in OpenAI-compatible format.
 
 ```bash
 curl -sS http://127.0.0.1:8080/v1/models
 ```
 
-This returns the same model list used by the Models page in the admin UI, using
-OpenAI-compatible list format:
+Example response:
 
 ```json
 {
@@ -232,13 +85,110 @@ OpenAI-compatible list format:
 }
 ```
 
-Endpoint:
+The model list is managed from the **Models** page in the admin UI and can be refreshed via `POST /api/models/refresh`.
 
-```text
-POST /v1/chat/completions
+---
+
+## Credentials
+
+LunaProxy supports two ways to configure Qwen credentials.
+
+### Automatic OAuth Capture
+
+Opens a real browser window, captures the Qwen web token and cookies after you log in, and saves them automatically.
+
+**Requirements:** Chrome or Chromium must be installed. Access to `https://chat.qwen.ai` is required.
+
+From the admin UI:
+
+1. Open `http://127.0.0.1:8080/`
+2. Go to **Providers → qwen-ai → OAuth tab**
+3. Click **Start OAuth** and log in to Qwen in the browser window
+4. Wait for LunaProxy to capture and save the credentials
+
+Equivalent API call:
+
+```bash
+curl -X POST http://127.0.0.1:8080/api/provider/oauth/capture \
+  -H 'Content-Type: application/json' \
+  -d '{"providerId": "qwen-ai", "timeout": 300000}'
 ```
 
-Minimal non-streaming request:
+If the browser is not found automatically, set the path explicitly:
+
+```bash
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium bun run dev
+```
+
+### Manual Token & Cookie Input
+
+Use this when you already have a valid Qwen token and cookie header.
+
+From the admin UI:
+
+1. Go to **Providers → qwen-ai → Config tab**
+2. Paste your token and cookie header
+3. Click **Validate**, then **Save**
+
+Via API:
+
+```bash
+# Set credentials
+curl -X POST http://127.0.0.1:8080/api/provider/token \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "providerId": "qwen-ai",
+    "credentials": {
+      "token": "YOUR_QWEN_TOKEN",
+      "cookies": "YOUR_QWEN_COOKIES"
+    }
+  }'
+
+# Validate credentials
+curl -X POST http://127.0.0.1:8080/api/provider/validate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "providerId": "qwen-ai",
+    "credentials": {
+      "token": "YOUR_QWEN_TOKEN",
+      "cookies": "YOUR_QWEN_COOKIES"
+    }
+  }'
+
+# Check provider status
+curl 'http://127.0.0.1:8080/api/provider/status?providerId=qwen-ai'
+```
+
+### Environment Variables
+
+LunaProxy also reads credentials from environment variables as a fallback:
+
+```
+QWEN_AI_TOKEN
+QWEN_AI_COOKIES
+```
+
+### Proxy Key Authentication
+
+If `proxy.key` is set in `data/config.json`, all requests to `/v1/chat/completions` and `/v1/models` must include the key via either:
+
+```
+Authorization: Bearer <proxy-key>
+```
+
+or:
+
+```
+x-proxy-key: <proxy-key>
+```
+
+---
+
+## Chat API
+
+**Endpoint:** `POST /v1/chat/completions`
+
+### Non-streaming request
 
 ```bash
 curl -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
@@ -247,12 +197,12 @@ curl -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
     "model": "Qwen3.6-Plus",
     "stream": false,
     "messages": [
-      {"role": "user", "content": "Xin chào"}
+      {"role": "user", "content": "Hello!"}
     ]
   }'
 ```
 
-Streaming request:
+### Streaming request
 
 ```bash
 curl -N -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
@@ -261,26 +211,32 @@ curl -N -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
     "model": "Qwen3.6-Plus",
     "stream": true,
     "messages": [
-      {"role": "user", "content": "Viết một đoạn giới thiệu ngắn"}
+      {"role": "user", "content": "Write a short introduction"}
     ]
   }'
 ```
 
-Common request fields:
+### Request fields
 
-- `model`: Qwen model name or mapped model id.
-- `messages`: OpenAI-style messages.
-- `stream`: `true` for SSE streaming, `false` for a collected response.
-- `account`: optional preferred provider account id.
-- `session_id`: optional Proxy-Luna session id.
-- `providerSessionId` or `provider_session_id`: optional upstream Qwen chat id.
-- `file_ids`: optional uploaded Qwen file ids.
-- `thinking_mode`, `reasoning_effort`, `enable_thinking`, `thinking_budget`:
-  optional Qwen thinking controls.
+| Field | Type | Description |
+|---|---|---|
+| `model` | string | Qwen model name or mapped model ID |
+| `messages` | array | OpenAI-style message array |
+| `stream` | boolean | `true` for SSE streaming, `false` for collected response |
+| `account` | string | *(optional)* Preferred provider account ID |
+| `session_id` | string | *(optional)* LunaProxy session ID |
+| `providerSessionId` | string | *(optional)* Upstream Qwen chat ID |
+| `file_ids` | array | *(optional)* Pre-uploaded Qwen file IDs |
+| `thinking_mode` | string | *(optional)* Qwen thinking mode |
+| `reasoning_effort` | string | *(optional)* Reasoning effort level |
+| `enable_thinking` | boolean | *(optional)* Enable thinking mode |
+| `thinking_budget` | number | *(optional)* Token budget for thinking |
 
-Useful session headers:
+### Session headers
 
-```text
+Useful request headers:
+
+```
 x-luna-session-id
 x-luna-source
 x-luna-workspace
@@ -289,203 +245,154 @@ x-luna-provider-session-id
 x-luna-account-id
 ```
 
-When a session is resolved, response headers may include:
+Response headers (when a session is resolved):
 
-```text
+```
 x-luna-session-id
 x-luna-thread-id
 x-luna-provider-session-id
 ```
 
+---
+
 ## Prompt Overflow
 
-Proxy-Luna estimates prompt size before sending requests upstream. When the
-configured token threshold is exceeded, the full client prompt is written to an
-overflow file under:
+When a prompt exceeds the configured token threshold, LunaProxy writes the full prompt to an overflow file and sends a compact transport prompt + the file to Qwen instead. The file is treated as the primary conversation context, not as a reference attachment.
 
-```text
+Overflow files are stored at:
+
+```
 data/overflow/
 ```
 
-The proxy then sends a short transport prompt plus the uploaded overflow file to
-Qwen. The file is treated as the primary conversation/prompt, not as reference
-material. Task routing and output format remain the responsibility of the prompt
-inside the file.
+Default overflow settings are configured in `data/config.json` under `settings.tokenOverflow`.
 
-Default overflow settings live in `data/config.json` under:
+---
 
-```text
-settings.tokenOverflow
+## Sessions & Runs
+
+LunaProxy persists session and run state to disk:
+
+```
+data/sessions.json   # session history and provider bindings
+data/runs.json       # run history
 ```
 
-## Sessions And Runs
+Session behavior is configured under `settings.session`. Concurrency and queueing behavior is under `settings.multiThread`.
 
-Proxy-Luna stores local session and run state:
+The admin UI includes dedicated pages for browsing sessions, runs, logs, providers, models, and workers.
 
-```text
-data/sessions.json
-data/runs.json
+---
+
+## API Reference
+
+### Core endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Health check |
+| `GET` | `/v1/models` | List available models |
+| `POST` | `/v1/chat/completions` | Chat completions |
+
+### Admin & config
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/config` | Read current config |
+| `POST` | `/api/config` | Update config |
+| `GET` | `/api/models` | List models |
+| `POST` | `/api/models/refresh` | Refresh model list from provider |
+
+### Provider management
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/provider/token` | Set provider credentials |
+| `POST` | `/api/provider/validate` | Validate credentials |
+| `GET` | `/api/provider/status` | Get provider status |
+| `POST` | `/api/provider/oauth/capture` | Start OAuth capture flow |
+
+### Runtime & diagnostics
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/logs` | Fetch logs |
+| `DELETE` | `/api/logs` | Clear logs |
+| `GET` | `/api/sessions` | List sessions |
+| `GET` | `/api/runs` | List runs |
+| `GET` | `/api/runtime` | Runtime state |
+| `GET` | `/api/provider-runtime` | Provider runtime state |
+| `GET` | `/api/network-profiles` | Network profiles |
+| `GET` | `/api/workers` | Worker list |
+
+### Debug endpoints
+
+```
+GET /api/debug/qwen-roundtrip
+GET /api/debug/qwen-wire
+GET /api/debug/qwen-file-flow
 ```
 
-Session behavior is configured under:
-
-```text
-settings.session
-```
-
-Runtime queueing and concurrency behavior is configured under:
-
-```text
-settings.multiThread
-```
-
-The admin UI includes pages for inspecting sessions, runs, logs, providers,
-models, and network workers.
-
-## Admin And Diagnostic APIs
-
-Common endpoints:
-
-```text
-GET    /health
-GET    /v1/models
-GET    /api/config
-POST   /api/config
-GET    /api/models
-POST   /api/models/refresh
-GET    /api/logs
-DELETE /api/logs
-GET    /api/sessions
-GET    /api/runs
-GET    /api/runtime
-GET    /api/provider-runtime
-GET    /api/network-profiles
-GET    /api/workers
-```
-
-Debug endpoints are available under:
-
-```text
-/api/debug/qwen-roundtrip
-/api/debug/qwen-wire
-/api/debug/qwen-file-flow
-```
-
-## Development Commands
-
-```bash
-bun run dev
-npm run dev
-npm run typecheck
-npm run build
-npm run dev:watch
-```
-
-`bun run dev` and `npm run dev` both run:
-
-```text
-bun ./src/dev.ts
-```
-
-TypeScript build output is written to:
-
-```text
-lib/
-```
-
-## Frontend Source And Static UI
-
-The frontend source lives in:
-
-```text
-frontend/
-```
-
-The backend does not serve `frontend/` directly. It serves the built/static UI
-from:
-
-```text
-public/
-```
-
-This keeps the proxy runtime easy to read:
-
-- `src/` is the backend proxy.
-- `frontend/` is the React admin UI source.
-- `public/` is the static UI currently served by Koa.
+---
 
 ## Project Structure
 
-See [STRUCTURE.md](./STRUCTURE.md) for the directory map and module ownership
-notes.
-
-Important directories:
-
-```text
-src/        backend proxy source
-frontend/   React admin UI source
-public/     built/static UI served by the backend
-tests/      TypeScript tests
-scripts/    local helper scripts
-data/       local runtime state and logs
-lib/        TypeScript build output
+```
+LunaProxy/
+├── src/                  # Backend proxy source (Koa, scheduler, adapters)
+│   ├── server.ts         # Main Koa server and API routes
+│   ├── configStore.ts    # Config and log persistence
+│   ├── sessionStore.ts   # Session persistence and bindings
+│   ├── modules/          # Overflow, session, stream, worker modules
+│   ├── runtime/          # Scheduler, locks, routing, run tracking
+│   └── main/             # OAuth, provider definitions, Qwen adapter
+├── frontend/             # React admin UI source
+├── public/               # Built static UI served by the backend
+├── tests/                # TypeScript tests
+├── scripts/              # Local helper scripts
+├── data/                 # Runtime state, logs, overflow files (generated)
+└── lib/                  # TypeScript build output (generated)
 ```
 
-`tests/` contains source tests for the backend modules. It is intentionally kept
-as project source, not treated as runtime output.
+> See [STRUCTURE.md](./STRUCTURE.md) for the full directory map and module ownership notes.
+
+---
+
+## Development
+
+```bash
+# Start dev server
+bun run dev
+
+# Watch mode
+npm run dev:watch
+
+# Type check
+npm run typecheck
+
+# Build
+npm run build
+```
+
+Both `bun run dev` and `npm run dev` execute `bun ./src/dev.ts`. TypeScript build output goes to `lib/`.
+
+The frontend source lives in `frontend/`. The backend serves the pre-built static UI from `public/`. To rebuild the UI, run the frontend build separately and copy the output to `public/`.
+
+---
 
 ## Troubleshooting
 
-No credentials:
+**`Token/cookies not configured`**
+Configure Qwen credentials via the admin UI or `POST /api/provider/token`.
 
-```text
-Token/cookies not configured
-```
+**`Unauthorized: invalid proxy key`**
+Pass the configured proxy key via `Authorization: Bearer <key>` or the `x-proxy-key` header.
 
-Configure Qwen credentials in the UI or through `/api/provider/token`.
+**`Scheduler queue timeout`**
+Check active runs, account concurrency limits, and worker availability in the admin UI under **Runs** and **Runtime**.
 
-Unauthorized:
+**Overflow or file upload failures**
+Inspect `data/overflow/`, `data/wire-logs/`, and `data/config.json`. Use the debug endpoints for deeper inspection.
 
-```text
-Unauthorized: invalid proxy key
-```
-
-Pass the configured proxy key through `Authorization: Bearer ...` or
-`x-proxy-key`.
-
-Queue timeout:
-
-```text
-Scheduler queue timeout
-```
-
-Check active runs, account concurrency limits, worker availability, and runtime
-settings in the admin UI.
-
-File or overflow failures:
-
-Check:
-
-```text
-data/overflow/
-data/wire-logs/
-data/config.json
-```
-
-Provider stream issues:
-
-Use the Logs and Runs pages in the UI, or inspect:
-
-```text
-GET /api/logs
-GET /api/runs
-```
-
-## Important Notice
-
-**WARNING: This project is provided only for research, learning, and local
-technical evaluation. It is not intended for commercial use, production abuse,
-unauthorized access, policy bypassing, spam, credential misuse, service abuse,
-or any other harmful activity. Any misuse of this project is strictly
-prohibited. Users are responsible for complying with applicable laws, platform
-terms, and provider policies.**
+**Stream issues**
+Check the **Logs** and **Runs** pages in the admin UI, or query `GET /api/logs` and `GET /api/runs` directly.
