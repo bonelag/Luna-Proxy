@@ -1,9 +1,14 @@
 # LunaProxy
 
-LunaProxy transforms Qwen's web chat capabilities into a fully OpenAI-compatible local proxy. Written entirely in TypeScript with a React admin UI built-in.
 
 
-> **Disclaimer**
+LunaProxy is a local reverse proxy that exposes Qwen's web chat as a fully OpenAI-compatible API. It handles credential management, multi-account concurrency, session persistence, and prompt overflow — all from a single process with a built-in React admin UI served on the same port.
+Designed for local development and controlled routing. No cloud dependency, no third-party relay — just a direct bridge between your OpenAI-compatible tooling and Qwen.
+
+---
+
+> [!WARNING]
+>  # **Disclaimer**
 >
 > This repository is provided for learning, research, personal experimentation, and internal validation only. It does not grant any commercial authorization and comes with no warranty of fitness, stability, or results.
 >
@@ -76,7 +81,7 @@ Example response:
   "object": "list",
   "data": [
     {
-      "id": "Qwen3.6-Plus",
+      "id": "qwen3.6-plus",
       "object": "model",
       "created": 0,
       "owned_by": "qwen-ai",
@@ -195,7 +200,7 @@ x-proxy-key: <proxy-key>
 curl -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{
-    "model": "Qwen3.6-Plus",
+    "model": "qwen3.6-plus",
     "stream": false,
     "messages": [
       {"role": "user", "content": "Hello!"}
@@ -209,7 +214,7 @@ curl -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
 curl -N -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -d '{
-    "model": "Qwen3.6-Plus",
+    "model": "qwen3.6-plus",
     "stream": true,
     "messages": [
       {"role": "user", "content": "Write a short introduction"}
