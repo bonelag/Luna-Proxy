@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-05-18T02:05:28.593Z",
+  "type": "status",
+  "url": "https://chat.qwen.ai/api/v2/files/parse/status",
+  "chatId": "f8ea9c04-9f0f-42fc-b481-af2eba222eb5",
+  "body": {
+    "file_id_list": [
+      "9ec58ec8-57d0-4d78-a47b-33201b58de31"
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Mon, 18 May 2026 02:05:28 GMT",
+      "content-type": "application/json",
+      "content-length": "194",
+      "connection": "keep-alive",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-origin": "https://chat.qwen.ai",
+      "vary": "Origin, Origin",
+      "cache-control": "no-cache",
+      "x-frame-options": "SAMEORIGIN",
+      "set-cookie": "x-ap=ap-southeast-1; Path=/; SameSite=lax, x-ap=ap-southeast-1; Path=/; SameSite=lax",
+      "x-request-id": "f4fc1264-9b6d-478b-b639-09ffe78eef97",
+      "x-actual-status-code": "200",
+      "ga-ap": "ap-southeast-1"
+    },
+    "body": {
+      "success": true,
+      "request_id": "f4fc1264-9b6d-478b-b639-09ffe78eef97",
+      "data": [
+        {
+          "file_id": "9ec58ec8-57d0-4d78-a47b-33201b58de31",
+          "status": "success",
+          "error_msg": "",
+          "error_code": null,
+          "retry": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "qwen-provider",
+  "version": "0.1.0",
+  "private": true,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf lib dist",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "dev": "bun ./src/dev.ts",
+    "dev:server": "bun ./src/dev.ts",
+    "dev:watch": "ts-node-dev --respawn --transpile-only src/dev.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@koa/router": "^10.1.1",
+    "axios": "^1.16.1",
+    "eventsource-parser": "^3.0.6",
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.3.0",
+    "koa-static": "^5.0.0",
+    "puppeteer": "^24.43.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.0",
+    "zstd-codec": "^0.1.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "esbuild": "^0.19.0"
+  }
+}

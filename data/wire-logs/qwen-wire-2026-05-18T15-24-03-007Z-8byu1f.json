@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-05-18T15:24:03.007Z",
+  "attempt": 1,
+  "type": "stream-peek",
+  "url": "https://chat.qwen.ai/api/v2/chat/completions?chat_id=5019f0af-7442-4d94-a699-8685d0cb2fc6",
+  "chatId": "5019f0af-7442-4d94-a699-8685d0cb2fc6",
+  "endedBeforeData": false,
+  "immediateError": false,
+  "firstChunk": "data: {\"response.created\":{\"chat_id\": \"5019f0af-7442-4d94-a699-8685d0cb2fc6\", \"parent_id\": \"c73e7810-8ed9-491b-9970-df618ef338d7\", \"response_id\":\"e9798c26-da54-4c09-a501-9ec8c5c921a8\", \"response_index\": \"0\"}} \n\n"
+}

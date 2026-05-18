@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-05-18T01:45:37.293Z",
+  "attempt": 1,
+  "url": "https://chat.qwen.ai/api/v2/chat/completions?chat_id=2f00cdf4-ff8d-4044-80c0-866cebfcfef5",
+  "request": {
+    "headers": {
+      "Accept": "application/json",
+      "Accept-Language": "zh-CN,zh;q=0.9",
+      "Content-Type": "application/json",
+      "source": "web",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"macOS\"",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+      "bx-v": "2.5.36",
+      "bx-umidtoken": "T2gAr9z8byN8sNOmfQ3X9j61MNTNmSqDO5L1rs2jMcQCVhOKgZICcBN-UdTuJGig-NM=",
+      "bx-ua": "231!lWD36kmUe5E+joKDK5gBZ48FEl2ZWfPwIPF92lBLek2KxVW/XJ2EwruCiDOX5Px4EXNhmh6EfS9eDwQGRwijIK64A4nPqeLysJcDjUACje/H3J4ZgGZpicG6K8AkiGGaEKC830+QSiSUsLRlL/EyhXTmLcJc/5iDkMuOpUhNz0e0Q/nTqjVJ3ko00Q/oyE+jauHhUHfb1GxGHkE+++3+qCS4+ItkaA6tiItCo+romzElfLFD6RIj7oHt9vffs98nLwpHnaqKjufnLFMejSlAUGiQvTofIiGhIvftAMcoFV4mrUHsqyQ/ncQihmJHkbxXjvM57FCb6b9dEIRZl7jgj0+QLNLRs0NZ4azdZ6rzbGTSO8KA5I3Aq/3gBr87X16Mj0oJtaPKmFGaP2zghfOVhxQht8YjRd50lJa+Ue4PAuPSdu2O69DKLH8VOhrsB+psaBIRxnRi5POUQ6w8s8qlb9vxvExjHNOAKWXV1by1Nz+6FPWdyTeAgcmonjCcV0dCtPj/KyeVDkeSrDkKZjnDzHEqeCdfmJ65kve+Vy3YS0vagzyHfVEnzN0ULUZtkGfJXFNm6+bIa55wmGBhUeXbHL0EdlQXMu1YXxmcwBgTaq7tlQcfv7AefanbfjGE8R1IFnNyg2/jXLbnLg5Z6l1oKqgnxZQg0DE9BJuw6s0XjGwTdSxybWxp+WFD/RsXt76uwvCBk7z+YmSFLtFj2UlTsoq+vl0DTmsVItDKf9SZ94NcuJ7mxJYI02S/2kQBfbbHG0d4hXevDrEC0cb86EvzN2ud+v6bAunNRGNFz/RH0KLusoBVeo+puCFKeeIJWEo0t1UicX5YxJwMAoV7+g0gK93y4W9sMQtso8/wY5wsBzis9dwfLvIwXpaAM1g0MZp/YIRq8T/Qc+U/8x99tam4er0IWizvrkjqhIzCWBKpJ4Y4gj3bOmiS3VCMEaoVfKCwUWENwYKuP3H5VI0n+O2vVVRrekUrwvkm6URRhVhN4eEFTCjB9nSQu++qKyDH8HPpkS3YfwF8/OQtrZo7hQXxvNmP2HcH/K7zcweD00BaoOLiYUtXRItGYbl06sVSbm04soRf1Jqpyo3XiRqBWD9rmJfr4w8NOEGVGUCKXLDLsXy+8JC4Iqf0FsIjWxjMVdraTUtCbwXRbYUownQVm6bt7LYD1SNPoWNPqUJgsLMwP33ugrb1UbHCs24roOch6Go5QHIPA8E15SZE9pkr1SkmqrNs/+KRomFJ9HyFnWUYhZIV9MRLqlOAt6XBBTash3WJnCjhx/PZGhXVvdn2jX4+0Pm55LsiNugA8vaAUJQBxD/8a1u/RvTgbj35+b7I7m8tG0hMhClNZF+tpsOmZZhUGuXH9uVbkJMlMuAmMVCHwn3O31GlLeXXzzep2WS3xN2U+p5J0I7GySnuZUkuGs1ZTVqGUvR2g4q+7ljU55Ak78yPZiQXeUeqS74azszvZvCqWxXn2eePj+gcpliOjrYKpglUP19rQrMt8PqLt8L0ghIqVCmMwl3Hgr/VUcqDpXdpPTR=",
+      "Timezone": "Mon May 18 2026 08:45:37 GMT+0700 (Indochina Time)",
+      "Version": "0.2.50",
+      "Origin": "https://chat.qwen.ai",
+      "Authorization": "Bearer ***",
+      "X-Request-Id": "ce09e077-c425-4e2f-a5e8-f5500894d58d",
+      "Referer": "https://chat.qwen.ai/c/2f00cdf4-ff8d-4044-80c0-866cebfcfef5",
+      "Cookie": "isg=***; qwen-theme=***; x-ap=***; acw_tc=***; _bl_uid=***; qwen-locale=***; sca=***; cna=***; token=***; tfstk=***; atpsida=***; ssxmod_itna=***; ssxmod_itna2=***; xlly_s=***",
+      "x-accel-buffering": "no"
+    },
+    "body": {
+      "stream": true,
+      "version": "2.1",
+      "incremental_output": true,
+      "chat_id": "2f00cdf4-ff8d-4044-80c0-866cebfcfef5",
+      "chat_mode": "normal",
+      "model": "Qwen3.6-Plus",
+      "parent_id": null,
+      "messages": [
+        {
+          "fid": "66707376-e68b-4c7a-b3c2-626a2026b67f",
+          "parentId": null,
+          "childrenIds": [
+            "0dfddc20-4639-4850-9906-9bc2c8fcb2bd"
+          ],
+          "role": "user",
+          "content": "You are behind a reverse proxy.\nYou cannot execute tools.\nWhen a downstream client tool is needed, output the tool request as literal XML text only.\nDo not use provider-native function calls.\nDo not emit JSON tool_calls.\nDo not claim a tool failed unless the provided context contains an actual tool result.\nThe downstream client will parse and execute XML tool tags.\nDo not output <tool_use> or function call format — output raw XML like <tool_name><param>value</param></tool_name>.\nIf you need to read a file, output <read_file><path>path</path></read_file> as text.\nIf you need to write a file, output <write_to_file><path>path</path><content>content</content></write_to_file> as text.\nIf the task is complete, use <attempt_completion><result>summary</result></attempt_completion>.\n\nUser: xin chào tôi là wholock",
+          "user_action": "chat",
+          "files": [],
+          "timestamp": 1779068737,
+          "models": [
+            "Qwen3.6-Plus"
+          ],
+          "chat_type": "t2t",
+          "feature_config": {
+            "thinking_enabled": true,
+            "output_schema": "phase",
+            "research_mode": "normal",
+            "auto_thinking": false,
+            "thinking_mode": "Thinking",
+            "thinking_format": "summary",
+            "auto_search": false
+          },
+          "extra": {
+            "meta": {
+              "subChatType": "t2t"
+            }
+          },
+          "sub_chat_type": "t2t",
+          "parent_id": null
+        }
+      ],
+      "timestamp": 1779068738,
+      "file_ids": []
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Mon, 18 May 2026 01:45:37 GMT",
+      "content-type": "application/json",
+      "content-length": "125",
+      "connection": "keep-alive",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-origin": "https://chat.qwen.ai",
+      "vary": "Origin, Origin",
+      "cache-control": "no-cache",
+      "x-frame-options": "SAMEORIGIN",
+      "set-cookie": "x-ap=ap-southeast-1; Path=/; SameSite=lax, x-ap=ap-southeast-1; Path=/; SameSite=lax",
+      "x-actual-status-code": "404",
+      "x-request-id": "3f02ae5a-2087-42d3-8332-b2569fb715e2",
+      "x-robots-tag": "noindex",
+      "ga-ap": "ap-southeast-1"
+    }
+  }
+}

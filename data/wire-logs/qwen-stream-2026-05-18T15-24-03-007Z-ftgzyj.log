@@ -1,0 +1,105 @@
+# {"timestamp":"2026-05-18T15:24:03.008Z","attempt":1,"url":"https://chat.qwen.ai/api/v2/chat/completions?chat_id=5019f0af-7442-4d94-a699-8685d0cb2fc6","chatId":"5019f0af-7442-4d94-a699-8685d0cb2fc6","filePath":"/home/wholock/Projects/AI/Proxy/Proxy-Luna/data/wire-logs/qwen-stream-2026-05-18T15-24-03-007Z-ftgzyj.log"}
+
+--- chunk ---
+data: {"response.created":{"chat_id": "5019f0af-7442-4d94-a699-8685d0cb2fc6", "parent_id": "c73e7810-8ed9-491b-9970-df618ef338d7", "response_id":"e9798c26-da54-4c09-a501-9ec8c5c921a8", "response_index": "0"}} 
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "Ch", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 1, "characters": 0, "total_tokens": 3955, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 1}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "ào bạn!", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 4, "characters": 0, "total_tokens": 3958, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 4}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " Tôi có thể giúp", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 8, "characters": 0, "total_tokens": 3962, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 8}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " gì cho bạn hôm", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 12, "characters": 0, "total_tokens": 3966, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 12}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " nay?\n\n==", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 16, "characters": 0, "total_tokens": 3970, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 16}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "SELF-REF", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 19, "characters": 0, "total_tokens": 3973, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 19}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "LECTION==\nSummary", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 23, "characters": 0, "total_tokens": 3977, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 23}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ": Responded to", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 27, "characters": 0, "total_tokens": 3981, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 27}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " user's greeting in", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 31, "characters": 0, "total_tokens": 3985, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 31}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " Vietnamese.\nDec", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 35, "characters": 0, "total_tokens": 3989, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 35}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "isions: Kept", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 39, "characters": 0, "total_tokens": 3993, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 39}}, "timestamp": 1779117845}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " response", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 40, "characters": 0, "total_tokens": 3994, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 40}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " concise and friendly,", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 44, "characters": 0, "total_tokens": 3998, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 44}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " adhering to persona", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 48, "characters": 0, "total_tokens": 4002, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 48}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " guidelines.\nUnc", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 52, "characters": 0, "total_tokens": 4006, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 52}}, "timestamp": 1779117846}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "ert", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 53, "characters": 0, "total_tokens": 4007, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 53}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "ainties: none\n", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 57, "characters": 0, "total_tokens": 4011, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 57}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "Next-Steps:", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 61, "characters": 0, "total_tokens": 4015, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 61}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " Wait for user's", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 65, "characters": 0, "total_tokens": 4019, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 65}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " specific request or task", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 69, "characters": 0, "total_tokens": 4023, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 69}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ".\nConfidence", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 73, "characters": 0, "total_tokens": 4027, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 73}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ": high", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 75, "characters": 0, "total_tokens": 4029, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 75}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 75, "characters": 0, "total_tokens": 4029, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 75}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8", "usage": {"input_tokens": 3954, "output_tokens": 75, "characters": 0, "total_tokens": 4029, "input_tokens_details": {"text_tokens": 3954}, "output_tokens_details": {"text_tokens": 75}}, "timestamp": 1779117846}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"content": "", "role": "assistant", "status": "finished", "phase": "answer"}}], "response_id": "e9798c26-da54-4c09-a501-9ec8c5c921a8"}
+
+
+--- end ---

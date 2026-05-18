@@ -1,0 +1,41 @@
+# {"timestamp":"2026-05-18T01:48:08.624Z","attempt":1,"url":"https://chat.qwen.ai/api/v2/chat/completions?chat_id=b1778322-c92e-4c92-8af2-d8bc4826bda2","chatId":"b1778322-c92e-4c92-8af2-d8bc4826bda2","filePath":"/home/wholock/Projects/AI/Proxy/Proxy-Luna/data/wire-logs/qwen-stream-2026-05-18T01-48-08-624Z-vl05yf.log"}
+
+--- chunk ---
+data: {"response.created":{"chat_id": "b1778322-c92e-4c92-8af2-d8bc4826bda2", "parent_id": "f93ccbc6-031d-4e59-942f-3025dbae8dd3", "response_id":"1da78c65-493c-4484-8101-a2fa5a9dde44", "response_index": "0"}} 
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "X", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 1, "characters": 0, "total_tokens": 863, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 1}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "in chào Wh", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 4, "characters": 0, "total_tokens": 866, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 4}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "olock! Tôi", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 8, "characters": 0, "total_tokens": 870, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 8}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " có thể giúp gì", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 12, "characters": 0, "total_tokens": 874, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 12}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cho bạn hôm nay", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 16, "characters": 0, "total_tokens": 878, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 16}}, "timestamp": 1779068890}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "?", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 17, "characters": 0, "total_tokens": 879, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 17}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 17, "characters": 0, "total_tokens": 879, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 17}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44", "usage": {"input_tokens": 862, "output_tokens": 17, "characters": 0, "total_tokens": 879, "input_tokens_details": {"text_tokens": 862}, "output_tokens_details": {"text_tokens": 17}}, "timestamp": 1779068890}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"content": "", "role": "assistant", "status": "finished", "phase": "answer"}}], "response_id": "1da78c65-493c-4484-8101-a2fa5a9dde44"}
+
+
+--- end ---

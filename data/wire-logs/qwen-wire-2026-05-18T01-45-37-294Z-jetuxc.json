@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-05-18T01:45:37.294Z",
+  "attempt": 1,
+  "type": "stream-peek",
+  "url": "https://chat.qwen.ai/api/v2/chat/completions?chat_id=2f00cdf4-ff8d-4044-80c0-866cebfcfef5",
+  "chatId": "2f00cdf4-ff8d-4044-80c0-866cebfcfef5",
+  "endedBeforeData": false,
+  "immediateError": false,
+  "firstChunk": "{\"success\":false,\"request_id\":\"3f02ae5a-2087-42d3-8332-b2569fb715e2\",\"data\":{\"code\":\"Not_Found\",\"details\":\"Model not found\"}}"
+}

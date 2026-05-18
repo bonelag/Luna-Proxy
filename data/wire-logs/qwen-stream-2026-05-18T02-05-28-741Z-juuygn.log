@@ -1,0 +1,301 @@
+# {"timestamp":"2026-05-18T02:05:28.741Z","attempt":1,"url":"https://chat.qwen.ai/api/v2/chat/completions?chat_id=f8ea9c04-9f0f-42fc-b481-af2eba222eb5","chatId":"f8ea9c04-9f0f-42fc-b481-af2eba222eb5","filePath":"/home/wholock/Projects/AI/Proxy/Proxy-Luna/data/wire-logs/qwen-stream-2026-05-18T02-05-28-741Z-juuygn.log"}
+
+--- chunk ---
+data: {"response.created":{"chat_id": "f8ea9c04-9f0f-42fc-b481-af2eba222eb5", "parent_id": "750826d9-d28a-4507-9a64-637250f0acc4", "response_id":"3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "response_index": "0"}} 
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "D", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 1, "characters": 0, "total_tokens": 2595, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 1}}, "timestamp": 1779069931}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "ựa trên thông", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 4, "characters": 0, "total_tokens": 2598, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 4}}, "timestamp": 1779069931}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " tin trong `PROJECT", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 8, "characters": 0, "total_tokens": 2602, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 8}}, "timestamp": 1779069931}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "_SNAPSHOT`", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 11, "characters": 0, "total_tokens": 2605, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 11}}, "timestamp": 1779069931}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " của file đính kèm", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 15, "characters": 0, "total_tokens": 2609, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 15}}, "timestamp": 1779069931}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": ", đây là", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 18, "characters": 0, "total_tokens": 2612, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 18}}, "timestamp": 1779069931}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " project **Proxy-L", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 22, "characters": 0, "total_tokens": 2616, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 22}}, "timestamp": 1779069931}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "una** (", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 25, "characters": 0, "total_tokens": 2619, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 25}}, "timestamp": 1779069931}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "cụ thể là", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 29, "characters": 0, "total_tokens": 2623, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 29}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " package `qwen", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 33, "characters": 0, "total_tokens": 2627, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 33}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "-provider`).\n\nĐây", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 37, "characters": 0, "total_tokens": 2631, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 37}}, "timestamp": 1779069932}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " là một proxy", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 40, "characters": 0, "total_tokens": 2634, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 40}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " nhẹ và giao diện", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 44, "characters": 0, "total_tokens": 2638, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 44}}, "timestamp": 1779069932}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " quản", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 45, "characters": 0, "total_tokens": 2639, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 45}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " trị (admin UI", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 49, "characters": 0, "total_tokens": 2643, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 49}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ") độc", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 51, "characters": 0, "total_tokens": 2645, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 51}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " lập, được thiết", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 55, "characters": 0, "total_tokens": 2649, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 55}}, "timestamp": 1779069932}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " kế", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 56, "characters": 0, "total_tokens": 2650, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 56}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cho nhà cung cấp", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 60, "characters": 0, "total_tokens": 2654, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 60}}, "timestamp": 1779069932}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " Q", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 61, "characters": 0, "total_tokens": 2655, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 61}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "wen (Qwen", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 65, "characters": 0, "total_tokens": 2659, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 65}}, "timestamp": 1779069932}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " provider) trong hệ", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 69, "characters": 0, "total_tokens": 2663, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 69}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " sinh thái Chat2", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 73, "characters": 0, "total_tokens": 2667, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 73}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "API.", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 75, "characters": 0, "total_tokens": 2669, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 75}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "\n\n**Các đặc", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 79, "characters": 0, "total_tokens": 2673, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 79}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " điểm chính:**\n", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 83, "characters": 0, "total_tokens": 2677, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 83}}, "timestamp": 1779069932}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "*   **Ch", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 87, "characters": 0, "total_tokens": 2681, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 87}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "ức năng:** Hoạt", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 91, "characters": 0, "total_tokens": 2685, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 91}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " động như một reverse", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 95, "characters": 0, "total_tokens": 2689, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 95}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " proxy và cung", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 98, "characters": 0, "total_tokens": 2692, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 98}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cấp giao diện người", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 102, "characters": 0, "total_tokens": 2696, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 102}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " dùng để quản lý", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 106, "characters": 0, "total_tokens": 2700, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 106}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " các phiên (sessions", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 110, "characters": 0, "total_tokens": 2704, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 110}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "),", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 111, "characters": 0, "total_tokens": 2705, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 111}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " xem nhật ký (", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 115, "characters": 0, "total_tokens": 2709, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 115}}, "timestamp": 1779069933}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "logs) và", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 118, "characters": 0, "total_tokens": 2712, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 118}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cấu hình settings.", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 122, "characters": 0, "total_tokens": 2716, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 122}}, "timestamp": 1779069933}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "\n*  ", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 125, "characters": 0, "total_tokens": 2719, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 125}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " **Công nghệ:**", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 129, "characters": 0, "total_tokens": 2723, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 129}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " Sử dụng Bun", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 132, "characters": 0, "total_tokens": 2726, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 132}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "/Node.js,", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 136, "characters": 0, "total_tokens": 2730, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 136}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " TypeScript cho", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "
+--- chunk ---
+usage": {"input_tokens": 2594, "output_tokens": 138, "characters": 0, "total_tokens": 2732, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 138}}, "timestamp": 1779069933}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " backend và React (", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 142, "characters": 0, "total_tokens": 2736, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 142}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "với", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 143, "characters": 0, "total_tokens": 2737, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 143}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " UI source trong thư", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 147, "characters": 0, "total_tokens": 2741, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 147}}, "timestamp": 1779069934}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " mục", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 148, "characters": 0, "total_tokens": 2742, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 148}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " `ui/`)", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 152, "characters": 0, "total_tokens": 2746, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 152}}, "timestamp": 1779069934}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " cho frontend.", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 155, "characters": 0, "total_tokens": 2749, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 155}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "\n*   **", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 159, "characters": 0, "total_tokens": 2753, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 159}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "Mục đích phát", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 163, "characters": 0, "total_tokens": 2757, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 163}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " triển:** Hỗ trợ", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 167, "characters": 0, "total_tokens": 2761, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 167}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " phát triển cục", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 170, "characters": 0, "total_tokens": 2764, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 170}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " bộ (local dev", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 174, "characters": 0, "total_tokens": 2768, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 174}}, "timestamp": 1779069934}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": ")", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 175, "characters": 0, "total_tokens": 2769, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 175}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cho các tính năng", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 179, "characters": 0, "total_tokens": 2773, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 179}}, "timestamp": 1779069934}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " liên quan", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 181, "characters": 0, "total_tokens": 2775, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 181}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " đến Qwen,", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 185, "characters": 0, "total_tokens": 2779, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 185}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " bao gồm cả", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 188, "characters": 0, "total_tokens": 2782, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 188}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " việc xử lý các", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 192, "characters": 0, "total_tokens": 2786, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 192}}, "timestamp": 1779069934}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " prompt", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 193, "characters": 0, "total_tokens": 2787, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 193}}, "timestamp": 1779069934}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " theo phong cách Xiaomi", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 197, "characters": 0, "total_tokens": 2791, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 197}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " MiMo", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 199, "characters": 0, "total_tokens": 2793, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 199}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " và quản lý công", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 203, "characters": 0, "total_tokens": 2797, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 203}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cụ", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 204, "characters": 0, "total_tokens": 2798, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 204}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " (tool use).", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 208, "characters": 0, "total_tokens": 2802, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 208}}, "timestamp": 1779069935}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "\n\nBạn", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 210, "characters": 0, "total_tokens": 2804, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 210}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " có thể khởi chạy", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 214, "characters": 0, "total_tokens": 2808, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 214}}, "timestamp": 1779069935}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " project", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 215, "characters": 0, "total_tokens": 2809, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 215}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " này bằng lệnh `", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 219, "characters": 0, "total_tokens": 2813, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 219}}, "timestamp": 1779069935}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "npm run dev`", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 223, "characters": 0, "total_tokens": 2817, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 223}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " (hoặc `b", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 227, "characters": 0, "total_tokens": 2821, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 227}}, "timestamp": 1779069935}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "un ./", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 229, "characters": 0, "total_tokens": 2823, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 229}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "src/dev.ts`)", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 233, "characters": 0, "total_tokens": 2827, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 233}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " và truy", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 235, "characters": 0, "total_tokens": 2829, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 235}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " cập giao diện quản", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 239, "characters": 0, "total_tokens": 2833, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 239}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " trị tại `http", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 243, "characters": 0, "total_tokens": 2837, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 243}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "://127", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 247, "characters": 0, "total_tokens": 2841, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 247}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ".0.0", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 251, "characters": 0, "total_tokens": 2845, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 251}}, "timestamp": 1779069935}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ".1:8", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 255, "characters": 0, "total_tokens": 2849, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 255}}, "timestamp": 1779069936}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "080/", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 259, "characters": 0, "total_tokens": 2853, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 259}}, "timestamp": 1779069936}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "`.", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 260, "characters": 0, "total_tokens": 2854, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 260}}, "timestamp": 1779069936}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 260, "characters": 0, "total_tokens": 2854, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 260}}, "timestamp": 1779069936}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e", "usage": {"input_tokens": 2594, "output_tokens": 260, "characters": 0, "total_tokens": 2854, "input_tokens_details": {"text_tokens": 2594}, "output_tokens_details": {"text_tokens": 260}}, "timestamp": 1779069936}
+
+data: {"choices": [{"delta": {"content": "", "role": "assistant", "status": "finished", "phase": "answer"}}], "response_id": "3174a9fa-e2fd-4f0a-9464-a8b86e91793e"}
+
+
+--- end ---

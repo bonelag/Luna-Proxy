@@ -1,0 +1,103 @@
+# {"timestamp":"2026-05-18T02:06:07.519Z","attempt":1,"url":"https://chat.qwen.ai/api/v2/chat/completions?chat_id=7f6ed117-d93b-4e25-9f57-aff6f0d829a9","chatId":"7f6ed117-d93b-4e25-9f57-aff6f0d829a9","filePath":"/home/wholock/Projects/AI/Proxy/Proxy-Luna/data/wire-logs/qwen-stream-2026-05-18T02-06-07-519Z-5h6u5e.log"}
+
+--- chunk ---
+data: {"response.created":{"chat_id": "7f6ed117-d93b-4e25-9f57-aff6f0d829a9", "parent_id": "ec143510-16f3-4a3e-aa3e-f0521619e839", "response_id":"9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "response_index": "0"}} 
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "To", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 1, "characters": 0, "total_tokens": 2616, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 1}}, "timestamp": 1779069969}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " investigate the `", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 4, "characters": 0, "total_tokens": 2619, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 4}}, "timestamp": 1779069969}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "Proxy-Luna`", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 8, "characters": 0, "total_tokens": 2623, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 8}}, "timestamp": 1779069969}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " project deeper", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 10, "characters": 0, "total_tokens": 2625, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 10}}, "timestamp": 1779069969}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " as requested, I", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 14, "characters": 0, "total_tokens": 2629, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 14}}, "timestamp": 1779069970}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " will", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 15, "characters": 0, "total_tokens": 2630, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 15}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " start by reading the", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 19, "characters": 0, "total_tokens": 2634, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 19}}, "timestamp": 1779069970}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": " core configuration", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 21, "characters": 0, "total_tokens": 2636, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 21}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " and entry point files", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 25, "characters": 0, "total_tokens": 2640, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 25}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " to understand the", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 28, "characters": 0, "total_tokens": 2643, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 28}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " project structure, dependencies", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 32, "characters": 0, "total_tokens": 2647, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 32}}, "timestamp": 1779069970}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": ", and initialization", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 35, "characters": 0, "total_tokens": 2650, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 35}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": " logic.\n\n<", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 39, "characters": 0, "total_tokens": 2654, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 39}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "read_file><path", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 43, "characters": 0, "total_tokens": 2658, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 43}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ">package.json</", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 47, "characters": 0, "total_tokens": 2662, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 47}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "path></read_file", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 51, "characters": 0, "total_tokens": 2666, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 51}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": ">\n<read", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 55, "characters": 0, "total_tokens": 2670, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 55}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "_file><path>", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 59, "characters": 0, "total_tokens": 2674, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 59}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "src/server.ts</", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 63, "characters": 0, "total_tokens": 2678, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 63}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "path", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 64, "characters": 0, "total_tokens": 2679, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 64}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "></read_file>", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 68, "characters": 0, "total_tokens": 2683, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 68}}, "timestamp": 1779069970}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "\n<read_file", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 72, "characters": 0, "total_tokens": 2687, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 72}}, "timestamp": 1779069970}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "><path>src", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 76, "characters": 0, "total_tokens": 2691, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 76}}, "timestamp": 1779069971}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "/dev.ts</path", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 80, "characters": 0, "total_tokens": 2695, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 80}}, "timestamp": 1779069971}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"role": "assistant", "content": "></read_file>", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 84, "characters": 0, "total_tokens": 2699, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 84}}, "timestamp": 1779069971}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 84, "characters": 0, "total_tokens": 2699, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 84}}, "timestamp": 1779069971}
+
+data: {"choices": [{"delta": {"role": "assistant", "content": "", "phase": "answer", "status": "typing"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1", "usage": {"input_tokens": 2615, "output_tokens": 84, "characters": 0, "total_tokens": 2699, "input_tokens_details": {"text_tokens": 2615}, "output_tokens_details": {"text_tokens": 84}}, "timestamp": 1779069971}
+
+
+--- chunk ---
+data: {"choices": [{"delta": {"content": "", "role": "assistant", "status": "finished", "phase": "answer"}}], "response_id": "9fc79ec6-cf82-4e3b-a540-7239e3938cc1"}
+
+
+--- end ---

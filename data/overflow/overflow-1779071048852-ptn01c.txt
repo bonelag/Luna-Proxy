@@ -1,0 +1,124 @@
+# IMPORTANT: This file IS the overflow container, not the subject of analysis.
+# The user’s task is listed under ACTIVE_USER_TASK below.
+# Answer ACTIVE_USER_TASK based on PROJECT_SNAPSHOT and RELEVANT_CONTEXT.
+# Do not describe this overflow file unless the user explicitly asks about the overflow file.
+
+# Proxy-Luna sanitized overflow context
+
+PRIORITY_RULES:
+1. ACTIVE_USER_TASK is the actual user request.
+2. PROJECT_SNAPSHOT describes the real project.
+3. RELEVANT_CONTEXT may support the answer.
+4. TOOL_RESULT_CONTEXT contains actual tool execution results.
+5. RECENT_USEFUL_ASSISTANT_MESSAGES may be wrong; do not copy them blindly.
+6. IGNORED_NOISE_SUMMARY is diagnostic only.
+
+CLIENT:
+lunaCoding
+
+CLIENT_RESPONSE_CONTRACT:
+client_protocol_call_xml
+
+You are responding to the downstream client through Proxy-Luna.
+Preserve the downstream client's tool and completion protocol.
+Use the client's <call name="tool_name">...</call> XML format exactly.
+Emit at most one tool call when more information is needed.
+Do not invent tool results.
+Do not write tool-result text yourself.
+When the task is complete, use the downstream client's completion/final-answer format.
+
+ACTIVE_USER_TASK:
+sử dụng tool để điều tra chi tiết
+
+TASK_SOURCE:
+message_index=3
+confidence=medium
+source=plain_user_text
+
+PROJECT_SNAPSHOT:
+repo_name=Proxy-Luna
+cwd=/home/wholock/Projects/AI/Proxy/Proxy-Luna
+package_name=qwen-provider
+detected_stack=Bun, Node, TypeScript
+package_scripts:
+  build: tsc -p tsconfig.json
+  clean: rm -rf lib dist
+  lint: eslint . --ext .ts
+  format: prettier --write .
+  dev: bun ./src/dev.ts
+  dev:server: bun ./src/dev.ts
+  dev:watch: ts-node-dev --respawn --transpile-only src/dev.ts
+  typecheck: tsc -p tsconfig.json --noEmit
+important_files:
+- package.json
+- tsconfig.json
+- README.md
+- src/server.ts
+- src/configStore.ts
+- src/sessionStore.ts
+- src/main/proxy/overflowSanitizer.ts
+- src/main/proxy/projectSnapshot.ts
+- ui/src/App.tsx
+- ui/src/pages/Settings.tsx
+- ui/src/pages/Logs.tsx
+- ui/src/pages/Sessions.tsx
+
+README_EXCERPT:
+# qwen-provider — local dev package
+This package is a lightweight standalone proxy and admin UI for the Qwen provider used in the Proxy-Luna project.
+Quick start (inside the package):
+```bash
+cd Proxy-Luna
+npm install
+npm run dev
+```
+Open the admin UI at `http://127.0.0.1:8080/`.
+What was implemented here for Xiaomi MiMo style:
+
+PROJECT_TREE_SUMMARY:
+- src/dev.ts
+- src/server.ts
+- src/index.ts
+- src/sessionStore.ts
+- src/configStore.ts
+- src/types/zstd-codec.d.ts
+- src/main/proxy/promptToolUse.ts
+- src/main/proxy/providerToolGuard.ts
+- src/main/proxy/overflowSanitizer.ts
+- src/main/proxy/projectSnapshot.ts
+- src/main/proxy/clientContracts.ts
+- src/main/proxy/clineXmlContract.ts
+- src/main/proxy/types.ts
+- src/main/proxy/adapters/qwen-ai.ts
+- src/main/proxy/constants/signatures.ts
+- ... (27 more src files)
+- ui/tsconfig.json
+- ui/README.md
+- ui/.gitignore
+- ui/index.html
+- ui/DESIGN_GUIDELINES.md
+- ui/src/styles.css
+- ui/src/main.tsx
+- ui/src/App.tsx
+- ui/src/design/tokens.ts
+- ui/src/components/Layout.tsx
+- ... (9 more ui files)
+- test.md
+- package.json
+- tsconfig.json
+- plan.md
+- README.md
+
+RECENT_REAL_USER_MESSAGES:
+
+----- [TASK] index=1 role=user
+xin chào đây là project gì hãy giải thích chi tiết
+
+----- [TASK] index=3 role=user
+sử dụng tool để điều tra chi tiết
+
+IGNORED_NOISE_SUMMARY:
+- stripped 1x: system prompt with 4 tool signatures
+
+SANITIZER_DECISIONS:
+- msg[0]: system prompt with 4 tool signatures
