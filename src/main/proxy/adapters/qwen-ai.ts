@@ -10,7 +10,8 @@ import * as path from 'path';
 import {PassThrough} from 'stream';
 import {createParser} from 'eventsource-parser';
 import {Account, Provider} from '../../store/types';
-import {hasToolUse, parseToolUse, ToolCall} from '../promptToolUse';
+import {hasToolUse, parseToolUse} from '../promptToolUse';
+import {parseToolCalls, cleanVisibleText, createStreamState, processStreamChunk} from '../toolcall/toolcall';
 
 const QWEN_AI_BASE = 'https://chat.qwen.ai';
 
@@ -1057,72 +1058,153 @@ export class QwenAiStreamHandler {
 	private sendToolCalls(transStream: PassThrough): void {
 		if (this.toolCallsSent) return;
 
-		const toolCalls = parseToolUse(this.content);
-		if (toolCalls && toolCalls.length > 0) {
-			this.toolCallsSent = true;
+		const oldCalls = parseToolUse(this.content);
+		const newCalls = parseToolCalls(this.content);
 
-			// If the transStream is already ended, bail out to avoid
-			// "write after end" errors.
-			if ((transStream as any).writableEnded) return;
+		// Prefer ML_XML format, fallback to legacy
+		let toolCalls: any[];
+		if (newCalls.length > 0) {
+			toolCalls = newCalls.map((tc, i) => ({
+				index: i,
+				id: tc.id,
+				type: 'function',
+				function: {
+					name: tc.name,
+					arguments: JSON.stringify(tc.input),
+				},
+			}));
+		} else if (oldCalls.length > 0) {
+			toolCalls = oldCalls.map((tc: any, i: number) => ({
+				index: i,
+				...tc,
+			}));
+		} else {
+			return;
+		}
 
-			// Send tool_calls delta
-			for (let i = 0; i < toolCalls.length; i++) {
-				if ((transStream as any).writableEnded) break;
-				const tc = toolCalls[i];
-				try {
-					transStream.write(
-						`data: ${JSON.stringify({
-							id: this.responseId || this.chatId,
-							model: this.model,
-							object: 'chat.completion.chunk',
-							choices: [
-								{
-									index: 0,
-									delta: {
-										tool_calls: [
-											{
-												index: i,
-												id: tc.id,
-												type: 'function',
-												function: {
-													name: tc.function.name,
-													arguments: tc.function.arguments,
-												},
+		this.toolCallsSent = true;
+		if ((transStream as any).writableEnded) return;
+
+		for (let i = 0; i < toolCalls.length; i++) {
+			if ((transStream as any).writableEnded) break;
+			const tc = toolCalls[i];
+			try {
+				transStream.write(
+					`data: ${JSON.stringify({
+						id: this.responseId || this.chatId,
+						model: this.model,
+						object: 'chat.completion.chunk',
+						choices: [
+							{
+								index: 0,
+								delta: {
+									tool_calls: [
+										{
+											index: i,
+											id: tc.id,
+											type: 'function',
+											function: {
+												name: tc.function?.name || tc.name,
+												arguments: tc.function?.arguments || JSON.stringify(tc.input || {}),
 											},
-										],
-									},
-									finish_reason: null,
+										},
+									],
 								},
-							],
-							created: this.created,
-						})}\n\n`,
-					);
-				} catch (e) {
-					console.warn('[QwenAI] sendToolCalls write failed', e);
-				}
+								finish_reason: null,
+							},
+						],
+						created: this.created,
+					})}\n\n`,
+				);
+			} catch (e) {
+				console.warn('[QwenAI] sendToolCalls write failed', e);
 			}
+		}
 
-			if (!(transStream as any).writableEnded) {
-				try {
-					transStream.write(
-						`data: ${JSON.stringify({
-							id: this.responseId || this.chatId,
-							model: this.model,
-							object: 'chat.completion.chunk',
-							choices: [{index: 0, delta: {}, finish_reason: 'tool_calls'}],
-							usage: {prompt_tokens: 1, completion_tokens: 1, total_tokens: 2},
-							created: this.created,
-						})}\n\n`,
-					);
-					transStream.end('data: [DONE]\n\n');
-				} catch (e) {
-					console.warn('[QwenAI] sendToolCalls final write/end failed', e);
-				}
+		if (!(transStream as any).writableEnded) {
+			try {
+				transStream.write(
+					`data: ${JSON.stringify({
+						id: this.responseId || this.chatId,
+						model: this.model,
+						object: 'chat.completion.chunk',
+						choices: [{index: 0, delta: {}, finish_reason: 'tool_calls'}],
+						usage: {prompt_tokens: 1, completion_tokens: 1, total_tokens: 2},
+						created: this.created,
+					})}\n\n`,
+				);
+				transStream.end('data: [DONE]\n\n');
+			} catch (e) {
+				console.warn('[QwenAI] sendToolCalls final write/end failed', e);
 			}
+		}
 
-			if (this.onEnd && this.chatId) {
-				this.onEnd(this.chatId);
+		if (this.onEnd && this.chatId) {
+			this.onEnd(this.chatId);
+		}
+	}
+
+	private sendOpenAiToolCalls(transStream: PassThrough, toolCalls: any[]): void {
+		if (this.toolCallsSent || toolCalls.length === 0) return;
+		this.toolCallsSent = true;
+		if ((transStream as any).writableEnded) return;
+
+		for (let i = 0; i < toolCalls.length; i++) {
+			if ((transStream as any).writableEnded) break;
+			const tc = toolCalls[i];
+			try {
+				transStream.write(
+					`data: ${JSON.stringify({
+						id: this.responseId || this.chatId,
+						model: this.model,
+						object: 'chat.completion.chunk',
+						choices: [
+							{
+								index: 0,
+								delta: {
+									tool_calls: [
+										{
+											index: i,
+											id: tc.id || `call_${Date.now().toString(36)}_${i}`,
+											type: 'function',
+											function: {
+												name: tc.name,
+												arguments: tc.arguments || '{}',
+											},
+										},
+									],
+								},
+								finish_reason: null,
+							},
+						],
+						created: this.created,
+					})}\n\n`,
+				);
+			} catch (e) {
+				console.warn('[QwenAI] sendOpenAiToolCalls write failed', e);
 			}
+		}
+
+		if (!(transStream as any).writableEnded) {
+			try {
+				transStream.write(
+					`data: ${JSON.stringify({
+						id: this.responseId || this.chatId,
+						model: this.model,
+						object: 'chat.completion.chunk',
+						choices: [{index: 0, delta: {}, finish_reason: 'tool_calls'}],
+						usage: {prompt_tokens: 1, completion_tokens: 1, total_tokens: 2},
+						created: this.created,
+					})}\n\n`,
+				);
+				transStream.end('data: [DONE]\n\n');
+			} catch (e) {
+				console.warn('[QwenAI] sendOpenAiToolCalls final write/end failed', e);
+			}
+		}
+
+		if (this.onEnd && this.chatId) {
+			this.onEnd(this.chatId);
 		}
 	}
 
@@ -1137,6 +1219,12 @@ export class QwenAiStreamHandler {
 		let initialChunkSent = false;
 		let sawAnswerContent = false;
 		let ended = false;
+		const toolStreamState = createStreamState();
+		const nativeToolCalls: Array<{id: string; name: string; arguments: string}> = [];
+		const nativeToolSignatures = new Set<string>();
+		let nativeToolCallSeq = 0;
+		let pendingNativeToolName = '';
+		let pendingNativeToolArgs = '';
 
 		const safeWrite = (data: string) => {
 			if (ended) return;
@@ -1208,6 +1296,47 @@ export class QwenAiStreamHandler {
 						const phase = delta.phase;
 						const status = delta.status;
 						const content = delta.content || '';
+						const functionCall = delta.function_call;
+
+						if (functionCall?.name || typeof functionCall?.arguments === 'string') {
+							if (!initialChunkSent) {
+								sendInitialChunk();
+							}
+							pendingNativeToolName = functionCall.name || pendingNativeToolName;
+							pendingNativeToolArgs = typeof functionCall.arguments === 'string'
+								? functionCall.arguments
+								: pendingNativeToolArgs;
+
+							if (pendingNativeToolName && pendingNativeToolArgs) {
+								try {
+									JSON.parse(pendingNativeToolArgs);
+									const signature = `${pendingNativeToolName}\n${pendingNativeToolArgs}`;
+									if (!nativeToolSignatures.has(signature)) {
+										nativeToolSignatures.add(signature);
+										nativeToolCalls.push({
+											id: `call_qwen_native_${Date.now().toString(36)}_${nativeToolCallSeq++}`,
+											name: pendingNativeToolName,
+											arguments: pendingNativeToolArgs,
+										});
+									}
+								} catch {
+									// Qwen streams partial/cumulative arguments; wait for valid JSON.
+								}
+							}
+						}
+
+						const isProviderFunctionLeak =
+							delta.role === 'function' &&
+							/Tool .+ does not exists?\.?/i.test(content);
+						if (isProviderFunctionLeak) {
+							this.leakDetected = true;
+							this.leakReason = content;
+							if (nativeToolCalls.length > 0) {
+								console.log('[QwenAI] Intercepted native function_call before provider tool leak');
+								this.sendOpenAiToolCalls(transStream, nativeToolCalls);
+							}
+							return;
+						}
 
 						console.log(
 							'[QwenAI] Phase:',
@@ -1324,16 +1453,21 @@ export class QwenAiStreamHandler {
 							sawAnswerContent = sawAnswerContent || !!content;
 
 							if (content) {
-								console.log('[QwenAI] Sending content chunk:', content);
-								const chunk = {
-									id: this.responseId || this.chatId,
-									model: this.model,
-									object: 'chat.completion.chunk',
-									choices: [{index: 0, delta: {content}, finish_reason: null}],
-									created: this.created,
-								};
-								safeWrite(`data: ${JSON.stringify(chunk)}\n\n`);
-								console.log('[QwenAI] Content chunk written');
+								const visibleContent = this.xmlPassthrough
+									? content
+									: processStreamChunk(content, toolStreamState).text;
+								if (visibleContent && !toolStreamState.hasEmittedToolCall) {
+									console.log('[QwenAI] Sending content chunk:', visibleContent);
+									const chunk = {
+										id: this.responseId || this.chatId,
+										model: this.model,
+										object: 'chat.completion.chunk',
+										choices: [{index: 0, delta: {content: visibleContent}, finish_reason: null}],
+										created: this.created,
+									};
+									safeWrite(`data: ${JSON.stringify(chunk)}\n\n`);
+									console.log('[QwenAI] Content chunk written');
+								}
 							}
 						} else if (phase === null && content) {
 							if (!initialChunkSent) {
@@ -1343,31 +1477,43 @@ export class QwenAiStreamHandler {
 							this.content += content;
 							sawAnswerContent = sawAnswerContent || !!content;
 
-							const chunk = {
-								id: this.responseId || this.chatId,
-								model: this.model,
-								object: 'chat.completion.chunk',
-								choices: [{index: 0, delta: {content}, finish_reason: null}],
-								created: this.created,
-							};
-							safeWrite(`data: ${JSON.stringify(chunk)}\n\n`);
+							const visibleContent = this.xmlPassthrough
+								? content
+								: processStreamChunk(content, toolStreamState).text;
+							if (visibleContent && !toolStreamState.hasEmittedToolCall) {
+								const chunk = {
+									id: this.responseId || this.chatId,
+									model: this.model,
+									object: 'chat.completion.chunk',
+									choices: [{index: 0, delta: {content: visibleContent}, finish_reason: null}],
+									created: this.created,
+								};
+								safeWrite(`data: ${JSON.stringify(chunk)}\n\n`);
+							}
 						}
 
 						if (
 							status === 'finished' &&
 							(phase === 'answer' || phase === null)
 						) {
-							// Check for tool calls before sending stop
-							if (hasToolUse(this.content)) {
+							if (nativeToolCalls.length > 0) {
+								console.log('[QwenAI] Found native function_call stream, sending tool_calls');
+								this.sendOpenAiToolCalls(transStream, nativeToolCalls);
+								return;
+							}
+							// Check for tool calls (both ML_XML and legacy formats)
+							const hasMlxToolCalls = /<ml_tool_calls>[\s\S]*<\/ml_tool_calls>/.test(this.content);
+							const hasLegacyToolUse = hasToolUse(this.content);
+							if (hasMlxToolCalls || hasLegacyToolUse) {
 								if (!this.xmlPassthrough) {
 									console.log(
-										'[QwenAI] Found tool_use in stream, sending tool_calls',
+										'[QwenAI] Found tool calls in stream, sending tool_calls',
 									);
 									this.sendToolCalls(transStream);
 									return;
 								}
 								console.log(
-									'[QwenAI] xmlPassthrough enabled, tool_use streamed as text',
+									'[QwenAI] xmlPassthrough enabled, tool calls streamed as text',
 								);
 							}
 
@@ -1438,7 +1584,7 @@ export class QwenAiStreamHandler {
 
 	async handleNonStream(stream: any): Promise<any> {
 		return new Promise((resolve, reject) => {
-			const data = {
+			const data: any = {
 				id: '',
 				model: this.model,
 				object: 'chat.completion',
@@ -1456,6 +1602,11 @@ export class QwenAiStreamHandler {
 			let reasoningText = '';
 			let summaryText = '';
 			let resolved = false;
+			const nativeToolCalls: Array<{id: string; name: string; arguments: string}> = [];
+			const nativeToolSignatures = new Set<string>();
+			let nativeToolCallSeq = 0;
+			let pendingNativeToolName = '';
+			let pendingNativeToolArgs = '';
 
 			const resolveOnce = (value: any) => {
 				if (!resolved) {
@@ -1488,6 +1639,51 @@ export class QwenAiStreamHandler {
 							const phase = delta.phase;
 							const status = delta.status;
 							const content = delta.content || '';
+							const functionCall = delta.function_call;
+
+							if (functionCall?.name || typeof functionCall?.arguments === 'string') {
+								pendingNativeToolName = functionCall.name || pendingNativeToolName;
+								pendingNativeToolArgs = typeof functionCall.arguments === 'string'
+									? functionCall.arguments
+									: pendingNativeToolArgs;
+
+								if (pendingNativeToolName && pendingNativeToolArgs) {
+									try {
+										JSON.parse(pendingNativeToolArgs);
+										const signature = `${pendingNativeToolName}\n${pendingNativeToolArgs}`;
+										if (!nativeToolSignatures.has(signature)) {
+											nativeToolSignatures.add(signature);
+											nativeToolCalls.push({
+												id: `call_qwen_native_${Date.now().toString(36)}_${nativeToolCallSeq++}`,
+												name: pendingNativeToolName,
+												arguments: pendingNativeToolArgs,
+											});
+										}
+									} catch {
+										// Wait for a complete cumulative arguments payload.
+									}
+								}
+							}
+
+							if (
+								delta.role === 'function' &&
+								/Tool .+ does not exists?\.?/i.test(content) &&
+								nativeToolCalls.length > 0
+							) {
+								data.choices[0].message.content = null;
+								data.choices[0].message.tool_calls = nativeToolCalls.map((tc, i) => ({
+									index: i,
+									id: tc.id,
+									type: 'function',
+									function: {
+										name: tc.name,
+										arguments: tc.arguments,
+									},
+								}));
+								data.choices[0].finish_reason = 'tool_calls';
+								resolveOnce(data);
+								return;
+							}
 
 							if (phase === 'think' && status !== 'finished') {
 								reasoningText += content;
@@ -1505,7 +1701,23 @@ export class QwenAiStreamHandler {
 									data.choices[0].message.content += content;
 								}
 								if (status === 'finished') {
-									// Use reasoningText or summaryText for reasoning_content
+									const fullContent = data.choices[0].message.content;
+									const toolCalls = parseToolCalls(fullContent);
+									if (toolCalls.length > 0 && !this.xmlPassthrough) {
+										const cleanContent = cleanVisibleText(fullContent);
+										data.choices[0].message.content = cleanContent;
+										data.choices[0].message.tool_calls = toolCalls.map((tc, i) => ({
+											index: i,
+											id: tc.id,
+											type: 'function',
+											function: {
+												name: tc.name,
+												arguments: JSON.stringify(tc.input),
+											},
+										}));
+										data.choices[0].finish_reason = 'tool_calls';
+									}
+
 									const finalReasoning = reasoningText || summaryText;
 									if (finalReasoning) {
 										data.choices[0].message.reasoning_content = finalReasoning;
@@ -1519,6 +1731,40 @@ export class QwenAiStreamHandler {
 								}
 							} else if (phase === null && content) {
 								data.choices[0].message.content += content;
+							}
+
+							if (status === 'finished' && (phase === 'answer' || phase === null)) {
+								if (nativeToolCalls.length > 0) {
+									data.choices[0].message.content = data.choices[0].message.content || null;
+									data.choices[0].message.tool_calls = nativeToolCalls.map((tc, i) => ({
+										index: i,
+										id: tc.id,
+										type: 'function',
+										function: {
+											name: tc.name,
+											arguments: tc.arguments,
+										},
+									}));
+									data.choices[0].finish_reason = 'tool_calls';
+									resolveOnce(data);
+									return;
+								}
+								const fullContent = data.choices[0].message.content;
+								const toolCalls = parseToolCalls(fullContent);
+								if (toolCalls.length > 0 && !this.xmlPassthrough) {
+									const cleanContent = cleanVisibleText(fullContent);
+									data.choices[0].message.content = cleanContent;
+									data.choices[0].message.tool_calls = toolCalls.map((tc, i) => ({
+										index: i,
+										id: tc.id,
+										type: 'function',
+										function: {
+											name: tc.name,
+											arguments: JSON.stringify(tc.input),
+										},
+									}));
+									data.choices[0].finish_reason = 'tool_calls';
+								}
 							}
 						}
 					} catch (err) {
@@ -1534,7 +1780,36 @@ export class QwenAiStreamHandler {
 				rejectOnce(err);
 			});
 			stream.once('close', () => {
-				// Use reasoningText or summaryText for reasoning_content
+				const fullContent = data.choices[0].message.content;
+				if (nativeToolCalls.length > 0) {
+					data.choices[0].message.content = fullContent || null;
+					data.choices[0].message.tool_calls = nativeToolCalls.map((tc, i) => ({
+						index: i,
+						id: tc.id,
+						type: 'function',
+						function: {
+							name: tc.name,
+							arguments: tc.arguments,
+						},
+					}));
+					data.choices[0].finish_reason = 'tool_calls';
+				}
+				const toolCalls = parseToolCalls(fullContent);
+				if (toolCalls.length > 0 && !this.xmlPassthrough && nativeToolCalls.length === 0) {
+					const cleanContent = cleanVisibleText(fullContent);
+					data.choices[0].message.content = cleanContent;
+					data.choices[0].message.tool_calls = toolCalls.map((tc, i) => ({
+						index: i,
+						id: tc.id,
+						type: 'function',
+						function: {
+							name: tc.name,
+							arguments: JSON.stringify(tc.input),
+						},
+					}));
+					data.choices[0].finish_reason = 'tool_calls';
+				}
+
 				const finalReasoning = reasoningText || summaryText;
 				if (finalReasoning) {
 					data.choices[0].message.reasoning_content = finalReasoning;

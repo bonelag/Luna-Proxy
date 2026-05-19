@@ -19,12 +19,15 @@ Designed for local development and controlled routing. No cloud dependency, no t
 ## Features
 
 - **OpenAI-compatible API** — drop-in `/v1/chat/completions` and `/v1/models` endpoints
+- **Anthropic-compatible API** — `/v1/messages` and `/v1/messages/count_tokens` for Claude-style clients
 - **Streaming support** — SSE streaming and non-streaming responses
+- **Tool-call bridging** — injects an XML tool contract for Qwen, parses tool calls, and returns OpenAI `tool_calls` or Anthropic `tool_use`
 - **Built-in Admin UI** — React dashboard served alongside the API on the same port
 - **Credential management** — automatic OAuth capture via Puppeteer or manual token/cookie input
 - **Multi-account routing** — queue and concurrency controls across providers, accounts, and workers
 - **Session & run tracking** — persistent sessions, run history, and thread binding
 - **Prompt overflow handling** — automatically offloads large prompts to file-backed context
+- **Runtime prompt overrides** — inspect and update protocol prompts from the admin API
 - **Worker routing** — optional egress/IP verification and worker forwarding
 - **Diagnostics APIs** — built-in logs, runtime inspection, and debug roundtrip endpoints
 
@@ -259,6 +262,8 @@ curl -N -sS -X POST http://127.0.0.1:8080/v1/chat/completions \
 | `reasoning_effort` | string | *(optional)* Reasoning effort level |
 | `enable_thinking` | boolean | *(optional)* Enable thinking mode |
 | `thinking_budget` | number | *(optional)* Token budget for thinking |
+| `tools` | array | *(optional)* OpenAI-style tool definitions |
+| `tool_choice` | string/object | *(optional)* `auto`, `none`, `required`, or a specific function |
 
 ### Session headers
 
@@ -283,6 +288,67 @@ x-luna-provider-session-id
 
 ---
 
+## Anthropic API
+
+**Endpoint:** `POST /v1/messages`
+
+This endpoint accepts Anthropic-style `system`, `messages`, `tools`, and `tool_choice` fields, converts them to the internal chat format, routes the request through Qwen, then renders the response back as Anthropic-compatible content blocks.
+
+```bash
+curl -N -sS -X POST http://127.0.0.1:8080/v1/messages \
+  -H 'Content-Type: application/json' \
+  -H 'anthropic-version: 2023-06-01' \
+  -d '{
+    "model": "qwen3.6-plus",
+    "max_tokens": 1024,
+    "stream": true,
+    "messages": [
+      {"role": "user", "content": "Read the project README and summarize it"}
+    ],
+    "tools": [
+      {
+        "name": "Read",
+        "description": "Read a local file",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "file_path": {"type": "string"}
+          },
+          "required": ["file_path"]
+        }
+      }
+    ]
+  }'
+```
+
+`POST /v1/messages/count_tokens` returns a local estimate. It does not call Qwen.
+
+---
+
+## Tool Calling
+
+Qwen web chat does not provide the same local tool runtime as clients such as Claude Code or Cline. LunaProxy bridges that gap at the protocol layer:
+
+1. The client sends OpenAI `tools` or Anthropic `tools`.
+2. LunaProxy injects a strict ML_XML tool-call contract into the prompt.
+3. If Qwen emits `<ml_tool_calls>...</ml_tool_calls>`, LunaProxy parses it.
+4. If Qwen emits native `function_call` deltas, LunaProxy intercepts them before Qwen's own web backend can leak `Tool ... does not exists.`
+5. LunaProxy returns standard OpenAI `tool_calls` or Anthropic `tool_use` blocks to the client.
+6. The client executes the tool and sends the result back in the next request.
+
+LunaProxy does not execute `Read`, `Bash`, `Edit`, or other client tools itself. It only translates model output into the client protocol. A client without tool execution support will still need its own executor.
+
+The tool prompt defaults live in:
+
+```
+src/main/proxy/prompts/prompts.ts
+src/main/proxy/toolcall/toolcall.ts
+```
+
+Runtime prompt overrides are available through `GET /api/prompts`, `POST /api/prompts`, and `POST /api/prompts/reset`.
+
+---
+
 ## Prompt Overflow
 
 When a prompt exceeds the configured token threshold, LunaProxy writes the full prompt to an overflow file and sends a compact transport prompt + the file to Qwen instead. The file is treated as the primary conversation context, not as a reference attachment.
@@ -294,6 +360,18 @@ data/overflow/
 ```
 
 Default overflow settings are configured in `data/config.json` under `settings.tokenOverflow`.
+
+The `TOTAL_TOKENS` value written into an overflow file is local debug metadata. It is not sent to Qwen as an API parameter and changing it does not change provider-side token accounting. Qwen still parses and tokenizes the attached file content. Very large tool results or session histories can still trigger provider errors such as `Allocated quota exceeded` even if the advertised model context window is larger.
+
+When debugging overflow problems, inspect:
+
+```
+data/overflow/
+data/wire-logs/
+data/config.json
+```
+
+If overflow files keep growing, reduce retained session history, compact old tool results, or avoid persisting large file reads as full prompt history.
 
 ---
 
@@ -321,6 +399,8 @@ The admin UI includes dedicated pages for browsing sessions, runs, logs, provide
 | `GET` | `/health` | Health check |
 | `GET` | `/v1/models` | List available models |
 | `POST` | `/v1/chat/completions` | Chat completions |
+| `POST` | `/v1/messages` | Anthropic-compatible messages |
+| `POST` | `/v1/messages/count_tokens` | Anthropic-compatible token estimate |
 
 ### Admin & config
 
@@ -328,6 +408,9 @@ The admin UI includes dedicated pages for browsing sessions, runs, logs, provide
 |---|---|---|
 | `GET` | `/api/config` | Read current config |
 | `POST` | `/api/config` | Update config |
+| `GET` | `/api/prompts` | List runtime prompt definitions and overrides |
+| `POST` | `/api/prompts` | Set a prompt override |
+| `POST` | `/api/prompts/reset` | Reset prompt overrides |
 | `GET` | `/api/models` | List models |
 | `POST` | `/api/models/refresh` | Refresh model list from provider |
 
@@ -377,7 +460,6 @@ LunaProxy/
 ├── frontend/             # React admin UI source
 ├── public/               # Built static UI served by the backend
 ├── tests/                # TypeScript tests
-├── scripts/              # Local helper scripts
 ├── data/                 # Runtime state, logs, overflow files (generated)
 └── lib/                  # TypeScript build output (generated)
 ```
@@ -420,6 +502,12 @@ bun run build
 
 `npm run dev`, `pnpm run dev`, and `bun run dev` all execute `bun ./src/dev.ts`. TypeScript build output goes to `lib/`.
 
+Run the focused tool-call suite with:
+
+```bash
+npx ts-node tests/toolcall.test.ts
+```
+
 The frontend source lives in `frontend/`. The backend serves the pre-built static UI from `public/`. To rebuild the UI, run the frontend build separately and copy the output to `public/`.
 
 ---
@@ -437,6 +525,12 @@ Check active runs, account concurrency limits, and worker availability in the ad
 
 **Overflow or file upload failures**
 Inspect `data/overflow/`, `data/wire-logs/`, and `data/config.json`. Use the debug endpoints for deeper inspection.
+
+**`Allocated quota exceeded` from Qwen**
+The provider rejected the effective prompt allocation. This can happen when overflow files contain very large histories or tool results. The local `TOTAL_TOKENS` line in the overflow file is only metadata; reduce the actual prompt/file content instead.
+
+**`Tool ... does not exists` in provider logs**
+Qwen may emit native `function_call` deltas and then its web backend may report missing tools. LunaProxy intercepts that pattern in the stream transformer and returns client-compatible tool calls. If the text reaches the client, restart the dev server and inspect `data/wire-logs/` plus `tests/toolcall.test.ts`.
 
 **Stream issues**
 Check the **Logs** and **Runs** pages in the admin UI, or query `GET /api/logs` and `GET /api/runs` directly.

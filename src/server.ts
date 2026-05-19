@@ -37,8 +37,126 @@ import {applyTokenOverflowPolicy} from './modules/overflowPolicy';
 import {persistSessionMessages} from './modules/sessionPersistence';
 import {compactSession} from './modules/sessionCompactor';
 import {uploadOverflowFileToQwen} from './modules/ossUploader';
+import {
+  convertToInternalRequest,
+  estimateAnthropicInputTokens,
+  renderAnthropicNonStream,
+  createAnthropicStream,
+  writeAnthropicStreamText,
+  writeAnthropicStreamToolCall,
+  endAnthropicStream,
+} from './main/proxy/anthropic';
+import {getToolNames, parseToolCalls, cleanVisibleText} from './main/proxy/toolcall/toolcall';
+import {injectToolPrompt, normalizeToolMessages} from './main/proxy/toolcall/toolcall';
+import {
+  getAllPrompts,
+  getPromptOverrides,
+  setPromptOverride,
+  resetPromptOverrides,
+} from './main/proxy/prompts/prompts';
 
 const SENSITIVE_HEADER_RE = /(authorization|cookie|token|api-key|x-proxy-key|proxy-authorization|secret|session)/i;
+
+function convertOpenAiTools(tools: any[] | undefined): any[] {
+  if (!Array.isArray(tools)) return [];
+  return tools
+    .map(tool => {
+      if (tool?.type === 'function' && tool.function) {
+        return {
+          name: tool.function.name,
+          description: tool.function.description,
+          parameters: tool.function.parameters,
+        };
+      }
+      if (tool?.name) {
+        return {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters || tool.input_schema,
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+}
+
+function convertOpenAiToolChoice(toolChoice: any): any {
+  if (!toolChoice) return undefined;
+  if (typeof toolChoice === 'string') {
+    if (toolChoice === 'none') return { mode: 'none' };
+    if (toolChoice === 'required') return { mode: 'required' };
+    return { mode: 'auto' };
+  }
+  if (toolChoice?.type === 'function' && toolChoice.function?.name) {
+    return { mode: 'specific', name: toolChoice.function.name };
+  }
+  if (toolChoice?.mode) return toolChoice;
+  return { mode: 'auto' };
+}
+
+function normalizeOpenAiMessagesForTools(messages: any[]): any[] {
+  return (messages || []).map(msg => {
+    if (!msg || typeof msg !== 'object') return msg;
+    const content = typeof msg.content === 'string'
+      ? msg.content
+      : Array.isArray(msg.content)
+        ? msg.content.map((part: any) => extractText(part)).filter(Boolean).join('\n')
+        : extractText(msg.content);
+    if (msg.role === 'assistant' && Array.isArray(msg.tool_calls)) {
+      return {
+        role: 'assistant',
+        content: content || '',
+        toolCalls: msg.tool_calls.map((tc: any) => ({
+          id: tc.id,
+          name: tc.function?.name || tc.name,
+          input: typeof tc.function?.arguments === 'string'
+            ? safeJsonObject(tc.function.arguments)
+            : (tc.function?.arguments || tc.input || {}),
+        })),
+      };
+    }
+    if (msg.role === 'tool') {
+      return {
+        role: 'tool',
+        content: content || '',
+        toolCallId: msg.tool_call_id,
+        toolName: msg.name,
+      };
+    }
+    return { ...msg, content: content || '' };
+  });
+}
+
+function buildQwenMessagesForToolPrompt(messages: any[]): any[] {
+  let systemContent = '';
+  const nonSystem: any[] = [];
+  for (const msg of messages || []) {
+    if (msg.role === 'system') {
+      systemContent += (systemContent ? '\n\n' : '') + (msg.content || '');
+    } else {
+      nonSystem.push(msg);
+    }
+  }
+
+  const chatMessages: any[] = [];
+  if (systemContent) chatMessages.push({ role: 'system', content: systemContent });
+  if (nonSystem.length > 0) {
+    chatMessages.push({
+      role: 'user',
+      content: nonSystem.map(m => `${m.role}:${m.content || ''}`).join(';'),
+    });
+  }
+  return chatMessages.length > 0 ? chatMessages : [{ role: 'user', content: 'Hello' }];
+}
+
+function safeJsonObject(value: string): Record<string, any> {
+  try {
+    const parsed = JSON.parse(value || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
 
 function normalizeHeaders(headers: Record<string, any> | undefined | null): Record<string, string> {
   const out: Record<string, string> = {};
@@ -168,6 +286,26 @@ export class SimpleProxyServer {
         return;
       }
       ctx.body = configStore.getProviderOAuthConfig(providerId);
+    });
+
+    this.router.get('/api/prompts', async ctx => {
+      ctx.body = getAllPrompts();
+    });
+
+    this.router.post('/api/prompts', async ctx => {
+      const body = ctx.request.body as any;
+      if (!body || !body.id) {
+        ctx.status = 400;
+        ctx.body = { error: 'id and value required' };
+        return;
+      }
+      setPromptOverride(String(body.id), String(body.value || ''));
+      ctx.body = { ok: true, prompts: getAllPrompts() };
+    });
+
+    this.router.post('/api/prompts/reset', async ctx => {
+      resetPromptOverrides();
+      ctx.body = { ok: true, prompts: getAllPrompts() };
     });
 
     this.router.post('/api/provider/oauth/capture', async ctx => {
@@ -1460,6 +1598,23 @@ export class SimpleProxyServer {
         currentSession?.id,
       );
       let processedMessages = overflowResult.messages;
+      const openAiTools = convertOpenAiTools(body.tools);
+      const openAiToolChoice = convertOpenAiToolChoice(body.tool_choice);
+      const openAiToolModeEnabled = openAiTools.length > 0 && openAiToolChoice?.mode !== 'none';
+      let openAiToolNames: string[] = [];
+      if (openAiTools.length > 0) {
+        const promptOverrides = getPromptOverrides();
+        const injected = injectToolPrompt(
+          normalizeOpenAiMessagesForTools(processedMessages),
+          openAiTools,
+          openAiToolChoice,
+          promptOverrides,
+        );
+        processedMessages = buildQwenMessagesForToolPrompt(injected.messages);
+        openAiToolNames = injected.toolNames;
+      } else {
+        processedMessages = normalizeToolMessages(processedMessages as any);
+      }
       // Attach file-backed session if overflow created one and no explicit session
       const fileBackedSessionId = overflowResult.fileBackedSessionId || overflowResult.sanitizerMeta?.fileBackedSessionId as string | undefined;
       if (!currentSession && fileBackedSessionId) {
@@ -1471,8 +1626,8 @@ export class SimpleProxyServer {
         }
       }
 
-      const promptContractInjected = false;
-      const responseXmlPassthroughEnabled = true;
+      const promptContractInjected = openAiToolModeEnabled;
+      const responseXmlPassthroughEnabled = !openAiToolModeEnabled;
 
       // Create run with full metadata
       const currentRun = runStore.createRun({
@@ -1828,6 +1983,7 @@ export class SimpleProxyServer {
 
         // Non-stream
         const nshandler = new QwenAiStreamHandler(model);
+        nshandler.xmlPassthrough = responseXmlPassthroughEnabled;
         const nstransformed = await nshandler.handleStream(response.data);
         const result = await collectNonStreamFromTransformedSSE(nstransformed, model);
         ctx.status = 200;
@@ -1857,6 +2013,307 @@ export class SimpleProxyServer {
         ctx.body = { error: { message: err instanceof Error ? err.message : String(err) } };
         await finalizeRun('failed', { error: err instanceof Error ? err.message : String(err) });
         buildLogEntry('error', { status: 500, error: err instanceof Error ? err.message : String(err), prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+      }
+    });
+
+    // ===== Anthropic-compatible endpoint =====
+    this.router.post('/v1/messages', async ctx => {
+      const startedAt = Date.now();
+      const clientRequestHeaders = maskHeaders(ctx.headers as Record<string, any>);
+      const conf = configStore.getConfig();
+      const requiredProxyKey = String(conf.proxy?.key || '').trim();
+      if (requiredProxyKey) {
+        const authHeader = String(ctx.headers.authorization || '');
+        const xApiKey = String(ctx.headers['x-api-key'] || '');
+        const bearer = authHeader.toLowerCase().startsWith('bearer ')
+          ? authHeader.slice(7).trim()
+          : '';
+        const providedKey = bearer || xApiKey;
+        if (providedKey !== requiredProxyKey) {
+          ctx.status = 401;
+          ctx.body = { error: { message: 'Unauthorized: invalid proxy key' } };
+          return;
+        }
+      }
+
+      const anthropicVersion = String(ctx.headers['anthropic-version'] || '').trim();
+      if (anthropicVersion && !/^\d{4}-\d{2}-\d{2}$/.test(anthropicVersion)) {
+        ctx.status = 400;
+        ctx.body = { error: { message: `Invalid anthropic-version: ${anthropicVersion}. Expected format YYYY-MM-DD.` } };
+        return;
+      }
+
+      const body = ctx.request.body as any;
+      if (!body) {
+        ctx.status = 400;
+        ctx.body = { error: { message: 'Request body required' } };
+        return;
+      }
+
+      try {
+        const internalReq = convertToInternalRequest(body);
+        const stream = !!body.stream;
+
+        const availableProviderIds = conf.providers.map(p => p.id);
+        const providerId = selectProvider(internalReq.model, body, ctx.headers as any, availableProviderIds);
+        const providerConf = conf.providers.find(p => p.id === providerId);
+        if (!providerConf) {
+          ctx.status = 400;
+          ctx.body = { error: { message: `Provider "${providerId}" not configured` } };
+          return;
+        }
+
+        const accounts = getAccountsFromProviderConf(providerConf);
+        if (accounts.length === 0) {
+          ctx.status = 400;
+          ctx.body = { error: { message: `No accounts available for provider "${providerId}"` } };
+          return;
+        }
+
+        const preferredAccountId = body.account || body.metadata?.account_id || ctx.headers['x-luna-account-id'] as string;
+        const account = selectAccount(providerId, accounts, preferredAccountId, (accId) => lockManager.currentCapacity(`account:${providerId}:${accId}`));
+        if (!account) {
+          ctx.status = 400;
+          ctx.body = { error: { message: `No enabled account available for provider "${providerId}"` } };
+          return;
+        }
+
+        const token = (account.credentials.token) || process.env.QWEN_AI_TOKEN || '';
+        const cookies = (account.credentials.cookies || account.credentials.cookie) || process.env.QWEN_AI_COOKIES || '';
+        if (!token && !cookies) {
+          ctx.status = 400;
+          ctx.body = { error: { message: `Token/cookies not configured for account "${account.id}"` } };
+          return;
+        }
+
+        const promptOverrides = getPromptOverrides();
+        const { messages: injectedMessages, toolNames } = injectToolPrompt(
+          internalReq.messages,
+          internalReq.tools || [],
+          internalReq.toolChoice,
+          promptOverrides,
+        );
+        const overflowResult = await applyTokenOverflowPolicy(
+          injectedMessages,
+          conf.settings || {},
+          token,
+          cookies,
+          internalReq.model,
+        );
+        const processedMessages = overflowResult.messages;
+
+        let systemContent = '';
+        let userContent = '';
+        for (const msg of processedMessages) {
+          if (msg.role === 'system') {
+            systemContent += (systemContent ? '\n\n' : '') + msg.content;
+          } else if (msg.role === 'user') {
+            userContent += (userContent ? '\n' : '') + msg.content;
+          }
+        }
+
+        const chatMessages: any[] = [];
+        if (systemContent) {
+          chatMessages.push({ role: 'system', content: systemContent });
+        }
+
+        const nonSystemMsgs = processedMessages.filter(m => m.role !== 'system');
+        const lastUserIdx = [...nonSystemMsgs].reverse().findIndex(m => m.role === 'user');
+        if (lastUserIdx >= 0) {
+          const transcriptParts: string[] = [];
+          for (let i = 0; i < nonSystemMsgs.length; i++) {
+            const m = nonSystemMsgs[i];
+            transcriptParts.push(`${m.role}:${m.content}`);
+          }
+          const transcript = transcriptParts.join(';');
+          chatMessages.push({ role: 'user', content: transcript });
+        } else {
+          chatMessages.push({ role: 'user', content: userContent || 'Hello' });
+        }
+
+        // Create adapter and call Qwen
+        let adapter: QwenAiAdapter;
+        if (providerId === 'qwen-ai') {
+          const provider: Provider = {
+            id: 'qwen-ai',
+            apiEndpoint: 'https://chat.qwen.ai',
+            chatPath: '/api/v2/chat/completions',
+            ...(qwenAiConfig.modelMappings ? { modelMappings: qwenAiConfig.modelMappings as any } : {}),
+          } as Provider;
+          adapter = new QwenAiAdapter(provider, account);
+        } else {
+          ctx.status = 400;
+          ctx.body = { error: { message: `Unsupported provider: ${providerId} for Anthropic endpoint` } };
+          return;
+        }
+
+        const { response, chatId } = await adapter.chatCompletion({
+          model: internalReq.model,
+          messages: chatMessages,
+          stream: true,
+          files: overflowResult.files || [],
+          file_ids: overflowResult.fileIds || [],
+          signal: undefined,
+        });
+
+        const inputTokens = estimateAnthropicInputTokens(body);
+        const messageId = `msg_${chatId || Date.now().toString(36)}`;
+
+        if (stream) {
+          // Stream mode: collect full SSE, parse tool calls, emit Anthropic SSE
+          const handler = new QwenAiStreamHandler(internalReq.model);
+          handler.xmlPassthrough = true;
+          const transformed = await handler.handleStream(response.data);
+
+          let fullContent = '';
+          const streamedToolCalls: any[] = [];
+          transformed.on('data', (chunk: Buffer) => {
+            const text = chunk.toString();
+            const dataLines = text.split('\n').filter(line => line.startsWith('data: '));
+            for (const line of dataLines) {
+              try {
+                const parsed = JSON.parse(line.slice(6));
+                const delta = parsed?.choices?.[0]?.delta;
+                if (delta?.content) {
+                  fullContent += delta.content;
+                }
+                if (Array.isArray(delta?.tool_calls)) {
+                  for (const tc of delta.tool_calls) {
+                    const index = typeof tc?.index === 'number' ? tc.index : streamedToolCalls.length;
+                    const existing = streamedToolCalls[index] || { index };
+                    streamedToolCalls[index] = {
+                      ...existing,
+                      ...tc,
+                      function: {
+                        ...(existing.function || {}),
+                        ...(tc.function || {}),
+                        name: tc.function?.name ?? existing.function?.name,
+                        arguments: `${existing.function?.arguments || ''}${tc.function?.arguments || ''}`,
+                      },
+                    };
+                  }
+                }
+              } catch {}
+            }
+          });
+
+          const anthropicStream = createAnthropicStream(internalReq.model, messageId);
+
+          transformed.once('end', () => {
+            const toolCalls = streamedToolCalls.filter(Boolean).map((tc: any) => {
+              let input = {};
+              try {
+                input = JSON.parse(tc.function?.arguments || '{}');
+              } catch {}
+              return {
+                id: tc.id,
+                name: tc.function?.name || tc.name,
+                input,
+              };
+            });
+            if (toolCalls.length === 0) {
+              toolCalls.push(...parseToolCalls(fullContent));
+            }
+            const cleanContent = cleanVisibleText(fullContent);
+            let contentIndex = 0;
+
+            if (cleanContent) {
+              writeAnthropicStreamText(anthropicStream, contentIndex, cleanContent);
+              contentIndex++;
+            }
+
+            for (let i = 0; i < toolCalls.length; i++) {
+              writeAnthropicStreamToolCall(anthropicStream, contentIndex + i, toolCalls[i], messageId);
+            }
+
+            endAnthropicStream(anthropicStream, toolCalls.length, inputTokens);
+          });
+
+          transformed.once('error', () => {
+            endAnthropicStream(anthropicStream, 0, inputTokens);
+          });
+
+          ctx.status = 200;
+          ctx.set('Content-Type', 'text/event-stream');
+          ctx.set('Cache-Control', 'no-cache');
+          ctx.set('Connection', 'keep-alive');
+          ctx.body = anthropicStream;
+          return;
+        }
+
+        // Non-stream mode
+        const nshandler = new QwenAiStreamHandler(internalReq.model);
+        const nstransformed = await nshandler.handleStream(response.data);
+        const { PassThrough } = require('stream');
+        const collector = new PassThrough();
+        nstransformed.pipe(collector);
+
+        let resultContent = '';
+        const chunks: Buffer[] = [];
+        collector.on('data', (chunk: Buffer) => chunks.push(chunk));
+        await new Promise<void>((resolve, reject) => {
+          collector.once('end', resolve);
+          collector.once('error', reject);
+        });
+
+        const rawText = Buffer.concat(chunks).toString();
+        const dataLines = rawText.split('\n').filter(line => line.startsWith('data: '));
+        for (const line of dataLines) {
+          try {
+            const parsed = JSON.parse(line.slice(6));
+            const delta = parsed?.choices?.[0]?.delta;
+            if (delta?.content) resultContent += delta.content;
+          } catch {}
+        }
+
+        const toolCalls = parseToolCalls(resultContent);
+        const cleanContent = cleanVisibleText(resultContent);
+        const outputTokens = Math.max(1, Math.ceil((cleanContent.length + JSON.stringify(toolCalls).length) / 4));
+
+        const anthropicResponse = renderAnthropicNonStream(
+          cleanContent,
+          toolCalls,
+          inputTokens,
+          outputTokens,
+          internalReq.model,
+          messageId,
+        );
+
+        ctx.status = 200;
+        ctx.set('x-request-id', crypto.randomUUID());
+
+        // Also cache toolCalls in the response for downstream render
+        (anthropicResponse as any).toolCalls = toolCalls;
+        ctx.body = anthropicResponse;
+      } catch (err) {
+        ctx.status = 500;
+        ctx.body = { error: { message: err instanceof Error ? err.message : String(err) } };
+        configStore.addLog('error', JSON.stringify({
+          path: '/v1/messages',
+          status: 500,
+          error: err instanceof Error ? err.message : String(err),
+          durationMs: Date.now() - startedAt,
+        }));
+      }
+    });
+
+    this.router.post('/v1/messages/count_tokens', async ctx => {
+      const body = ctx.request.body as any;
+      if (!body) {
+        ctx.status = 400;
+        ctx.body = { error: { message: 'Request body required' } };
+        return;
+      }
+
+      try {
+        const inputTokens = estimateAnthropicInputTokens(body);
+        ctx.body = {
+          input_tokens: inputTokens,
+          output_tokens: 0,
+        };
+      } catch (err) {
+        ctx.status = 500;
+        ctx.body = { error: { message: err instanceof Error ? err.message : String(err) } };
       }
     });
 

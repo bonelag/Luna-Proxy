@@ -8,6 +8,7 @@ export function collectNonStreamFromTransformedSSE(
     let content = '';
     let reasoningContent = '';
     let finishReason = 'stop';
+    const toolCalls: any[] = [];
 
     const flushLine = (line: string) => {
       const trimmed = line.trim();
@@ -24,6 +25,22 @@ export function collectNonStreamFromTransformedSSE(
         }
         if (typeof delta.reasoning_content === 'string' && delta.reasoning_content) {
           reasoningContent += delta.reasoning_content;
+        }
+        if (Array.isArray(delta.tool_calls)) {
+          for (const tc of delta.tool_calls) {
+            const index = typeof tc?.index === 'number' ? tc.index : toolCalls.length;
+            const existing = toolCalls[index] || { index };
+            toolCalls[index] = {
+              ...existing,
+              ...tc,
+              function: {
+                ...(existing.function || {}),
+                ...(tc.function || {}),
+                name: tc.function?.name ?? existing.function?.name,
+                arguments: `${existing.function?.arguments || ''}${tc.function?.arguments || ''}`,
+              },
+            };
+          }
         }
         if (choice?.finish_reason) {
           finishReason = choice.finish_reason;
@@ -45,6 +62,17 @@ export function collectNonStreamFromTransformedSSE(
 
     stream.once('error', err => reject(err));
     stream.once('end', () => {
+      const message: any = {
+        role: 'assistant',
+        content: content || '',
+        reasoning_content: reasoningContent || '',
+      };
+      const compactToolCalls = toolCalls.filter(Boolean);
+      if (compactToolCalls.length > 0) {
+        message.content = content || null;
+        message.tool_calls = compactToolCalls;
+      }
+
       resolve({
         id: id || '',
         model,
@@ -52,11 +80,7 @@ export function collectNonStreamFromTransformedSSE(
         choices: [
           {
             index: 0,
-            message: {
-              role: 'assistant',
-              content: content || '',
-              reasoning_content: reasoningContent || '',
-            },
+            message,
             finish_reason: finishReason || 'stop',
           },
         ],
