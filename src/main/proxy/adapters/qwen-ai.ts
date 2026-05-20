@@ -12,6 +12,7 @@ import {createParser} from 'eventsource-parser';
 import {Account, Provider} from '../../store/types';
 import {hasToolUse, parseToolUse} from '../promptToolUse';
 import {parseToolCalls, cleanVisibleText, createStreamState, processStreamChunk} from '../toolcall/toolcall';
+import {inspectStreamForError} from '../../../modules/upstreamErrorHandler';
 
 const QWEN_AI_BASE = 'https://chat.qwen.ai';
 
@@ -1044,6 +1045,12 @@ export class QwenAiStreamHandler {
 	xmlPassthrough: boolean = true;
 	leakDetected: boolean = false;
 	leakReason: string = '';
+	/** Maximum output tokens (0 = no limit) */
+	maxOutputTokens: number = 0;
+	/** Tracks estimated output tokens emitted so far */
+	private outputTokenCount: number = 0;
+	/** Whether output was truncated due to max_tokens */
+	outputTruncated: boolean = false;
 
 	constructor(model: string, onEnd?: (chatId: string) => void) {
 		this.model = model;
@@ -1451,6 +1458,28 @@ export class QwenAiStreamHandler {
 							// Accumulate content for tool call detection
 							this.content += content;
 							sawAnswerContent = sawAnswerContent || !!content;
+
+							// Output token limit check
+							if (this.maxOutputTokens > 0 && content) {
+								const chunkTokens = Math.ceil(content.length / 4);
+								this.outputTokenCount += chunkTokens;
+								if (this.outputTokenCount >= this.maxOutputTokens && !this.outputTruncated) {
+									this.outputTruncated = true;
+									console.log(`[QwenAI] Output truncated at ~${this.outputTokenCount} tokens (max: ${this.maxOutputTokens})`);
+									// Send final chunk with finish_reason 'length'
+									const truncChunk = {
+										id: this.responseId || this.chatId,
+										model: this.model,
+										object: 'chat.completion.chunk',
+										choices: [{index: 0, delta: {}, finish_reason: 'length'}],
+										created: this.created,
+									};
+									safeWrite(`data: ${JSON.stringify(truncChunk)}\n\n`);
+									safeEnd('data: [DONE]\n\n');
+									if (this.onEnd && this.chatId) this.onEnd(this.chatId);
+									return;
+								}
+							}
 
 							if (content) {
 								const visibleContent = this.xmlPassthrough

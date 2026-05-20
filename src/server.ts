@@ -31,7 +31,8 @@ import {qwenAiConfig} from './main/providers/builtin/qwen-ai';
 import {isAssistantFailureEcho, stripThinkingBlocks, messageSimilarity} from './main/proxy/overflowSanitizer';
 import {getWorkers, upsertWorker, deleteWorker, verifyWorkerIp} from './modules/workers';
 import {analyzeResponseXml} from './modules/responseAnalyzer';
-import {extractText} from './modules/textUtils';
+import {extractText, validateInputSize} from './modules/textUtils';
+import {normalizeUpstreamError, formatUpstreamErrorResponse, isRetryableError} from './modules/upstreamErrorHandler';
 import {collectNonStreamFromTransformedSSE} from './modules/sseCollector';
 import {applyTokenOverflowPolicy} from './modules/overflowPolicy';
 import {persistSessionMessages} from './modules/sessionPersistence';
@@ -1589,6 +1590,32 @@ export class SimpleProxyServer {
         }
       }
 
+      // ---- INPUT TOKEN GUARD ----
+      const tokenLimitsCfg = conf.settings?.tokenLimits || {};
+      if (tokenLimitsCfg.enabled !== false) {
+        const maxInput = Number(tokenLimitsCfg.maxInputTokens) || 128000;
+        const warnInput = Number(tokenLimitsCfg.warnInputTokens) || 100000;
+        const inputValidation = validateInputSize(combinedMessages, maxInput, warnInput);
+        if (!inputValidation.ok) {
+          ctx.status = 400;
+          ctx.body = { error: { message: inputValidation.suggestion || 'Input exceeds maximum token limit', type: 'token_limit', totalTokens: inputValidation.totalTokens, maxInputTokens: inputValidation.maxInputTokens } };
+          configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: 400, model, stream: !!body.stream, error: inputValidation.suggestion, totalTokens: inputValidation.totalTokens, maxInputTokens: inputValidation.maxInputTokens, durationMs: Date.now() - startedAt }));
+          return;
+        }
+        if (inputValidation.warn) {
+          console.warn(`[TokenGuard] Warning: ${inputValidation.suggestion}`);
+          configStore.addLog('info', JSON.stringify({ path: '/v1/chat/completions', warning: 'token_limit_approaching', totalTokens: inputValidation.totalTokens, maxInputTokens: inputValidation.maxInputTokens }));
+        }
+      }
+
+      // ---- Extract max_tokens from request ----
+      const requestedMaxTokens = Number(body.max_tokens || body.max_completion_tokens || 0);
+      const maxOutputCap = Number(tokenLimitsCfg.maxOutputTokensCap) || 32000;
+      const defaultMaxOutput = Number(tokenLimitsCfg.defaultMaxOutputTokens) || 8192;
+      const effectiveMaxOutputTokens = requestedMaxTokens > 0
+        ? Math.min(requestedMaxTokens, maxOutputCap)
+        : defaultMaxOutput;
+
       const overflowResult = await applyTokenOverflowPolicy(
         combinedMessages,
         conf.settings || {},
@@ -1935,6 +1962,7 @@ export class SimpleProxyServer {
         if (stream) {
           const handler = new QwenAiStreamHandler(model, async sid => {});
           handler.xmlPassthrough = responseXmlPassthroughEnabled;
+          handler.maxOutputTokens = effectiveMaxOutputTokens;
           const transformed = await handler.handleStream(response.data);
 
           ctx.status = 200;
@@ -2009,10 +2037,21 @@ export class SimpleProxyServer {
           if (!ctx.body) { ctx.status = 499; ctx.body = { error: { message: 'Request aborted', runId: currentRun.id } }; }
           return;
         }
-        ctx.status = 500;
-        ctx.body = { error: { message: err instanceof Error ? err.message : String(err) } };
-        await finalizeRun('failed', { error: err instanceof Error ? err.message : String(err) });
-        buildLogEntry('error', { status: 500, error: err instanceof Error ? err.message : String(err), prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+
+        // Normalize upstream errors for proper status codes
+        const errMsg = err instanceof Error ? err.message : String(err);
+        const upstreamErr = normalizeUpstreamError(undefined, errMsg, errMsg);
+        if (upstreamErr) {
+          ctx.status = upstreamErr.statusCode;
+          ctx.body = formatUpstreamErrorResponse(upstreamErr);
+          await finalizeRun('failed', { error: upstreamErr.message });
+          buildLogEntry('error', { status: upstreamErr.statusCode, error: upstreamErr.message, errorType: upstreamErr.errorType, retryable: upstreamErr.retryable, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+        } else {
+          ctx.status = 500;
+          ctx.body = { error: { message: errMsg } };
+          await finalizeRun('failed', { error: errMsg });
+          buildLogEntry('error', { status: 500, error: errMsg, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+        }
       }
     });
 
@@ -2093,6 +2132,22 @@ export class SimpleProxyServer {
           internalReq.toolChoice,
           promptOverrides,
         );
+        // ---- INPUT TOKEN GUARD (Anthropic) ----
+        const anthropicTokenLimitsCfg = conf.settings?.tokenLimits || {};
+        if (anthropicTokenLimitsCfg.enabled !== false) {
+          const maxInput = Number(anthropicTokenLimitsCfg.maxInputTokens) || 128000;
+          const warnInput = Number(anthropicTokenLimitsCfg.warnInputTokens) || 100000;
+          const inputValidation = validateInputSize(injectedMessages, maxInput, warnInput);
+          if (!inputValidation.ok) {
+            ctx.status = 400;
+            ctx.body = { type: 'error', error: { type: 'invalid_request_error', message: inputValidation.suggestion || 'Input exceeds maximum token limit' } };
+            return;
+          }
+          if (inputValidation.warn) {
+            console.warn(`[TokenGuard/Anthropic] Warning: ${inputValidation.suggestion}`);
+          }
+        }
+
         const overflowResult = await applyTokenOverflowPolicy(
           injectedMessages,
           conf.settings || {},

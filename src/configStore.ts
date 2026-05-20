@@ -131,6 +131,13 @@ export class ConfigStore {
         verifyBeforeUse: true,
         verifyIpUrl: 'https://api.ipify.org?format=json',
       },
+      tokenLimits: {
+        enabled: true,
+        maxInputTokens: 128000,
+        warnInputTokens: 100000,
+        defaultMaxOutputTokens: 8192,
+        maxOutputTokensCap: 32000,
+      },
     };
 
     this.save(defaultConfig);
@@ -175,6 +182,10 @@ export class ConfigStore {
         egressIsolation: {
           ...((this.data.settings?.egressIsolation as any) || {}),
           ...((partial.settings.egressIsolation as any) || {}),
+        },
+        tokenLimits: {
+          ...((this.data.settings?.tokenLimits as any) || {}),
+          ...((partial.settings.tokenLimits as any) || {}),
         },
       };
       const rest = {...partial};

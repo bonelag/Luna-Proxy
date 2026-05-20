@@ -66,9 +66,26 @@ Do NOT repeat the conversation verbatim. Keep the summary under 500 words.`;
     file_ids: [uploaded.fileId],
   } as any);
   const handler = new QwenAiStreamHandler(compactModel);
-  const result = await handler.handleNonStream(compactResponse.data);
-  const summary = result?.choices?.[0]?.message?.content || '';
-  if (!summary) throw new Error('Compact produced empty summary');
+  let summary = '';
+  try {
+    const result = await handler.handleNonStream(compactResponse.data);
+    const message = result?.choices?.[0]?.message;
+    // Qwen may return the summary in content or in reasoning_content (thinking mode)
+    summary = message?.content || message?.reasoning_content || '';
+    if (!summary && result?.choices?.[0]) {
+      // Last resort: try to extract any text from the choice
+      const raw = JSON.stringify(result.choices[0]);
+      console.warn('[Session] Compact response had no content or reasoning_content, raw choice:', raw.slice(0, 300));
+    }
+  } catch (parseErr) {
+    console.error('[Session] Failed to parse compact response:', parseErr);
+  }
+
+  if (!summary) {
+    // Non-fatal: log warning and skip compaction rather than crashing
+    console.warn('[Session] Compact produced empty summary for session', sessionId, '— skipping compaction');
+    return '';
+  }
 
   sessionStore.setSummary(sessionId, summary);
   const recentMessages = session.messages.slice(-keepRecent);
