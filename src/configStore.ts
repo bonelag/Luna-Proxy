@@ -104,13 +104,29 @@ export class ConfigStore {
       },
       session: {
         enabled: true,
-        requireExplicitId: true,
-        fallbackMode: 'file-backed',
         historyLimit: 10,
+        rollingHistoryK: 10,
+        summaryEveryNTurns: 5,
+        summaryMaxTokens: 800,
         autoCompact: true,
         compactAfterMessages: 40,
         compactModel: 'Qwen3.6-Plus',
         compactKeepRecent: 5,
+        overflowSignal: {
+          enabled: true,
+          mode: 'auto',
+          signalThresholdTokens: 90000,
+        },
+        chatCleanup: {
+          enabled: false,
+          afterResponse: false,
+          scheduled: {
+            enabled: false,
+            mode: 'proxy-created',
+            intervalHours: 1,
+            maxAgeHours: 24,
+          },
+        },
       },
       multiThread: {
         enabled: true,
@@ -174,6 +190,18 @@ export class ConfigStore {
         session: {
           ...(this.data.settings?.session || {}),
           ...(partial.settings.session || {}),
+          overflowSignal: {
+            ...((this.data.settings?.session as any)?.overflowSignal || {}),
+            ...((partial.settings.session as any)?.overflowSignal || {}),
+          },
+          chatCleanup: {
+            ...((this.data.settings?.session as any)?.chatCleanup || {}),
+            ...((partial.settings.session as any)?.chatCleanup || {}),
+            scheduled: {
+              ...((this.data.settings?.session as any)?.chatCleanup?.scheduled || {}),
+              ...((partial.settings.session as any)?.chatCleanup?.scheduled || {}),
+            },
+          },
         },
         multiThread: {
           ...((this.data.settings?.multiThread as any) || {}),

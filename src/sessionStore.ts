@@ -37,6 +37,8 @@ export interface StoredSession {
   providerId: 'qwen-ai';
   providerSessionId?: string;
   summary?: string;
+  contextHash?: string;
+  turnCount?: number;
   mode?: 'persistent' | 'transient' | 'file-backed' | 'shared-default' | 'stateless';
   profileId?: string;
   fingerprint?: string;
@@ -83,6 +85,7 @@ type SessionData = Record<string, StoredSession>;
 export class SessionStore {
   private filePath: string;
   private data: SessionData;
+  private contextHashIndex = new Map<string, string>();
   private locks = new Map<string, Promise<void>>();
   private seenRequestIds = new Set<string>();
 
@@ -93,6 +96,7 @@ export class SessionStore {
     }
     this.filePath = path.join(dataDir, 'sessions.json');
     this.data = this.load();
+    this.rebuildContextHashIndex();
   }
 
   async withSessionLock<T>(sessionId: string, fn: () => Promise<T> | T): Promise<T> {
@@ -136,8 +140,17 @@ export class SessionStore {
     return {};
   }
 
+  private rebuildContextHashIndex(): void {
+    this.contextHashIndex.clear();
+    for (const session of Object.values(this.data)) {
+      if (typeof session.turnCount !== 'number') session.turnCount = Math.max(0, session.messages?.filter(m => m.role === 'assistant').length || 0);
+      if (session.contextHash) this.contextHashIndex.set(session.contextHash, session.id);
+    }
+  }
+
   reload() {
     this.data = this.load();
+    this.rebuildContextHashIndex();
     console.log('[SessionStore] Reloaded from disk, sessions:', Object.keys(this.data).length);
   }
 
@@ -147,8 +160,58 @@ export class SessionStore {
 
   clearAll() {
     this.data = {};
+    this.contextHashIndex.clear();
     this.save();
     console.log('[SessionStore] Cleared all sessions');
+  }
+
+  createSession(input?: {model?: string; source?: string; workspace?: string; threadId?: string; mode?: StoredSession['mode']}): StoredSession {
+    const session: StoredSession = {
+      id: crypto.randomUUID(),
+      source: input?.source || 'auto',
+      workspace: input?.workspace,
+      threadId: input?.threadId || crypto.randomUUID(),
+      providerId: 'qwen-ai',
+      model: input?.model,
+      mode: input?.mode || 'persistent',
+      turnCount: 0,
+      messages: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      active: true,
+    };
+    this.data[`session::${session.id}`] = session;
+    this.save();
+    console.log('[SessionStore] Created auto session:', session.id);
+    return session;
+  }
+
+  resolveByContextHash(hash: string): StoredSession | undefined {
+    if (!hash) return undefined;
+    const sessionId = this.contextHashIndex.get(hash);
+    const session = sessionId ? this.getSession(sessionId) : undefined;
+    if (session) {
+      session.updatedAt = Date.now();
+      this.save();
+    }
+    return session;
+  }
+
+  updateContextHash(sessionId: string, oldHash: string | undefined, newHash: string): Promise<void> {
+    return this.withSessionLock(sessionId, () => {
+      const session = this.getSession(sessionId);
+      if (!session || !newHash) return;
+      if (oldHash && this.contextHashIndex.get(oldHash) === sessionId) {
+        this.contextHashIndex.delete(oldHash);
+      }
+      if (session.contextHash && session.contextHash !== newHash && this.contextHashIndex.get(session.contextHash) === sessionId) {
+        this.contextHashIndex.delete(session.contextHash);
+      }
+      session.contextHash = newHash;
+      session.updatedAt = Date.now();
+      this.contextHashIndex.set(newHash, sessionId);
+      this.save();
+    });
   }
 
   private keyFromSessionKey(input: SessionKey): string {
@@ -222,6 +285,7 @@ export class SessionStore {
       createdAt: Date.now(),
       updatedAt: Date.now(),
       active: true,
+      turnCount: 0,
     };
     this.data[key] = session;
     this.save();
@@ -278,6 +342,7 @@ export class SessionStore {
       createdAt: Date.now(),
       updatedAt: Date.now(),
       active: true,
+      turnCount: 0,
       resolveReason: 'file-backed:medium',
     };
     this.data[uniqueKey] = session;
@@ -431,6 +496,7 @@ export class SessionStore {
       const session = this.getSession(sessionId);
       if (!session) return;
       session.messages.push(...msgs);
+      session.turnCount = (session.turnCount || 0) + msgs.filter(m => m.role === 'assistant').length;
       session.updatedAt = Date.now();
       this.save();
     });

@@ -5,6 +5,11 @@ import type { SessionMessage } from '../sessionStore';
 import { estimateTokens, extractText } from './textUtils';
 import { stripThinkingBlocks, isAssistantFailureEcho, messageSimilarity } from '../main/proxy/overflowSanitizer';
 import { compactSession } from './sessionCompactor';
+import { updateRollingSummary } from './rollingSummary';
+import { QwenAiAdapter } from '../main/proxy/adapters/qwen-ai';
+import type { Provider } from '../main/store/types';
+
+const compactingNow = new Set<string>();
 
 export function persistSessionMessages(
   sessionId: string,
@@ -97,14 +102,44 @@ export function persistSessionMessages(
   const historyLimit = Number(sessionCfg.historyLimit) || 10;
   sessionStore.trimHistory(sessionId, historyLimit * 2);
 
+  const session = sessionStore.getSession(sessionId);
+  const summaryEveryNTurns = Number(sessionCfg.summaryEveryNTurns) || 5;
+  const turnCount = session?.turnCount || 0;
+  if (session && summaryEveryNTurns > 0 && turnCount > 0 && turnCount % summaryEveryNTurns === 0) {
+    const providerConf = conf.providers.find(p => p.id === 'qwen-ai');
+    const token = (providerConf?.credentials?.token) || process.env.QWEN_AI_TOKEN || '';
+    const cookies = (providerConf?.credentials?.cookies || providerConf?.credentials?.cookie) || process.env.QWEN_AI_COOKIES || '';
+    if (token || cookies) {
+      const provider: Provider = {
+        id: 'qwen-ai',
+        apiEndpoint: 'https://chat.qwen.ai',
+        chatPath: '/api/v2/chat/completions',
+      } as Provider;
+      const adapter = new QwenAiAdapter(provider, {id: 'summary', providerId: 'qwen-ai', name: 'summary', credentials: {token, cookies}} as any);
+      updateRollingSummary(
+        sessionId,
+        sessionStore.getRecentMessages(sessionId, Math.max(historyLimit * 2, Number(sessionCfg.rollingHistoryK) || 10)),
+        session.summary || '',
+        adapter,
+        session.model || sessionCfg.compactModel || 'Qwen3.6-Plus',
+        Number(sessionCfg.summaryMaxTokens) || 800,
+      ).catch(err => console.error('[Session] Rolling summary failed:', err));
+    }
+  }
+
   if (sessionCfg.autoCompact !== false && sessionStore.getMessageCount(sessionId) >= Number(sessionCfg.compactAfterMessages || 40)) {
     const providerConf = conf.providers.find(p => p.id === 'qwen-ai');
     const token = (providerConf?.credentials?.token) || process.env.QWEN_AI_TOKEN || '';
     const cookies = (providerConf?.credentials?.cookies || providerConf?.credentials?.cookie) || process.env.QWEN_AI_COOKIES || '';
     if (token || cookies) {
-      compactSession(sessionId, token, cookies).catch(err => {
-        console.error('[Session] Auto-compact failed:', err);
-      });
+      if (!compactingNow.has(sessionId)) {
+        compactingNow.add(sessionId);
+        compactSession(sessionId, token, cookies)
+          .catch(err => console.error('[Session] Auto-compact failed:', err))
+          .finally(() => compactingNow.delete(sessionId));
+      } else {
+        console.log('[Session] Compact already in progress for', sessionId, '- skipping');
+      }
     }
   }
 }

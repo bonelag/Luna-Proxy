@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { estimateTokens } from './textUtils';
@@ -98,8 +97,6 @@ export async function applyTokenOverflowPolicy(
       sanitizerMeta.overflowFile = fileName;
     }
 
-    const sessionClient = 'raw-full-prompt';
-
     const guardPrompt = `\n<|begin▁of▁sentence|><|System|>\nThe attached file is the original client prompt that exceeded the token threshold.\nThe file is the real prompt/conversation to process, not reference material and not a document to discuss.\nDo not infer any task from this outer transport message.\nRead the attached file in message order and continue from the prompt inside the file.\n<|end▁of▁instructions|>\n<|User|>\nATTACHED FILE: ${fileName}\nContinue from the prompt contained in the attached file.\n<|Assistant|>\n`;
 
     let overflowFileId: string | undefined;
@@ -127,9 +124,7 @@ export async function applyTokenOverflowPolicy(
       console.error('[Overflow] upload failed, fallback to local-only overflow file:', e);
     }
 
-    const overflowSessionCfg = settings?.session || {};
-    const fileBackedCfg = overflowSessionCfg.fileBacked || {};
-    if (fileBackedCfg.enabled !== false && fileBackedCfg.createOnOverflow !== false) {
+    if (currentSessionId) {
       try {
         const activeTaskPreview = sanitizerMeta?.activeTask?.textPreview?.slice(0, 100) || '';
         const overflowAnchor = {
@@ -140,33 +135,10 @@ export async function applyTokenOverflowPolicy(
           activeTaskPreview,
           createdAt: Date.now(),
         };
-
-        if (currentSessionId) {
-          await sessionStore.appendOverflowAnchor(currentSessionId, overflowAnchor);
-          if (sanitizerMeta) sanitizerMeta.fileBackedSessionId = currentSessionId;
-        } else {
-          const identity: any = {
-            clientType: sessionClient,
-            workspace: process.cwd(),
-            fingerprint: crypto.createHash('sha256').update([
-              sessionClient,
-              process.cwd(),
-              activeTaskPreview.slice(0, 50),
-            ].join('::')).digest('hex').slice(0, 16),
-            activeTask: activeTaskPreview,
-          };
-          const fbSession = sessionStore.resolveFileBackedSession(identity, overflowAnchor);
-          if (fbSession) {
-            sessionStore.setModel(fbSession.id, requestModel || '');
-            if (sanitizerMeta) {
-              sanitizerMeta.fileBackedSessionId = fbSession.id;
-              sanitizerMeta.fileBackedConfidence = fbSession.confidence;
-            }
-            console.log('[Overflow] File-backed session:', fbSession.id, fbSession.confidence);
-          }
-        }
+        await sessionStore.appendOverflowAnchor(currentSessionId, overflowAnchor);
+        if (sanitizerMeta) sanitizerMeta.sessionId = currentSessionId;
       } catch (fbErr) {
-        console.warn('[Overflow] File-backed session creation failed:', fbErr);
+        console.warn('[Overflow] Session overflow anchor append failed:', fbErr);
       }
     }
 

@@ -31,12 +31,14 @@ import {qwenAiConfig} from './main/providers/builtin/qwen-ai';
 import {isAssistantFailureEcho, stripThinkingBlocks, messageSimilarity} from './main/proxy/overflowSanitizer';
 import {getWorkers, upsertWorker, deleteWorker, verifyWorkerIp} from './modules/workers';
 import {analyzeResponseXml} from './modules/responseAnalyzer';
-import {extractText, validateInputSize} from './modules/textUtils';
+import {extractText, estimateTokens, validateInputSize} from './modules/textUtils';
 import {normalizeUpstreamError, formatUpstreamErrorResponse, isRetryableError} from './modules/upstreamErrorHandler';
 import {collectNonStreamFromTransformedSSE} from './modules/sseCollector';
 import {applyTokenOverflowPolicy} from './modules/overflowPolicy';
 import {persistSessionMessages} from './modules/sessionPersistence';
 import {compactSession} from './modules/sessionCompactor';
+import {computeInboundContextHash, computeOutboundContextHash} from './modules/contextHash';
+import {chatCleanupScheduler} from './modules/chatCleanup';
 import {uploadOverflowFileToQwen} from './modules/ossUploader';
 import {
   convertToInternalRequest,
@@ -201,6 +203,17 @@ export class SimpleProxyServer {
     this.setupMiddleware();
     this.setupRoutes();
     sessionStore.startCleanupInterval();
+    const conf = configStore.getConfig();
+    chatCleanupScheduler.start(conf.settings?.session?.chatCleanup || {}, () => {
+      const providerConf = configStore.getConfig().providers.find(p => p.id === 'qwen-ai');
+      const account = providerConf ? getAccountsFromProviderConf(providerConf)[0] : undefined;
+      if (!account) return null;
+      return new QwenAiAdapter({
+        id: 'qwen-ai',
+        apiEndpoint: 'https://chat.qwen.ai',
+        chatPath: '/api/v2/chat/completions',
+      } as Provider, account);
+    });
   }
 
   private setupMiddleware() {
@@ -688,6 +701,27 @@ export class SimpleProxyServer {
       ctx.body = {ok: true};
     });
 
+    this.router.get('/api/chat-cleanup/status', async ctx => {
+      ctx.body = chatCleanupScheduler.status();
+    });
+
+    this.router.post('/api/chat-cleanup/run', async ctx => {
+      const conf = configStore.getConfig();
+      const providerConf = conf.providers.find(p => p.id === 'qwen-ai');
+      const account = providerConf ? getAccountsFromProviderConf(providerConf)[0] : undefined;
+      if (!account) {
+        ctx.status = 400;
+        ctx.body = {error: 'No qwen-ai account configured'};
+        return;
+      }
+      const adapter = new QwenAiAdapter({
+        id: 'qwen-ai',
+        apiEndpoint: 'https://chat.qwen.ai',
+        chatPath: '/api/v2/chat/completions',
+      } as Provider, account);
+      ctx.body = {ok: true, ...(await chatCleanupScheduler.runOnce(adapter))};
+    });
+
     this.router.get('/api/sessions', async ctx => {
       ctx.body = sessionStore.listSessions().map(s => ({
         id: s.id,
@@ -697,6 +731,8 @@ export class SimpleProxyServer {
         title: s.title,
         model: s.model,
         providerSessionId: s.providerSessionId,
+        contextHash: s.contextHash,
+        turnCount: s.turnCount || 0,
         messageCount: s.messages.length,
         summary: s.summary,
         compactedAt: s.compactedAt,
@@ -726,16 +762,14 @@ export class SimpleProxyServer {
       }
       ctx.body = {
         sessionEnabled: sessionCfg.enabled !== false,
-        requireExplicitId: sessionCfg.requireExplicitId !== false,
-        fallbackMode: sessionCfg.fallbackMode || 'file-backed',
+        resolutionMode: 'context-hash',
+        rollingHistoryK: Number(sessionCfg.rollingHistoryK) || 10,
+        summaryEveryNTurns: Number(sessionCfg.summaryEveryNTurns) || 5,
         totalSessions: allSessions.length,
         stats: {
-          persistent: allSessions.filter(s => s.source !== 'transient' && s.source !== 'unknown' && s.mode !== 'file-backed').length,
-          transient: allSessions.filter(s => s.source === 'transient').length,
-          fileBacked: allSessions.filter(s => s.mode === 'file-backed').length,
-          hint: sessionCfg.fallbackMode === 'file-backed'
-            ? 'fallbackMode=file-backed: sessions are created only when overflow files are generated. Before overflow, requests are stateless.'
-            : 'No sessions stored when fallbackMode=stateless and no explicit session ID is provided.',
+          persistent: allSessions.filter(s => s.mode === 'persistent' || !s.mode).length,
+          indexed: allSessions.filter(s => !!s.contextHash).length,
+          summarized: allSessions.filter(s => !!s.summary).length,
         },
         dataFile: {
           path: sessionsFilePath,
@@ -1468,98 +1502,39 @@ export class SimpleProxyServer {
       const stream = !!body.stream;
       const sessionCfg = conf.settings?.session || {};
       const sessionEnabled = sessionCfg.enabled !== false;
-      const requireExplicitId = sessionCfg.requireExplicitId !== false;
-      const fallbackMode = String(sessionCfg.fallbackMode || 'stateless');
       let currentSession: StoredSession | null = null;
       let sessionIdForLog: string | undefined;
-      let sessionMode: string = 'disabled';
-      let sessionResolveReason: string = 'not_resolved';
+      let sessionMode: string = sessionEnabled ? 'stateless' : 'disabled';
+      let sessionResolveReason: string = sessionEnabled ? 'hash_not_available' : 'disabled';
       let combinedMessages: any[] = messages;
+      let inboundHash = '';
 
-      if (sessionEnabled) {
-        const headerSessionId = ctx.headers['x-luna-session-id'] as string;
-        const bodySessionId = body.session_id || body.metadata?.session_id;
-        const explicitSessionId = headerSessionId || bodySessionId;
-
-        if (explicitSessionId) {
-          currentSession = sessionStore.getSession(explicitSessionId);
-          if (currentSession) {
-            sessionResolveReason = `found_by_explicit_id=${explicitSessionId.slice(0, 8)}`;
-            sessionStore.updateSessionKey(currentSession.id, {
-              source: String(ctx.headers['x-luna-source'] || body.metadata?.ide || currentSession.source),
-              workspace: String(ctx.headers['x-luna-workspace'] || body.metadata?.workspace || currentSession.workspace || ''),
-              threadId: String(ctx.headers['x-luna-thread-id'] || body.metadata?.thread_id || currentSession.threadId),
-            });
-          } else {
-            sessionResolveReason = `not_found_by_id=${explicitSessionId.slice(0, 8)}_fallback_resolve`;
-            const src = String(ctx.headers['x-luna-source'] || body.metadata?.ide || 'unknown');
-            const ws = String(ctx.headers['x-luna-workspace'] || body.metadata?.workspace || '');
-            const tid = String(ctx.headers['x-luna-thread-id'] || body.metadata?.thread_id || 'default');
-            currentSession = sessionStore.resolveSession({source: src, workspace: ws, threadId: tid});
-          }
+      if (sessionEnabled && messages.length > 0) {
+        inboundHash = computeInboundContextHash(messages, model);
+        if (inboundHash) {
+          currentSession = sessionStore.resolveByContextHash(inboundHash) || null;
           if (currentSession) {
             sessionMode = 'persistent';
-            sessionResolveReason += '_persistent';
-          }
-        }
-
-        if (!currentSession) {
-          const src = String(ctx.headers['x-luna-source'] || body.metadata?.ide || '');
-          const ws = String(ctx.headers['x-luna-workspace'] || body.metadata?.workspace || '');
-          const tid = String(ctx.headers['x-luna-thread-id'] || body.metadata?.thread_id || '');
-          const hasExplicitThread = tid && tid !== 'default' && tid !== '';
-          const hasExplicitSource = src && src !== 'unknown' && src !== '';
-
-          if (hasExplicitThread && hasExplicitSource) {
-            sessionResolveReason = `resolve_by_key=${src}/${ws}/${tid}`;
-            currentSession = sessionStore.resolveSession({source: src, workspace: ws, threadId: tid});
-            if (currentSession) {
-              sessionMode = 'persistent';
-              sessionResolveReason += '_persistent';
-            }
-          }
-        }
-
-        if (!currentSession) {
-          if (fallbackMode === 'stateless') {
-            sessionMode = 'stateless';
-            sessionResolveReason = 'stateless_fallback_no_explicit_id';
-          } else if (fallbackMode === 'file-backed') {
-            sessionMode = 'stateless';
-            sessionResolveReason = 'stateless_waiting_for_overflow_file_backed';
-          } else if (fallbackMode === 'transient') {
-            const src = String(ctx.headers['x-luna-source'] || body.metadata?.ide || 'transient');
-            const ws = String(ctx.headers['x-luna-workspace'] || body.metadata?.workspace || '');
-            const tid = String(ctx.headers['x-luna-thread-id'] || body.metadata?.thread_id || crypto.randomUUID());
-            currentSession = sessionStore.resolveSession({source: src, workspace: ws, threadId: tid}, {create: true});
-            sessionMode = 'transient';
-            sessionResolveReason = `transient_fallback_created=${currentSession.id.slice(0, 8)}`;
+            sessionResolveReason = `context_hash_hit=${inboundHash.slice(0, 8)}`;
           } else {
-            const src = String(ctx.headers['x-luna-source'] || body.metadata?.ide || 'unknown');
-            const ws = String(ctx.headers['x-luna-workspace'] || body.metadata?.workspace || '');
-            const tid = String(ctx.headers['x-luna-thread-id'] || body.metadata?.thread_id || 'default');
-            currentSession = sessionStore.resolveSession({source: src, workspace: ws, threadId: tid});
-            sessionMode = 'shared-default';
-            sessionResolveReason = 'shared_default_fallback';
+            currentSession = sessionStore.createSession({model, source: 'auto'});
+            await sessionStore.updateContextHash(currentSession.id, undefined, inboundHash);
+            sessionMode = 'new';
+            sessionResolveReason = `context_hash_miss_created=${inboundHash.slice(0, 8)}`;
           }
-        }
-
-        if (currentSession && sessionMode === 'persistent') {
           sessionIdForLog = currentSession.id;
           sessionStore.setModel(currentSession.id, model);
-
-          const historyLimit = Number(sessionCfg.historyLimit) || 10;
-          const summary = currentSession.summary;
-          const combined: any[] = [];
-          if (summary) {
-            combined.push({ role: 'system', content: `[Session summary from previous conversation]\n${summary}` });
-          }
-          for (const sm of sessionStore.getRecentMessages(currentSession.id, historyLimit)) {
-            combined.push({ role: sm.role, content: sm.content });
-          }
-          combined.push(...messages);
-          combinedMessages = combined;
+        } else {
+          sessionResolveReason = 'first_turn_waiting_for_response_hash';
         }
+      }
+
+      const rollingHistoryK = Number(sessionCfg.rollingHistoryK) || 10;
+      if (currentSession?.summary && messages.length > rollingHistoryK) {
+        combinedMessages = [
+          {role: 'system', content: `[Conversation context summary]\n${currentSession.summary}`},
+          ...messages.slice(-rollingHistoryK),
+        ];
       }
 
       // Resolve provider binding / provider chat purpose
@@ -1625,6 +1600,29 @@ export class SimpleProxyServer {
         currentSession?.id,
       );
       let processedMessages = overflowResult.messages;
+      const overflowSignalCfg = sessionCfg.overflowSignal || {};
+      const overflowSignalMode = String(overflowSignalCfg.mode || 'auto');
+      if (overflowSignalCfg.enabled && (overflowSignalMode === 'signal' || overflowSignalMode === 'both')) {
+        const threshold = Number(overflowSignalCfg.signalThresholdTokens) || 90000;
+        const tokenCount = processedMessages.reduce((sum, msg) => {
+          const content = typeof msg?.content === 'string' ? msg.content : JSON.stringify(msg?.content || '');
+          return sum + estimateTokens(content);
+        }, 0);
+        if (tokenCount > threshold) {
+          ctx.status = 400;
+          ctx.body = {
+            error: {
+              message: 'This conversation has exceeded the context limit. Please compact or summarize your conversation history.',
+              type: 'invalid_request_error',
+              code: 'context_length_exceeded',
+              param: 'messages',
+              luna_session_id: currentSession?.id,
+            },
+          };
+          configStore.addLog('error', JSON.stringify({path: '/v1/chat/completions', status: 400, model, stream, error: 'context_length_exceeded', sessionId: currentSession?.id, durationMs: Date.now() - startedAt}));
+          return;
+        }
+      }
       const openAiTools = convertOpenAiTools(body.tools);
       const openAiToolChoice = convertOpenAiToolChoice(body.tool_choice);
       const openAiToolModeEnabled = openAiTools.length > 0 && openAiToolChoice?.mode !== 'none';
@@ -1749,6 +1747,25 @@ export class SimpleProxyServer {
           await releaseRun(currentRun.id);
         } catch (err) {
           console.warn('[Runtime] releaseRun failed', currentRun.id, err);
+        }
+        const cleanupCfg = configStore.getConfig().settings?.session?.chatCleanup || {};
+        if (status === 'completed' && cleanupCfg.enabled && cleanupCfg.afterResponse) {
+          chatCleanupScheduler.scheduleDeleteAfterResponse(extra?.providerChatId ?? currentRun.providerChatId, adapter);
+        }
+      };
+
+      const ensureSessionAfterResponse = async (responseText: string) => {
+        if (!sessionEnabled || !responseText) return;
+        if (!currentSession) {
+          currentSession = sessionStore.createSession({model, source: 'auto'});
+          sessionMode = 'new';
+          sessionResolveReason = 'first_turn_created_after_response';
+          runStore.updateRun(currentRun.id, {sessionId: currentSession.id});
+          sessionStore.addActiveRunId(currentSession.id, currentRun.id);
+        }
+        const outboundHash = computeOutboundContextHash(messages, responseText, model);
+        if (outboundHash) {
+          await sessionStore.updateContextHash(currentSession.id, inboundHash || currentSession.contextHash, outboundHash);
         }
       };
 
@@ -1980,6 +1997,8 @@ export class SimpleProxyServer {
               const captureStream = new (require('stream').PassThrough)();
               captureStream.end(capturedResponse);
               const parsed = await collectNonStreamFromTransformedSSE(captureStream, model);
+              const parsedText = parsed?.choices?.[0]?.message?.content || '';
+              await ensureSessionAfterResponse(parsedText);
               if (currentSession) {
                 await acquireSessionWriteLock(currentSession.id);
                 try {
@@ -1989,6 +2008,7 @@ export class SimpleProxyServer {
               buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(parsed?.choices?.[0]?.message?.content), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: parsed, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
               await finalizeRun('completed', { providerChatId: chatId });
             } catch (err) {
+              await ensureSessionAfterResponse(capturedResponse);
               if (currentSession) {
                 await acquireSessionWriteLock(currentSession.id);
                 try {
@@ -2014,6 +2034,8 @@ export class SimpleProxyServer {
         nshandler.xmlPassthrough = responseXmlPassthroughEnabled;
         const nstransformed = await nshandler.handleStream(response.data);
         const result = await collectNonStreamFromTransformedSSE(nstransformed, model);
+        const resultContent = result?.choices?.[0]?.message?.content || '';
+        await ensureSessionAfterResponse(resultContent);
         ctx.status = 200;
         ctx.body = {
           ...result,
@@ -2028,7 +2050,6 @@ export class SimpleProxyServer {
           ctx.set('x-luna-thread-id', currentSession.threadId);
           if (chatId) ctx.set('x-luna-provider-session-id', chatId);
         }
-        const resultContent = result?.choices?.[0]?.message?.content;
         buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(resultContent), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: result, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
         await finalizeRun('completed', { providerChatId: chatId });
       } catch (err) {
