@@ -109,6 +109,15 @@ Tool-call compatibility is split across:
 - `anthropic.ts` and `/v1/messages` in `server.ts` for Anthropic `tool_use` rendering.
 - `sseCollector.ts` for non-stream OpenAI-compatible collection.
 
+## Built-In Providers
+
+```text
+src/main/providers/builtin/
+└── qwen-ai.ts                   # Qwen provider config, single model catalog, model metadata, and aliases
+```
+
+The Qwen model catalog in `qwen-ai.ts` is the single source for `/api/models`, `/api/models/refresh`, and `/v1/models`. It stores display names, provider model IDs, descriptions, limits, modalities, and two-way mappings so chat requests can use either names like `Qwen3.7-Max-Preview` or IDs like `qwen-latest-series-invite-beta-v24`.
+
 ## Frontend Source
 
 ```text

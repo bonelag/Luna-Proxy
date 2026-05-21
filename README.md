@@ -86,7 +86,7 @@ data/config.json
 
 ## Supported Models
 
-LunaProxy exposes the built-in Qwen model catalog through the `/v1/models` endpoint in OpenAI-compatible format. The model list is maintained in `src/main/providers/builtin/qwen-ai.ts` and is the single source used by `/api/models`, `/api/models/refresh`, and `/v1/models`.
+LunaProxy exposes the built-in Qwen model catalog through the `/v1/models` endpoint in OpenAI-compatible format. The model list, descriptions, limits, modalities, and display-name-to-provider-id mappings are maintained in `src/main/providers/builtin/qwen-ai.ts`; this is the single source used by `/api/models`, `/api/models/refresh`, and `/v1/models`.
 
 ```bash
 curl -sS http://127.0.0.1:8080/v1/models
@@ -109,7 +109,7 @@ Example response:
 }
 ```
 
-The **Models** page can refresh/sync the runtime config from this built-in catalog via `POST /api/models/refresh`; it does not fetch a separate model list from Qwen at runtime.
+The **Models** page can refresh/sync the runtime config from this built-in catalog via `POST /api/models/refresh`; it does not fetch a separate model list from Qwen at runtime. Chat requests may use either the display name, such as `Qwen3.7-Max-Preview`, or the provider model id, such as `qwen-latest-series-invite-beta-v24`; both resolve to the same upstream model.
 
 ---
 
