@@ -75,6 +75,19 @@ export class RunStore {
     return this.updateRun(runId, { status: 'cancelled', completedAt: Date.now() });
   }
 
+  deleteRun(runId: string): boolean {
+    const before = this.runs.length;
+    this.runs = this.runs.filter(r => r.id !== runId);
+    if (this.runs.length === before) return false;
+    this.save();
+    return true;
+  }
+
+  clearAll(): void {
+    this.runs = [];
+    this.save();
+  }
+
   getActiveRuns(): RunContext[] {
     const active: RunStatus[] = ['queued', 'routing', 'waiting_provider_chat', 'streaming'];
     return this.runs.filter(r => active.includes(r.status));

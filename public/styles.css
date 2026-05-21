@@ -170,6 +170,25 @@ button.danger:hover { background: #b42318; color: white; border-color: #b42318; 
 .status-warn { border-color: #a66c00; color: #a66c00; }
 .status-dead { border-color: #b42318; color: #b42318; }
 .table-wrap { overflow-x: auto; }
+.list-scroll {
+  max-height: min(58vh, 680px);
+  overflow: auto;
+  border: 2px solid var(--color-accent);
+  background: white;
+}
+.list-scroll .data-table {
+  border: 0;
+}
+.list-scroll .data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: white;
+}
+.list-lazy-status {
+  margin: var(--space-2) 0 0;
+  text-align: center;
+}
 .data-table {
   width: 100%;
   border-collapse: collapse;

@@ -1111,7 +1111,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
-        function useMemo6(create, deps) {
+        function useMemo8(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useMemo(create, deps);
         }
@@ -1883,7 +1883,7 @@ var require_react_development = __commonJS({
         exports.useImperativeHandle = useImperativeHandle;
         exports.useInsertionEffect = useInsertionEffect;
         exports.useLayoutEffect = useLayoutEffect3;
-        exports.useMemo = useMemo6;
+        exports.useMemo = useMemo8;
         exports.useReducer = useReducer;
         exports.useRef = useRef4;
         exports.useState = useState12;
@@ -27182,6 +27182,7 @@ function Models() {
 // frontend/src/pages/Sessions.tsx
 var import_react5 = __toESM(require_react());
 var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var LIST_BATCH_SIZE = 50;
 function Sessions() {
   const [sessions, setSessions] = (0, import_react5.useState)([]);
   const [loading, setLoading] = (0, import_react5.useState)(true);
@@ -27191,6 +27192,7 @@ function Sessions() {
   const [detailLoading, setDetailLoading] = (0, import_react5.useState)(false);
   const [filterSource, setFilterSource] = (0, import_react5.useState)("all");
   const [diagnostics, setDiagnostics] = (0, import_react5.useState)(null);
+  const [visibleCount, setVisibleCount] = (0, import_react5.useState)(LIST_BATCH_SIZE);
   (0, import_react5.useEffect)(() => {
     loadSessions();
     loadDiagnostics();
@@ -27296,7 +27298,24 @@ function Sessions() {
     }
   }
   const sources = Array.from(new Set(sessions.map((s) => s.source)));
-  const filtered = filterSource === "all" ? sessions : sessions.filter((s) => s.source === filterSource);
+  const filtered = (0, import_react5.useMemo)(
+    () => filterSource === "all" ? sessions : sessions.filter((s) => s.source === filterSource),
+    [filterSource, sessions]
+  );
+  const renderedSessions = (0, import_react5.useMemo)(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount]
+  );
+  (0, import_react5.useEffect)(() => {
+    setVisibleCount(LIST_BATCH_SIZE);
+  }, [filterSource, sessions]);
+  function handleListScroll(event) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < filtered.length) {
+      setVisibleCount((count) => Math.min(count + LIST_BATCH_SIZE, filtered.length));
+    }
+  }
   return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { "aria-labelledby": "sessions-title", className: "page-panel sessions-panel", children: [
     /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "page-heading", children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
@@ -27309,14 +27328,14 @@ function Sessions() {
           sources.map((s) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: s, children: s }, s))
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: loadSessions, disabled: loading, children: loading ? "Loading..." : "Refresh" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "danger", onClick: async () => {
           if (!confirm("Clear ALL sessions?"))
             return;
           await fetch("/api/sessions", { method: "DELETE" });
           setSelectedId(null);
           setDetail(null);
           await loadSessions();
-        }, children: "Clear All" }),
+        }, children: "X\xF3a" }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
           await fetch("/api/sessions/reload", { method: "POST" });
           await loadSessions();
@@ -27403,7 +27422,7 @@ function Sessions() {
         "."
       ] })
     ] }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("table", { className: "data-table", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("table", { className: "data-table", children: [
       /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("tr", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Title / ID" }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Mode" }),
@@ -27416,7 +27435,7 @@ function Sessions() {
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Provider Chat" }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Updated" })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("tbody", { children: filtered.map((s) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("tbody", { children: renderedSessions.map((s) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
         "tr",
         {
           className: `clickable-row ${selectedId === s.id ? "selected-row" : ""}`,
@@ -27442,25 +27461,38 @@ function Sessions() {
         s.id
       )) })
     ] }) }),
+    filtered.length > renderedSessions.length ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted list-lazy-status", children: [
+      "Showing ",
+      renderedSessions.length,
+      " of ",
+      filtered.length,
+      ". Scroll to load more."
+    ] }) : null,
     detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: "Loading detail..." }) : null,
-    detail && !detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "surface-card", style: { marginTop: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { children: detail.title || detail.id.slice(0, 8) + "..." }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "action-row", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => renameSession(detail.id), children: "Rename" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => compactSession(detail.id), children: "Compact" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => clearSession(detail.id), children: "Clear" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
-            const res = await fetch(`/api/sessions/${detail.id}/reset-provider`, { method: "POST" });
-            if (res.ok) {
-              setMessage("Provider chat ID reset");
-              await loadDetail(detail.id);
-            } else
-              setMessage("Reset failed");
-          }, children: "Reset Provider" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "danger", onClick: () => deleteSession(detail.id), children: "Delete" })
-        ] })
+    detail && !detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "session-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "modal-close-btn", "aria-label": "Close session detail", onClick: () => {
+        setSelectedId(null);
+        setDetail(null);
+      }, children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "eyebrow", children: "Session detail" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { id: "session-detail-title", children: detail.title || detail.id.slice(0, 8) + "..." }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: new Date(detail.updatedAt).toLocaleString() })
       ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "surface-card-head", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => renameSession(detail.id), children: "Rename" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => compactSession(detail.id), children: "Compact" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => clearSession(detail.id), children: "Clear" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
+          const res = await fetch(`/api/sessions/${detail.id}/reset-provider`, { method: "POST" });
+          if (res.ok) {
+            setMessage("Provider chat ID reset");
+            await loadDetail(detail.id);
+          } else
+            setMessage("Reset failed");
+        }, children: "Reset Provider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "danger", onClick: () => deleteSession(detail.id), children: "Delete" })
+      ] }) }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("dl", { className: "detail-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "ID" }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.id }),
@@ -27570,26 +27602,36 @@ function Sessions() {
           /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("pre", { className: "detail-pre", style: { fontSize: "0.85em", maxHeight: 120, overflow: "auto" }, children: typeof m.content === "string" ? m.content.slice(0, 1e3) : JSON.stringify(m.content).slice(0, 1e3) })
         ] }, m.id || i)) })
       ] }) : null
-    ] }) : null
+    ] }) }) : null
   ] });
 }
 
 // frontend/src/pages/Runs.tsx
 var import_react6 = __toESM(require_react());
 var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var LIST_BATCH_SIZE2 = 50;
 function Runs() {
   const [runs, setRuns] = (0, import_react6.useState)([]);
   const [loading, setLoading] = (0, import_react6.useState)(true);
   const [message, setMessage] = (0, import_react6.useState)(null);
   const [selectedRun, setSelectedRun] = (0, import_react6.useState)(null);
+  const [deleting, setDeleting] = (0, import_react6.useState)(false);
+  const [visibleCount, setVisibleCount] = (0, import_react6.useState)(LIST_BATCH_SIZE2);
   (0, import_react6.useEffect)(() => {
     loadRuns();
   }, []);
+  (0, import_react6.useEffect)(() => {
+    setVisibleCount(LIST_BATCH_SIZE2);
+  }, [runs]);
+  const renderedRuns = (0, import_react6.useMemo)(
+    () => runs.slice(0, visibleCount),
+    [runs, visibleCount]
+  );
   async function loadRuns() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch("/api/runs?limit=200");
+      const res = await fetch("/api/runs?limit=2000");
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`);
       setRuns(await res.json());
@@ -27606,6 +27648,37 @@ function Runs() {
     } catch {
     }
   }
+  async function deleteRun(runId) {
+    if (!confirm("X\xF3a run n\xE0y?"))
+      return;
+    try {
+      const res = await fetch(`/api/runs/${runId}`, { method: "DELETE" });
+      if (!res.ok)
+        throw new Error(`HTTP ${res.status}`);
+      if (selectedRun?.id === runId)
+        setSelectedRun(null);
+      await loadRuns();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to delete run");
+    }
+  }
+  async function deleteRuns() {
+    if (!confirm("X\xF3a t\u1EA5t c\u1EA3 runs?"))
+      return;
+    setDeleting(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/runs", { method: "DELETE" });
+      if (!res.ok)
+        throw new Error(`HTTP ${res.status}`);
+      setSelectedRun(null);
+      setRuns([]);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to delete runs");
+    } finally {
+      setDeleting(false);
+    }
+  }
   function statusClass(status) {
     if (status === "completed")
       return "status-alive";
@@ -27615,20 +27688,30 @@ function Runs() {
       return "status-dead";
     return "status-warn";
   }
+  function handleListScroll(event) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < runs.length) {
+      setVisibleCount((count) => Math.min(count + LIST_BATCH_SIZE2, runs.length));
+    }
+  }
   return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("section", { "aria-labelledby": "runs-title", className: "page-panel runs-panel", children: [
     /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "page-heading", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: "Request runs (including stateless)" }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { id: "runs-title", children: "Runs" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "action-row", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: loadRuns, disabled: loading, children: loading ? "Loading..." : "Refresh" }) })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: loadRuns, disabled: loading, children: loading ? "Loading..." : "Refresh" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: deleteRuns, disabled: deleting, children: deleting ? "Deleting..." : "X\xF3a" })
+      ] })
     ] }),
     message ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: message }) : null,
     !loading && runs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "surface-card", style: { marginBottom: 16, padding: 16 }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { style: { marginBottom: 8 }, children: "No runs recorded yet" }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: "Send a request via /v1/chat/completions to create a run record." })
     ] }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("table", { className: "data-table", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("table", { className: "data-table", children: [
       /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("tr", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Time" }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Status" }),
@@ -27642,7 +27725,7 @@ function Runs() {
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Duration" }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", {})
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("tbody", { children: runs.map((r) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("tbody", { children: renderedRuns.map((r) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
         "tr",
         {
           className: "clickable-row",
@@ -27663,19 +27746,38 @@ function Runs() {
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.queueReason || "-" }),
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { className: "log-message", children: r.activeTaskPreview || "-" }),
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: typeof r.completedAt === "number" && typeof r.startedAt === "number" ? `${r.completedAt - r.startedAt}ms` : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: r.status === "streaming" || r.status === "queued" || r.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: (e) => {
-              e.stopPropagation();
-              cancelRun(r.id);
-            }, style: { fontSize: "0.8em", padding: "2px 8px" }, children: "Cancel" }) : null })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("td", { children: [
+              r.status === "streaming" || r.status === "queued" || r.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: (e) => {
+                e.stopPropagation();
+                cancelRun(r.id);
+              }, style: { fontSize: "0.8em", padding: "2px 8px" }, children: "Cancel" }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: (e) => {
+                e.stopPropagation();
+                deleteRun(r.id);
+              }, style: { fontSize: "0.8em", padding: "2px 8px", marginLeft: 6 }, children: "X\xF3a" })
+            ] })
           ]
         },
         r.id
       )) })
     ] }) }),
-    selectedRun ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "surface-card", style: { marginTop: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { children: "Run Detail" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => setSelectedRun(null), children: "Close" })
+    runs.length > renderedRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "muted list-lazy-status", children: [
+      "Showing ",
+      renderedRuns.length,
+      " of ",
+      runs.length,
+      ". Scroll to load more."
+    ] }) : null,
+    selectedRun ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "run-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "modal-close-btn", "aria-label": "Close run detail", onClick: () => setSelectedRun(null), children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: "Run detail" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { id: "run-detail-title", children: selectedRun.model }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: new Date(selectedRun.createdAt).toLocaleString() })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", style: { marginBottom: 16 }, children: [
+        selectedRun.status === "streaming" || selectedRun.status === "queued" || selectedRun.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => cancelRun(selectedRun.id), children: "Cancel" }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: () => deleteRun(selectedRun.id), children: "X\xF3a" })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dl", { className: "detail-grid", children: [
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "ID" }),
@@ -27717,13 +27819,14 @@ function Runs() {
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Duration" }),
         /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: typeof selectedRun.completedAt === "number" && typeof selectedRun.startedAt === "number" ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : "-" })
       ] })
-    ] }) : null
+    ] }) }) : null
   ] });
 }
 
 // frontend/src/pages/Logs.tsx
 var import_react7 = __toESM(require_react());
 var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+var LIST_BATCH_SIZE3 = 50;
 function parseLog2(log) {
   try {
     return JSON.parse(log.message);
@@ -27769,11 +27872,12 @@ function Logs() {
   const [selectedLog, setSelectedLog] = (0, import_react7.useState)(null);
   const [activeTab, setActiveTab] = (0, import_react7.useState)("metrics");
   const [selectedPromptRole, setSelectedPromptRole] = (0, import_react7.useState)("user");
+  const [visibleCount, setVisibleCount] = (0, import_react7.useState)(LIST_BATCH_SIZE3);
   async function loadLogs() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch("/api/logs?limit=200");
+      const res = await fetch("/api/logs?limit=1000");
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
@@ -27809,7 +27913,14 @@ function Logs() {
     () => logs.filter((log) => filter === "all" || log.level === filter),
     [logs, filter]
   );
+  const renderedLogs = (0, import_react7.useMemo)(
+    () => visibleLogs.slice(0, visibleCount),
+    [visibleLogs, visibleCount]
+  );
   const selectedMeta = selectedLog ? parseLog2(selectedLog) : null;
+  (0, import_react7.useEffect)(() => {
+    setVisibleCount(LIST_BATCH_SIZE3);
+  }, [filter, logs]);
   (0, import_react7.useEffect)(() => {
     if (!selectedMeta)
       return;
@@ -27821,6 +27932,13 @@ function Logs() {
   function openLog(log) {
     setSelectedLog(log);
     setActiveTab("metrics");
+  }
+  function handleListScroll(event) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < visibleLogs.length) {
+      setVisibleCount((count) => Math.min(count + LIST_BATCH_SIZE3, visibleLogs.length));
+    }
   }
   function renderJsonBlock(value, emptyText) {
     if (value === void 0 || value === null || typeof value === "object" && Object.keys(value).length === 0) {
@@ -27880,7 +27998,7 @@ function Logs() {
     ] }),
     message ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: message }) : null,
     !loading && visibleLogs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: "No logs found." }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("table", { className: "data-table logs-table", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("table", { className: "data-table logs-table", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Time" }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Level" }),
@@ -27890,7 +28008,7 @@ function Logs() {
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Prompt / Message" }),
         /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Latency" })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("tbody", { children: visibleLogs.map((log, index) => {
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("tbody", { children: renderedLogs.map((log, index) => {
         const meta = parseLog2(log);
         return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
           "tr",
@@ -27916,6 +28034,13 @@ function Logs() {
         );
       }) })
     ] }) }),
+    visibleLogs.length > renderedLogs.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "muted list-lazy-status", children: [
+      "Showing ",
+      renderedLogs.length,
+      " of ",
+      visibleLogs.length,
+      ". Scroll to load more."
+    ] }) : null,
     selectedLog && selectedMeta ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "log-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("aside", { className: "detail-panel", children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "modal-close-btn", "aria-label": "Close log detail", onClick: () => setSelectedLog(null), children: "\xD7" }),
       /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "detail-heading", children: [

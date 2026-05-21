@@ -877,6 +877,22 @@ export class SimpleProxyServer {
       ctx.body = run;
     });
 
+    this.router.delete('/api/runs/:id', async ctx => {
+      const run = runStore.getRun(ctx.params.id);
+      if (run?.sessionId) sessionStore.removeActiveRunId(run.sessionId, ctx.params.id);
+      const ok = runStore.deleteRun(ctx.params.id);
+      ctx.status = ok ? 200 : 404;
+      ctx.body = {ok};
+    });
+
+    this.router.delete('/api/runs', async ctx => {
+      for (const run of runStore.listRuns(5000)) {
+        if (run.sessionId) sessionStore.removeActiveRunId(run.sessionId, run.id);
+      }
+      runStore.clearAll();
+      ctx.body = {ok: true};
+    });
+
     this.router.post('/api/runs/:id/cancel', async ctx => {
       const run = runStore.getRun(ctx.params.id);
       if (!run) {

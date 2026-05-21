@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 type SessionSummary = {
   id: string;
@@ -21,6 +21,7 @@ type SessionSummary = {
   lastRequestAt?: number;
   active: boolean;
 };
+const LIST_BATCH_SIZE = 50;
 
 type ProviderBinding = {
   providerId: string;
@@ -49,8 +50,11 @@ type Diagnostics = {
   transient: number;
   stats: {
     persistent: number;
-    transient: number;
-    statelessHint: string;
+    transient?: number;
+    fileBacked?: number;
+    indexed?: number;
+    summarized?: number;
+    statelessHint?: string;
   };
   dataFile: {
     path: string;
@@ -68,6 +72,7 @@ export default function Sessions() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [filterSource, setFilterSource] = useState<string>('all');
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
+  const [visibleCount, setVisibleCount] = useState(LIST_BATCH_SIZE);
 
   useEffect(() => {
     loadSessions();
@@ -169,9 +174,28 @@ export default function Sessions() {
   }
 
   const sources = Array.from(new Set(sessions.map(s => s.source)));
-  const filtered = filterSource === 'all'
-    ? sessions
-    : sessions.filter(s => s.source === filterSource);
+  const filtered = useMemo(
+    () => filterSource === 'all'
+      ? sessions
+      : sessions.filter(s => s.source === filterSource),
+    [filterSource, sessions],
+  );
+  const renderedSessions = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount],
+  );
+
+  useEffect(() => {
+    setVisibleCount(LIST_BATCH_SIZE);
+  }, [filterSource, sessions]);
+
+  function handleListScroll(event: React.UIEvent<HTMLDivElement>) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < filtered.length) {
+      setVisibleCount(count => Math.min(count + LIST_BATCH_SIZE, filtered.length));
+    }
+  }
 
   return (
     <section aria-labelledby="sessions-title" className="page-panel sessions-panel">
@@ -186,13 +210,13 @@ export default function Sessions() {
             {sources.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <button onClick={loadSessions} disabled={loading}>{loading ? 'Loading...' : 'Refresh'}</button>
-          <button onClick={async () => {
+          <button className="danger" onClick={async () => {
             if (!confirm('Clear ALL sessions?')) return;
             await fetch('/api/sessions', {method: 'DELETE'});
             setSelectedId(null);
             setDetail(null);
             await loadSessions();
-          }}>Clear All</button>
+          }}>Xóa</button>
           <button onClick={async () => {
             await fetch('/api/sessions/reload', {method: 'POST'});
             await loadSessions();
@@ -251,7 +275,7 @@ export default function Sessions() {
         </div>
       ) : null}
 
-      <div className="table-wrap">
+      <div className="table-wrap list-scroll" onScroll={handleListScroll}>
         <table className="data-table">
           <thead>
             <tr>
@@ -268,7 +292,7 @@ export default function Sessions() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map(s => (
+            {renderedSessions.map(s => (
               <tr
                 key={s.id}
                 className={`clickable-row ${selectedId === s.id ? 'selected-row' : ''}`}
@@ -291,13 +315,22 @@ export default function Sessions() {
           </tbody>
         </table>
       </div>
+      {filtered.length > renderedSessions.length ? (
+        <p className="muted list-lazy-status">Showing {renderedSessions.length} of {filtered.length}. Scroll to load more.</p>
+      ) : null}
 
       {detailLoading ? <p className="muted">Loading detail...</p> : null}
 
       {detail && !detailLoading ? (
-        <div className="surface-card" style={{marginTop: 16}}>
+        <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="session-detail-title">
+          <aside className="detail-panel">
+          <button className="modal-close-btn" aria-label="Close session detail" onClick={() => { setSelectedId(null); setDetail(null); }}>×</button>
+          <div className="detail-heading">
+            <p className="eyebrow">Session detail</p>
+            <h3 id="session-detail-title">{detail.title || detail.id.slice(0, 8) + '...'}</h3>
+            <p className="muted">{new Date(detail.updatedAt).toLocaleString()}</p>
+          </div>
           <div className="surface-card-head">
-            <h3>{detail.title || detail.id.slice(0, 8) + '...'}</h3>
             <div className="action-row">
               <button onClick={() => renameSession(detail.id)}>Rename</button>
               <button onClick={() => compactSession(detail.id)}>Compact</button>
@@ -414,6 +447,7 @@ export default function Sessions() {
               </div>
             </div>
           ) : null}
+          </aside>
         </div>
       ) : null}
     </section>

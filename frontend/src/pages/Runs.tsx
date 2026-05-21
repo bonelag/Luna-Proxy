@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 type RunContext = {
   id: string;
@@ -20,20 +20,31 @@ type RunContext = {
   queueReason?: string;
   error?: string;
 };
+const LIST_BATCH_SIZE = 50;
 
 export default function Runs() {
   const [runs, setRuns] = useState<RunContext[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [selectedRun, setSelectedRun] = useState<RunContext | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(LIST_BATCH_SIZE);
 
   useEffect(() => { loadRuns(); }, []);
+  useEffect(() => {
+    setVisibleCount(LIST_BATCH_SIZE);
+  }, [runs]);
+
+  const renderedRuns = useMemo(
+    () => runs.slice(0, visibleCount),
+    [runs, visibleCount],
+  );
 
   async function loadRuns() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/runs?limit=200');
+      const res = await fetch('/api/runs?limit=2000');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setRuns(await res.json());
     } catch (error) {
@@ -50,11 +61,47 @@ export default function Runs() {
     } catch {}
   }
 
+  async function deleteRun(runId: string) {
+    if (!confirm('Xóa run này?')) return;
+    try {
+      const res = await fetch(`/api/runs/${runId}`, {method: 'DELETE'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (selectedRun?.id === runId) setSelectedRun(null);
+      await loadRuns();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Failed to delete run');
+    }
+  }
+
+  async function deleteRuns() {
+    if (!confirm('Xóa tất cả runs?')) return;
+    setDeleting(true);
+    setMessage(null);
+    try {
+      const res = await fetch('/api/runs', {method: 'DELETE'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setSelectedRun(null);
+      setRuns([]);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Failed to delete runs');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   function statusClass(status: string) {
     if (status === 'completed') return 'status-alive';
     if (status === 'streaming') return 'status-alive';
     if (status === 'failed' || status === 'cancelled') return 'status-dead';
     return 'status-warn';
+  }
+
+  function handleListScroll(event: React.UIEvent<HTMLDivElement>) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < runs.length) {
+      setVisibleCount(count => Math.min(count + LIST_BATCH_SIZE, runs.length));
+    }
   }
 
   return (
@@ -66,6 +113,7 @@ export default function Runs() {
         </div>
         <div className="action-row">
           <button onClick={loadRuns} disabled={loading}>{loading ? 'Loading...' : 'Refresh'}</button>
+          <button className="danger" onClick={deleteRuns} disabled={deleting}>{deleting ? 'Deleting...' : 'Xóa'}</button>
         </div>
       </div>
 
@@ -77,7 +125,7 @@ export default function Runs() {
         </div>
       ) : null}
 
-      <div className="table-wrap">
+      <div className="table-wrap list-scroll" onScroll={handleListScroll}>
         <table className="data-table">
           <thead>
             <tr>
@@ -95,7 +143,7 @@ export default function Runs() {
             </tr>
           </thead>
           <tbody>
-            {runs.map(r => (
+            {renderedRuns.map(r => (
               <tr key={r.id} className="clickable-row"
                 onClick={() => setSelectedRun(selectedRun?.id === r.id ? null : r)}
                 tabIndex={0}
@@ -114,18 +162,31 @@ export default function Runs() {
                   {r.status === 'streaming' || r.status === 'queued' || r.status === 'routing' ? (
                     <button onClick={(e) => { e.stopPropagation(); cancelRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px'}}>Cancel</button>
                   ) : null}
+                  <button className="danger" onClick={(e) => { e.stopPropagation(); deleteRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px', marginLeft: 6}}>Xóa</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {runs.length > renderedRuns.length ? (
+        <p className="muted list-lazy-status">Showing {renderedRuns.length} of {runs.length}. Scroll to load more.</p>
+      ) : null}
 
       {selectedRun ? (
-        <div className="surface-card" style={{marginTop: 16}}>
-          <div className="surface-card-head">
-            <h3>Run Detail</h3>
-            <button onClick={() => setSelectedRun(null)}>Close</button>
+        <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="run-detail-title">
+          <aside className="detail-panel">
+          <button className="modal-close-btn" aria-label="Close run detail" onClick={() => setSelectedRun(null)}>×</button>
+          <div className="detail-heading">
+            <p className="eyebrow">Run detail</p>
+            <h3 id="run-detail-title">{selectedRun.model}</h3>
+            <p className="muted">{new Date(selectedRun.createdAt).toLocaleString()}</p>
+          </div>
+          <div className="action-row" style={{marginBottom: 16}}>
+            {selectedRun.status === 'streaming' || selectedRun.status === 'queued' || selectedRun.status === 'routing' ? (
+              <button onClick={() => cancelRun(selectedRun.id)}>Cancel</button>
+            ) : null}
+            <button className="danger" onClick={() => deleteRun(selectedRun.id)}>Xóa</button>
           </div>
           <dl className="detail-grid">
             <dt>ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{selectedRun.id}</dd>
@@ -148,6 +209,7 @@ export default function Runs() {
             <dt>Task</dt><dd>{selectedRun.activeTaskPreview || '-'}</dd>
             <dt>Duration</dt><dd>{typeof selectedRun.completedAt === 'number' && typeof selectedRun.startedAt === 'number' ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : '-'}</dd>
           </dl>
+          </aside>
         </div>
       ) : null}
     </section>

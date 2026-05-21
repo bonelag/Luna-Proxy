@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 
 type LogItem = {level: string; message: string; timestamp: number};
 type DetailTab = 'metrics' | 'requestHeaders' | 'responseHeaders' | 'response' | 'prompt';
+const LIST_BATCH_SIZE = 50;
 
 function parseLog(log: LogItem): Record<string, any> {
   try {
@@ -44,12 +45,13 @@ export default function Logs() {
   const [selectedLog, setSelectedLog] = useState<LogItem | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTab>('metrics');
   const [selectedPromptRole, setSelectedPromptRole] = useState<string>('user');
+  const [visibleCount, setVisibleCount] = useState(LIST_BATCH_SIZE);
 
   async function loadLogs() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/logs?limit=200');
+      const res = await fetch('/api/logs?limit=1000');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!Array.isArray(data)) {
@@ -86,7 +88,15 @@ export default function Logs() {
     () => logs.filter(log => filter === 'all' || log.level === filter),
     [logs, filter],
   );
+  const renderedLogs = useMemo(
+    () => visibleLogs.slice(0, visibleCount),
+    [visibleLogs, visibleCount],
+  );
   const selectedMeta = selectedLog ? parseLog(selectedLog) : null;
+
+  useEffect(() => {
+    setVisibleCount(LIST_BATCH_SIZE);
+  }, [filter, logs]);
 
   useEffect(() => {
     if (!selectedMeta) return;
@@ -99,6 +109,14 @@ export default function Logs() {
   function openLog(log: LogItem) {
     setSelectedLog(log);
     setActiveTab('metrics');
+  }
+
+  function handleListScroll(event: React.UIEvent<HTMLDivElement>) {
+    const target = event.currentTarget;
+    const remaining = target.scrollHeight - target.scrollTop - target.clientHeight;
+    if (remaining < 160 && visibleCount < visibleLogs.length) {
+      setVisibleCount(count => Math.min(count + LIST_BATCH_SIZE, visibleLogs.length));
+    }
   }
 
   function renderJsonBlock(value: unknown, emptyText: string) {
@@ -165,7 +183,7 @@ export default function Logs() {
       {message ? <p className="muted">{message}</p> : null}
       {!loading && visibleLogs.length === 0 ? <p className="muted">No logs found.</p> : null}
 
-      <div className="table-wrap">
+      <div className="table-wrap list-scroll" onScroll={handleListScroll}>
         <table className="data-table logs-table">
           <thead>
             <tr>
@@ -179,7 +197,7 @@ export default function Logs() {
             </tr>
           </thead>
           <tbody>
-            {visibleLogs.map((log, index) => {
+            {renderedLogs.map((log, index) => {
               const meta = parseLog(log);
               return (
                 <tr
@@ -204,6 +222,9 @@ export default function Logs() {
           </tbody>
         </table>
       </div>
+      {visibleLogs.length > renderedLogs.length ? (
+        <p className="muted list-lazy-status">Showing {renderedLogs.length} of {visibleLogs.length}. Scroll to load more.</p>
+      ) : null}
 
       {selectedLog && selectedMeta ? (
         <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="log-detail-title">
