@@ -101,6 +101,7 @@ export async function applyTokenOverflowPolicy(
 
     let overflowFileId: string | undefined;
     let overflowFileUrl: string | undefined;
+    let uploadFailed = false;
     try {
       const uploaded = await uploadOverflowFileToQwen(fileName, fileContent, token, cookies);
       overflowFileId = uploaded.fileId;
@@ -121,6 +122,7 @@ export async function applyTokenOverflowPolicy(
         update_at: Date.now(),
       });
     } catch (e) {
+      uploadFailed = true;
       console.error('[Overflow] upload failed, fallback to local-only overflow file:', e);
     }
 
@@ -142,8 +144,12 @@ export async function applyTokenOverflowPolicy(
       }
     }
 
+    if (uploadFailed) {
+      return { messages, fileIds: [], files: [], sanitized: false, sanitizerMeta };
+    }
+
     const outMessages = [{ role: 'user', content: guardPrompt }];
-    return { messages: outMessages, fileIds, files, sanitized, sanitizerMeta };
+    return { messages: outMessages, fileIds, files, sanitized: true, sanitizerMeta };
   } catch (err) {
     console.error('[Overflow] failed to write aggregated overflow file:', err);
     return { messages, fileIds: [], files: [] };

@@ -6,7 +6,7 @@ import { buildQwenAiHeaders } from '../main/proxy/adapters/qwen-ai';
 export async function waitForFileParseStatus(
   fileId: string,
   headers: Record<string, string>,
-  maxAttempts = 10,
+  maxAttempts = 30,
   delayMs = 1000,
 ): Promise<void> {
   for (let i = 1; i <= maxAttempts; i++) {

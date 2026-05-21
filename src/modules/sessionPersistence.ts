@@ -11,6 +11,16 @@ import type { Provider } from '../main/store/types';
 
 const compactingNow = new Set<string>();
 
+function isProtocolSystemMessage(role: string, text: string): boolean {
+  return role === 'system' && (
+    /# Tools\s*\n/i.test(text)
+    || /Tool Use Formatting/i.test(text)
+    || /UPDATING TASK PROGRESS/i.test(text)
+    || /ACT MODE V\.S\. PLAN MODE/i.test(text)
+    || /<tool_name>\s*\n<parameter/i.test(text)
+  );
+}
+
 export function persistSessionMessages(
   sessionId: string,
   incomingMessages: any[],
@@ -28,6 +38,10 @@ export function persistSessionMessages(
   for (const msg of incomingMessages) {
     if (!msg || !msg.role) continue;
     const text = extractText(msg.content);
+    if (isProtocolSystemMessage(String(msg.role).toLowerCase(), text)) {
+      skippedMessages++;
+      continue;
+    }
     if (msg.role === 'assistant') {
       const cleanedText = stripThinkingBlocks(text);
       if (isAssistantFailureEcho(cleanedText)) {
@@ -122,7 +136,12 @@ export function persistSessionMessages(
         session.summary || '',
         adapter,
         session.model || sessionCfg.compactModel || 'Qwen3.6-Plus',
-        Number(sessionCfg.summaryMaxTokens) || 800,
+        {
+          maxSummaryTokens: Number(sessionCfg.summaryMaxTokens) || 800,
+          maxInputTokens: Number(sessionCfg.summaryInputMaxTokens) || 6000,
+          maxMessageChars: Number(sessionCfg.summaryMessageMaxChars) || 3000,
+          includeSystemMessages: sessionCfg.summaryIncludeSystemMessages === true,
+        },
       ).catch(err => console.error('[Session] Rolling summary failed:', err));
     }
   }

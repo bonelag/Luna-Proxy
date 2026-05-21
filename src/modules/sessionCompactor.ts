@@ -36,7 +36,17 @@ export async function compactSession(sessionId: string, token: string, cookies: 
   const fileContent = parts.join('\n');
   fs.writeFileSync(filePath, fileContent, 'utf8');
 
-  const uploaded = await uploadOverflowFileToQwen(fileName, fileContent, token, cookies);
+  let uploaded: {fileId: string; fileUrl: string};
+  try {
+    uploaded = await uploadOverflowFileToQwen(fileName, fileContent, token, cookies);
+  } catch (uploadErr) {
+    console.warn(
+      '[Session] Compact upload failed; preserved local compact file and skipped compaction:',
+      filePath,
+      uploadErr,
+    );
+    return '';
+  }
 
   const provider = new QwenAiAdapter(
     {id: 'qwen-ai', apiEndpoint: 'https://chat.qwen.ai', chatPath: '/api/v2/chat/completions'} as any,
