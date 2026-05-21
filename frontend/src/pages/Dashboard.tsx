@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type ConfigData = {
   providers?: Array<{id: string; name?: string; credentials?: Record<string, string>}>;
@@ -37,6 +38,7 @@ function parseLog(log: LogItem): Record<string, any> {
 }
 
 export default function Dashboard() {
+  const {t} = useI18n();
   const [config, setConfig] = useState<ConfigData | null>(null);
   const [logs, setLogs] = useState<LogItem[]>([]);
   const [logStats, setLogStats] = useState<LogStats>({total: 0, errors: 0, chatRequests: 0});
@@ -109,9 +111,9 @@ export default function Dashboard() {
     <section aria-labelledby="dashboard-title" className="page-panel dashboard-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Local control plane</p>
-          <h2 id="dashboard-title">Dashboard</h2>
-          <p className="muted">Auto-updating every 2 seconds.</p>
+          <p className="eyebrow">{t('dashboard.eyebrow')}</p>
+          <h2 id="dashboard-title">{t('dashboard.title')}</h2>
+          <p className="muted">{t('dashboard.autoUpdate')}</p>
         </div>
         <span className={`status-pill status-${health === 'online' ? 'alive' : health === 'offline' ? 'dead' : 'warn'}`}>
           {health}
@@ -123,54 +125,54 @@ export default function Dashboard() {
           <span className={`status-pill status-${health === 'online' ? 'alive' : health === 'offline' ? 'dead' : 'warn'}`}>
             {health}
           </span>
-          <h3>Proxy health</h3>
-          <p className="metric-value">{health === 'online' ? 'Ready' : health === 'offline' ? 'Down' : 'Checking'}</p>
+          <h3>{t('dashboard.proxyHealth')}</h3>
+          <p className="metric-value">{health === 'online' ? t('dashboard.ready') : health === 'offline' ? t('dashboard.down') : t('dashboard.checking')}</p>
         </article>
         <article className="metric-card">
-          <h3>Configured providers</h3>
+          <h3>{t('dashboard.configuredProviders')}</h3>
           <p className="metric-value">{stats.providers}</p>
         </article>
         <article className="metric-card">
-          <h3>Active runs</h3>
+          <h3>{t('dashboard.activeRuns')}</h3>
           <p className="metric-value">{stats.activeRuns}</p>
-          <p className="muted">Live scheduler state.</p>
+          <p className="muted">{t('dashboard.schedulerState')}</p>
         </article>
         <article className="metric-card">
-          <h3>Queued runs</h3>
+          <h3>{t('dashboard.queuedRuns')}</h3>
           <p className="metric-value">{stats.queued}</p>
-          <p className="muted">Waiting on capacity or locks.</p>
+          <p className="muted">{t('dashboard.waitingCapacity')}</p>
         </article>
         <article className="metric-card">
-          <h3>Capacity in use</h3>
+          <h3>{t('dashboard.capacityInUse')}</h3>
           <p className="metric-value">{stats.activeCapacity}</p>
         </article>
         <article className="metric-card">
-          <h3>Recent requests</h3>
+          <h3>{t('dashboard.recentRequests')}</h3>
           <p className="metric-value">{stats.requests}</p>
         </article>
         <article className="metric-card">
-          <h3>Recent errors</h3>
+          <h3>{t('dashboard.recentErrors')}</h3>
           <p className="metric-value">{stats.errors}</p>
         </article>
       </div>
 
       <section className="surface-card" aria-labelledby="runtime-title" style={{marginBottom: 16}}>
         <div className="surface-card-head">
-          <h3 id="runtime-title">Runtime Scheduler</h3>
-          {lastUpdated ? <span className="muted">Updated {new Date(lastUpdated).toLocaleTimeString()}</span> : null}
+          <h3 id="runtime-title">{t('dashboard.runtimeScheduler')}</h3>
+          {lastUpdated ? <span className="muted">{t('common.updated')} {new Date(lastUpdated).toLocaleTimeString()}</span> : null}
         </div>
         {runtime?.activeRuns?.length ? (
           <div className="table-wrap">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Run</th>
-                  <th>Status</th>
-                  <th>Provider</th>
-                  <th>Account</th>
-                  <th>Session</th>
-                  <th>Worker</th>
-                  <th>Started</th>
+                  <th>{t('nav.runs')}</th>
+                  <th>{t('label.status')}</th>
+                  <th>{t('label.provider')}</th>
+                  <th>{t('label.account')}</th>
+                  <th>{t('label.session')}</th>
+                  <th>{t('label.worker')}</th>
+                  <th>{t('label.started')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,18 +191,18 @@ export default function Dashboard() {
             </table>
           </div>
         ) : (
-          <p className="muted">No active runs.</p>
+          <p className="muted">{t('dashboard.noActiveRuns')}</p>
         )}
         {runtime?.locks && Object.keys(runtime.locks).length > 0 ? (
           <div className="table-wrap" style={{marginTop: 16}}>
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Lock / capacity key</th>
-                  <th>Active</th>
-                  <th>Max</th>
-                  <th>Queued</th>
-                  <th>Owner</th>
+                  <th>{t('dashboard.lockCapacityKey')}</th>
+                  <th>{t('label.active')}</th>
+                  <th>{t('label.max')}</th>
+                  <th>{t('label.queued')}</th>
+                  <th>{t('label.owner')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -221,21 +223,21 @@ export default function Dashboard() {
 
       <section className="surface-card" aria-labelledby="recent-title">
         <div className="surface-card-head">
-          <h3 id="recent-title">Recent requests</h3>
-          {lastUpdated ? <span className="muted">Updated {new Date(lastUpdated).toLocaleTimeString()}</span> : null}
+          <h3 id="recent-title">{t('dashboard.recentRequests')}</h3>
+          {lastUpdated ? <span className="muted">{t('common.updated')} {new Date(lastUpdated).toLocaleTimeString()}</span> : null}
         </div>
         {logs.length === 0 ? (
-          <p className="muted">No request logs yet.</p>
+          <p className="muted">{t('dashboard.noRequestLogs')}</p>
         ) : (
           <div className="table-wrap">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Time</th>
-                  <th>Level</th>
-                  <th>Path</th>
-                  <th>Model</th>
-                  <th>Status</th>
+                  <th>{t('label.time')}</th>
+                  <th>{t('label.level')}</th>
+                  <th>{t('label.path')}</th>
+                  <th>{t('label.model')}</th>
+                  <th>{t('label.status')}</th>
                 </tr>
               </thead>
               <tbody>

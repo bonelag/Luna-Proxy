@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type RunContext = {
   id: string;
@@ -23,6 +24,7 @@ type RunContext = {
 const LIST_BATCH_SIZE = 50;
 
 export default function Runs() {
+  const {t} = useI18n();
   const [runs, setRuns] = useState<RunContext[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export default function Runs() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setRuns(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to load runs');
+      setMessage(error instanceof Error ? error.message : t('runs.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -62,19 +64,19 @@ export default function Runs() {
   }
 
   async function deleteRun(runId: string) {
-    if (!confirm('Xóa run này?')) return;
+    if (!confirm(t('runs.confirmDelete'))) return;
     try {
       const res = await fetch(`/api/runs/${runId}`, {method: 'DELETE'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       if (selectedRun?.id === runId) setSelectedRun(null);
       await loadRuns();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to delete run');
+      setMessage(error instanceof Error ? error.message : t('runs.deleteFailed'));
     }
   }
 
   async function deleteRuns() {
-    if (!confirm('Xóa tất cả runs?')) return;
+    if (!confirm(t('runs.confirmDeleteAll'))) return;
     setDeleting(true);
     setMessage(null);
     try {
@@ -83,7 +85,7 @@ export default function Runs() {
       setSelectedRun(null);
       setRuns([]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to delete runs');
+      setMessage(error instanceof Error ? error.message : t('runs.deleteAllFailed'));
     } finally {
       setDeleting(false);
     }
@@ -108,20 +110,20 @@ export default function Runs() {
     <section aria-labelledby="runs-title" className="page-panel runs-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Request runs (including stateless)</p>
-          <h2 id="runs-title">Runs</h2>
+          <p className="eyebrow">{t('runs.eyebrow')}</p>
+          <h2 id="runs-title">{t('nav.runs')}</h2>
         </div>
         <div className="action-row">
-          <button onClick={loadRuns} disabled={loading}>{loading ? 'Loading...' : 'Refresh'}</button>
-          <button className="danger" onClick={deleteRuns} disabled={deleting}>{deleting ? 'Deleting...' : 'Xóa'}</button>
+          <button onClick={loadRuns} disabled={loading}>{loading ? t('common.loading') : t('common.refresh')}</button>
+          <button className="danger" onClick={deleteRuns} disabled={deleting}>{deleting ? t('common.deleting') : t('common.delete')}</button>
         </div>
       </div>
 
       {message ? <p className="muted">{message}</p> : null}
       {!loading && runs.length === 0 ? (
         <div className="surface-card" style={{marginBottom: 16, padding: 16}}>
-          <h4 style={{marginBottom: 8}}>No runs recorded yet</h4>
-          <p className="muted">Send a request via /v1/chat/completions to create a run record.</p>
+          <h4 style={{marginBottom: 8}}>{t('runs.emptyTitle')}</h4>
+          <p className="muted">{t('runs.emptyHint')}</p>
         </div>
       ) : null}
 
@@ -129,16 +131,16 @@ export default function Runs() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Status</th>
-              <th>Provider</th>
-              <th>Account</th>
-              <th>Model</th>
-              <th>Session</th>
-              <th>Chat ID</th>
-              <th>Queue Reason</th>
-              <th>Task</th>
-              <th>Duration</th>
+              <th>{t('label.time')}</th>
+              <th>{t('label.status')}</th>
+              <th>{t('label.provider')}</th>
+              <th>{t('label.account')}</th>
+              <th>{t('label.model')}</th>
+              <th>{t('label.session')}</th>
+              <th>{t('label.chatId')}</th>
+              <th>{t('label.queueReason')}</th>
+              <th>{t('label.task')}</th>
+              <th>{t('label.duration')}</th>
               <th></th>
             </tr>
           </thead>
@@ -160,9 +162,9 @@ export default function Runs() {
                 <td>{typeof r.completedAt === 'number' && typeof r.startedAt === 'number' ? `${r.completedAt - r.startedAt}ms` : '-'}</td>
                 <td>
                   {r.status === 'streaming' || r.status === 'queued' || r.status === 'routing' ? (
-                    <button onClick={(e) => { e.stopPropagation(); cancelRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px'}}>Cancel</button>
+                    <button onClick={(e) => { e.stopPropagation(); cancelRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px'}}>{t('common.cancel')}</button>
                   ) : null}
-                  <button className="danger" onClick={(e) => { e.stopPropagation(); deleteRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px', marginLeft: 6}}>Xóa</button>
+                  <button className="danger" onClick={(e) => { e.stopPropagation(); deleteRun(r.id); }} style={{fontSize: '0.8em', padding: '2px 8px', marginLeft: 6}}>{t('common.delete')}</button>
                 </td>
               </tr>
             ))}
@@ -170,44 +172,44 @@ export default function Runs() {
         </table>
       </div>
       {runs.length > renderedRuns.length ? (
-        <p className="muted list-lazy-status">Showing {renderedRuns.length} of {runs.length}. Scroll to load more.</p>
+        <p className="muted list-lazy-status">{t('common.showingOf', {shown: renderedRuns.length, total: runs.length})}</p>
       ) : null}
 
       {selectedRun ? (
         <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="run-detail-title">
           <aside className="detail-panel">
-          <button className="modal-close-btn" aria-label="Close run detail" onClick={() => setSelectedRun(null)}>×</button>
+          <button className="modal-close-btn" aria-label={t('common.close')} onClick={() => setSelectedRun(null)}>×</button>
           <div className="detail-heading">
-            <p className="eyebrow">Run detail</p>
+            <p className="eyebrow">{t('runs.detail')}</p>
             <h3 id="run-detail-title">{selectedRun.model}</h3>
             <p className="muted">{new Date(selectedRun.createdAt).toLocaleString()}</p>
           </div>
           <div className="action-row" style={{marginBottom: 16}}>
             {selectedRun.status === 'streaming' || selectedRun.status === 'queued' || selectedRun.status === 'routing' ? (
-              <button onClick={() => cancelRun(selectedRun.id)}>Cancel</button>
+              <button onClick={() => cancelRun(selectedRun.id)}>{t('common.cancel')}</button>
             ) : null}
-            <button className="danger" onClick={() => deleteRun(selectedRun.id)}>Xóa</button>
+            <button className="danger" onClick={() => deleteRun(selectedRun.id)}>{t('common.delete')}</button>
           </div>
           <dl className="detail-grid">
             <dt>ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{selectedRun.id}</dd>
-            <dt>Status</dt><dd><span className={`status-pill ${statusClass(selectedRun.status)}`}>{selectedRun.status}</span></dd>
-            <dt>Created</dt><dd>{new Date(selectedRun.createdAt).toLocaleString()}</dd>
-            <dt>Queued</dt><dd>{new Date(selectedRun.queuedAt).toLocaleString()}</dd>
-            <dt>Started</dt><dd>{selectedRun.startedAt ? new Date(selectedRun.startedAt).toLocaleString() : '-'}</dd>
-            <dt>Completed</dt><dd>{selectedRun.completedAt ? new Date(selectedRun.completedAt).toLocaleString() : '-'}</dd>
-            <dt>Provider</dt><dd>{selectedRun.providerId}</dd>
-            <dt>Account</dt><dd>{selectedRun.accountId || '-'}</dd>
-            <dt>Worker</dt><dd>{selectedRun.workerId || '-'}</dd>
-            <dt>Network Profile</dt><dd>{selectedRun.networkProfileId || '-'}</dd>
-            <dt>Outbound IP</dt><dd>{selectedRun.outboundIp || '-'}</dd>
-            <dt>Provider Chat</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{selectedRun.providerChatId || '-'}</dd>
+            <dt>{t('label.status')}</dt><dd><span className={`status-pill ${statusClass(selectedRun.status)}`}>{selectedRun.status}</span></dd>
+            <dt>{t('label.created')}</dt><dd>{new Date(selectedRun.createdAt).toLocaleString()}</dd>
+            <dt>{t('label.queued')}</dt><dd>{new Date(selectedRun.queuedAt).toLocaleString()}</dd>
+            <dt>{t('label.started')}</dt><dd>{selectedRun.startedAt ? new Date(selectedRun.startedAt).toLocaleString() : '-'}</dd>
+            <dt>{t('label.completed')}</dt><dd>{selectedRun.completedAt ? new Date(selectedRun.completedAt).toLocaleString() : '-'}</dd>
+            <dt>{t('label.provider')}</dt><dd>{selectedRun.providerId}</dd>
+            <dt>{t('label.account')}</dt><dd>{selectedRun.accountId || '-'}</dd>
+            <dt>{t('label.worker')}</dt><dd>{selectedRun.workerId || '-'}</dd>
+            <dt>{t('label.networkProfile')}</dt><dd>{selectedRun.networkProfileId || '-'}</dd>
+            <dt>{t('label.outboundIp')}</dt><dd>{selectedRun.outboundIp || '-'}</dd>
+            <dt>{t('label.providerChat')}</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{selectedRun.providerChatId || '-'}</dd>
             <dt>Session ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{selectedRun.sessionId || '-'}</dd>
-            <dt>Model</dt><dd>{selectedRun.model}</dd>
-            <dt>Stream</dt><dd>{selectedRun.stream ? 'Yes' : 'No'}</dd>
-            <dt>Queue Reason</dt><dd>{selectedRun.queueReason || '-'}</dd>
-            <dt>Error</dt><dd style={{color: 'var(--color-danger)'}}>{selectedRun.error || '-'}</dd>
-            <dt>Task</dt><dd>{selectedRun.activeTaskPreview || '-'}</dd>
-            <dt>Duration</dt><dd>{typeof selectedRun.completedAt === 'number' && typeof selectedRun.startedAt === 'number' ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : '-'}</dd>
+            <dt>{t('label.model')}</dt><dd>{selectedRun.model}</dd>
+            <dt>{t('label.stream')}</dt><dd>{selectedRun.stream ? t('common.yes') : t('common.no')}</dd>
+            <dt>{t('label.queueReason')}</dt><dd>{selectedRun.queueReason || '-'}</dd>
+            <dt>{t('label.error')}</dt><dd style={{color: 'var(--color-danger)'}}>{selectedRun.error || '-'}</dd>
+            <dt>{t('label.task')}</dt><dd>{selectedRun.activeTaskPreview || '-'}</dd>
+            <dt>{t('label.duration')}</dt><dd>{typeof selectedRun.completedAt === 'number' && typeof selectedRun.startedAt === 'number' ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : '-'}</dd>
           </dl>
           </aside>
         </div>

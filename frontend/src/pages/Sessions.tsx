@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type SessionSummary = {
   id: string;
@@ -64,6 +65,7 @@ type Diagnostics = {
 };
 
 export default function Sessions() {
+  const {t} = useI18n();
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
@@ -100,7 +102,7 @@ export default function Sessions() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSessions(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to load sessions');
+      setMessage(error instanceof Error ? error.message : `${t('common.loadFailed')} ${t('nav.sessions')}`);
     } finally {
       setLoading(false);
     }
@@ -113,51 +115,51 @@ export default function Sessions() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setDetail(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to load session detail');
+      setMessage(error instanceof Error ? error.message : `${t('common.loadFailed')} ${t('sessions.detail')}`);
     } finally {
       setDetailLoading(false);
     }
   }
 
   async function deleteSession(id: string) {
-    if (!confirm('Delete this session?')) return;
+    if (!confirm(t('sessions.confirmDelete'))) return;
     try {
       const res = await fetch(`/api/sessions/${id}`, {method: 'DELETE'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       if (selectedId === id) { setSelectedId(null); setDetail(null); }
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to delete');
+      setMessage(error instanceof Error ? error.message : t('common.deleteFailed'));
     }
   }
 
   async function clearSession(id: string) {
-    if (!confirm('Clear history for this session?')) return;
+    if (!confirm(t('sessions.confirmClear'))) return;
     try {
       const res = await fetch(`/api/sessions/${id}/clear`, {method: 'POST'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await loadDetail(id);
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to clear');
+      setMessage(error instanceof Error ? error.message : t('sessions.clearFailed'));
     }
   }
 
   async function compactSession(id: string) {
-    setMessage('Compacting...');
+    setMessage(t('sessions.compacting'));
     try {
       const res = await fetch(`/api/sessions/${id}/compact`, {method: 'POST'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setMessage('Compact complete');
+      setMessage(t('sessions.compactComplete'));
       await loadDetail(id);
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Compact failed');
+      setMessage(error instanceof Error ? error.message : t('sessions.compactFailed'));
     }
   }
 
   async function renameSession(id: string) {
-    const title = prompt('New title:');
+    const title = prompt(t('sessions.newTitle'));
     if (!title) return;
     try {
       const res = await fetch(`/api/sessions/${id}/rename`, {
@@ -169,7 +171,7 @@ export default function Sessions() {
       await loadSessions();
       if (selectedId === id) await loadDetail(id);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Rename failed');
+      setMessage(error instanceof Error ? error.message : t('sessions.renameFailed'));
     }
   }
 
@@ -201,76 +203,76 @@ export default function Sessions() {
     <section aria-labelledby="sessions-title" className="page-panel sessions-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Conversation sessions</p>
-          <h2 id="sessions-title">Sessions</h2>
+          <p className="eyebrow">{t('sessions.eyebrow')}</p>
+          <h2 id="sessions-title">{t('nav.sessions')}</h2>
         </div>
         <div className="action-row">
-          <select value={filterSource} onChange={(e) => setFilterSource(e.target.value)} aria-label="Filter by source">
-            <option value="all">All sources</option>
+          <select value={filterSource} onChange={(e) => setFilterSource(e.target.value)} aria-label={t('sessions.filterSource')}>
+            <option value="all">{t('sessions.allSources')}</option>
             {sources.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-          <button onClick={loadSessions} disabled={loading}>{loading ? 'Loading...' : 'Refresh'}</button>
+          <button onClick={loadSessions} disabled={loading}>{loading ? t('common.loading') : t('common.refresh')}</button>
           <button className="danger" onClick={async () => {
-            if (!confirm('Clear ALL sessions?')) return;
+            if (!confirm(t('sessions.confirmClearAll'))) return;
             await fetch('/api/sessions', {method: 'DELETE'});
             setSelectedId(null);
             setDetail(null);
             await loadSessions();
-          }}>Xóa</button>
+          }}>{t('common.delete')}</button>
           <button onClick={async () => {
             await fetch('/api/sessions/reload', {method: 'POST'});
             await loadSessions();
-            setMessage('Sessions reloaded from disk');
-          }}>Reload</button>
+            setMessage(t('sessions.reloadDone'));
+          }}>{t('sessions.reload')}</button>
         </div>
       </div>
 
       {message ? <p className="muted">{message}</p> : null}
       {!loading && filtered.length === 0 && diagnostics ? (
         <div className="surface-card" style={{marginBottom: 16, padding: 16}}>
-          <h4 style={{marginBottom: 8}}>Why is this empty?</h4>
+          <h4 style={{marginBottom: 8}}>{t('sessions.emptyTitle')}</h4>
           {!diagnostics.sessionEnabled ? (
-            <p className="muted">Session memory is disabled in Settings. Enable "Session Memory" to start tracking conversations.</p>
+            <p className="muted">{t('sessions.disabled')}</p>
           ) : diagnostics.fallbackMode === 'stateless' ? (
             <div>
-              <p className="muted">Session memory is in <strong>stateless</strong> mode. No sessions are stored unless the client sends an explicit session ID (<code>x-luna-session-id</code> header or <code>session_id</code> in the request body).</p>
-              <p className="muted" style={{marginTop: 8}}>The API clients you are using may not provide session metadata. Try switching Settings → Session → Fallback Mode to <strong>file-backed</strong> to auto-create sessions when overflow files are generated.</p>
+              <p className="muted">{t('sessions.statelessHint')}</p>
+              <p className="muted" style={{marginTop: 8}}>{t('sessions.statelessTip')}</p>
               <details style={{marginTop: 12}}>
-                <summary style={{cursor: 'pointer', color: 'var(--color-text-secondary)'}}>Diagnostics</summary>
+                <summary style={{cursor: 'pointer', color: 'var(--color-text-secondary)'}}>{t('sessions.diagnostics')}</summary>
                 <dl className="detail-grid" style={{marginTop: 8, fontSize: '0.85em'}}>
-                  <dt>Config enabled</dt><dd>{String(diagnostics.sessionEnabled)}</dd>
-                  <dt>Fallback mode</dt><dd>{diagnostics.fallbackMode}</dd>
-                  <dt>Require explicit ID</dt><dd>{String(diagnostics.requireExplicitId)}</dd>
-                  <dt>Total sessions on disk</dt><dd>{diagnostics.totalSessions}</dd>
-                  <dt>Persistent</dt><dd>{diagnostics.persistent ?? diagnostics.stats?.persistent ?? '-'}</dd>
-                  <dt>File-backed</dt><dd>{diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? '-'}</dd>
-                  <dt>Transient</dt><dd>{diagnostics.transient ?? diagnostics.stats?.transient ?? '-'}</dd>
-                  <dt>Data file exists</dt><dd>{String(diagnostics.dataFile.exists)}</dd>
-                  <dt>Data file parseable</dt><dd>{String(diagnostics.dataFile.parseable)}</dd>
+                  <dt>{t('label.enabled')}</dt><dd>{String(diagnostics.sessionEnabled)}</dd>
+                  <dt>{t('settings.session.fallbackMode')}</dt><dd>{diagnostics.fallbackMode}</dd>
+                  <dt>{t('settings.session.requireExplicitId')}</dt><dd>{String(diagnostics.requireExplicitId)}</dd>
+                  <dt>{t('label.totalSessions')}</dt><dd>{diagnostics.totalSessions}</dd>
+                  <dt>{t('label.persistent')}</dt><dd>{diagnostics.persistent ?? diagnostics.stats?.persistent ?? '-'}</dd>
+                  <dt>{t('label.fileBacked')}</dt><dd>{diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? '-'}</dd>
+                  <dt>{t('label.transient')}</dt><dd>{diagnostics.transient ?? diagnostics.stats?.transient ?? '-'}</dd>
+                  <dt>{t('label.dataFileExists')}</dt><dd>{String(diagnostics.dataFile.exists)}</dd>
+                  <dt>{t('label.dataFileParseable')}</dt><dd>{String(diagnostics.dataFile.parseable)}</dd>
                 </dl>
               </details>
             </div>
           ) : diagnostics.fallbackMode === 'file-backed' ? (
             <div>
-              <p className="muted">Session memory is in <strong>file-backed</strong> mode. Sessions are only created when overflow files are generated (i.e., when the conversation exceeds the token threshold). Before overflow, all requests are stateless.</p>
-              <p className="muted" style={{marginTop: 8}}>If you have not seen any overflow files, no file-backed sessions will appear. Once a conversation triggers overflow, a file-backed session will be created and visible here.</p>
+              <p className="muted">{t('sessions.fileBackedHint')}</p>
+              <p className="muted" style={{marginTop: 8}}>{t('sessions.fileBackedTip')}</p>
               <details style={{marginTop: 12}}>
-                <summary style={{cursor: 'pointer', color: 'var(--color-text-secondary)'}}>Diagnostics</summary>
+                <summary style={{cursor: 'pointer', color: 'var(--color-text-secondary)'}}>{t('sessions.diagnostics')}</summary>
                 <dl className="detail-grid" style={{marginTop: 8, fontSize: '0.85em'}}>
-                  <dt>Config enabled</dt><dd>{String(diagnostics.sessionEnabled)}</dd>
-                  <dt>Fallback mode</dt><dd>{diagnostics.fallbackMode}</dd>
-                  <dt>Require explicit ID</dt><dd>{String(diagnostics.requireExplicitId)}</dd>
-                  <dt>Total sessions on disk</dt><dd>{diagnostics.totalSessions}</dd>
-                  <dt>File-backed</dt><dd>{diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? '-'}</dd>
-                  <dt>Persistent</dt><dd>{diagnostics.persistent ?? diagnostics.stats?.persistent ?? '-'}</dd>
-                  <dt>Transient</dt><dd>{diagnostics.transient ?? diagnostics.stats?.transient ?? '-'}</dd>
-                  <dt>Data file exists</dt><dd>{String(diagnostics.dataFile.exists)}</dd>
-                  <dt>Data file parseable</dt><dd>{String(diagnostics.dataFile.parseable)}</dd>
+                  <dt>{t('label.enabled')}</dt><dd>{String(diagnostics.sessionEnabled)}</dd>
+                  <dt>{t('settings.session.fallbackMode')}</dt><dd>{diagnostics.fallbackMode}</dd>
+                  <dt>{t('settings.session.requireExplicitId')}</dt><dd>{String(diagnostics.requireExplicitId)}</dd>
+                  <dt>{t('label.totalSessions')}</dt><dd>{diagnostics.totalSessions}</dd>
+                  <dt>{t('label.fileBacked')}</dt><dd>{diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? '-'}</dd>
+                  <dt>{t('label.persistent')}</dt><dd>{diagnostics.persistent ?? diagnostics.stats?.persistent ?? '-'}</dd>
+                  <dt>{t('label.transient')}</dt><dd>{diagnostics.transient ?? diagnostics.stats?.transient ?? '-'}</dd>
+                  <dt>{t('label.dataFileExists')}</dt><dd>{String(diagnostics.dataFile.exists)}</dd>
+                  <dt>{t('label.dataFileParseable')}</dt><dd>{String(diagnostics.dataFile.parseable)}</dd>
                 </dl>
               </details>
             </div>
           ) : (
-            <p className="muted">No sessions found. Total on disk: {diagnostics.totalSessions}. File exists: {String(diagnostics.dataFile.exists)}.</p>
+            <p className="muted">{t('sessions.noneFound', {count: diagnostics.totalSessions, exists: String(diagnostics.dataFile.exists)})}</p>
           )}
         </div>
       ) : null}
@@ -279,16 +281,16 @@ export default function Sessions() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Title / ID</th>
-              <th>Mode</th>
-              <th>Source</th>
-              <th>Workspace</th>
-              <th>Thread</th>
-              <th>Model</th>
-              <th>Messages</th>
-              <th>Overflow</th>
-              <th>Provider Chat</th>
-              <th>Updated</th>
+              <th>{t('sessions.titleId')}</th>
+              <th>{t('label.mode')}</th>
+              <th>{t('label.source')}</th>
+              <th>{t('label.workspace')}</th>
+              <th>{t('label.thread')}</th>
+              <th>{t('label.model')}</th>
+              <th>{t('label.messages')}</th>
+              <th>{t('label.overflow')}</th>
+              <th>{t('label.providerChat')}</th>
+              <th>{t('label.updated')}</th>
             </tr>
           </thead>
           <tbody>
@@ -316,53 +318,53 @@ export default function Sessions() {
         </table>
       </div>
       {filtered.length > renderedSessions.length ? (
-        <p className="muted list-lazy-status">Showing {renderedSessions.length} of {filtered.length}. Scroll to load more.</p>
+        <p className="muted list-lazy-status">{t('common.showingOf', {shown: renderedSessions.length, total: filtered.length})}</p>
       ) : null}
 
-      {detailLoading ? <p className="muted">Loading detail...</p> : null}
+      {detailLoading ? <p className="muted">{t('sessions.loadingDetail')}</p> : null}
 
       {detail && !detailLoading ? (
         <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="session-detail-title">
           <aside className="detail-panel">
-          <button className="modal-close-btn" aria-label="Close session detail" onClick={() => { setSelectedId(null); setDetail(null); }}>×</button>
+          <button className="modal-close-btn" aria-label={t('common.close')} onClick={() => { setSelectedId(null); setDetail(null); }}>×</button>
           <div className="detail-heading">
-            <p className="eyebrow">Session detail</p>
+            <p className="eyebrow">{t('sessions.detail')}</p>
             <h3 id="session-detail-title">{detail.title || detail.id.slice(0, 8) + '...'}</h3>
             <p className="muted">{new Date(detail.updatedAt).toLocaleString()}</p>
           </div>
           <div className="surface-card-head">
             <div className="action-row">
-              <button onClick={() => renameSession(detail.id)}>Rename</button>
-              <button onClick={() => compactSession(detail.id)}>Compact</button>
-              <button onClick={() => clearSession(detail.id)}>Clear</button>
+              <button onClick={() => renameSession(detail.id)}>{t('common.rename')}</button>
+              <button onClick={() => compactSession(detail.id)}>{t('common.compact')}</button>
+              <button onClick={() => clearSession(detail.id)}>{t('common.clear')}</button>
               <button onClick={async () => {
                 const res = await fetch(`/api/sessions/${detail.id}/reset-provider`, {method: 'POST'});
-                if (res.ok) { setMessage('Provider chat ID reset'); await loadDetail(detail.id); }
-                else setMessage('Reset failed');
-              }}>Reset Provider</button>
-              <button className="danger" onClick={() => deleteSession(detail.id)}>Delete</button>
+                if (res.ok) { setMessage(t('sessions.providerReset')); await loadDetail(detail.id); }
+                else setMessage(t('sessions.resetFailed'));
+              }}>{t('common.reset')} {t('label.provider')}</button>
+              <button className="danger" onClick={() => deleteSession(detail.id)}>{t('common.delete')}</button>
             </div>
           </div>
           <dl className="detail-grid">
             <dt>ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{detail.id}</dd>
-            <dt>Mode</dt><dd>{detail.mode || 'persistent'}</dd>
-            <dt>Source</dt><dd>{detail.source}</dd>
-            <dt>Workspace</dt><dd>{detail.workspace || '-'}</dd>
-            <dt>Thread</dt><dd>{detail.threadId}</dd>
-            <dt>Model</dt><dd>{detail.model || '-'}</dd>
-            <dt>Profile</dt><dd>{detail.profileId || '-'}</dd>
-            <dt>Fingerprint</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{detail.fingerprint ? detail.fingerprint.slice(0, 16) + '...' : '-'}</dd>
-            <dt>Confidence</dt><dd>{detail.confidence || '-'}</dd>
-            <dt>Messages</dt><dd>{detail.messageCount}</dd>
-            <dt>Provider Chat ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{detail.providerSessionId || '-'}</dd>
-            <dt>Compacted</dt><dd>{detail.compactedAt ? new Date(detail.compactedAt).toLocaleString() : 'Never'}</dd>
-            <dt>Created</dt><dd>{new Date(detail.createdAt).toLocaleString()}</dd>
-            <dt>Updated</dt><dd>{new Date(detail.updatedAt).toLocaleString()}</dd>
+            <dt>{t('label.mode')}</dt><dd>{detail.mode || 'persistent'}</dd>
+            <dt>{t('label.source')}</dt><dd>{detail.source}</dd>
+            <dt>{t('label.workspace')}</dt><dd>{detail.workspace || '-'}</dd>
+            <dt>{t('label.thread')}</dt><dd>{detail.threadId}</dd>
+            <dt>{t('label.model')}</dt><dd>{detail.model || '-'}</dd>
+            <dt>{t('label.profile')}</dt><dd>{detail.profileId || '-'}</dd>
+            <dt>{t('label.fingerprint')}</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{detail.fingerprint ? detail.fingerprint.slice(0, 16) + '...' : '-'}</dd>
+            <dt>{t('label.confidence')}</dt><dd>{detail.confidence || '-'}</dd>
+            <dt>{t('label.messages')}</dt><dd>{detail.messageCount}</dd>
+            <dt>{t('label.providerChat')} ID</dt><dd style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{detail.providerSessionId || '-'}</dd>
+            <dt>{t('common.compact')}</dt><dd>{detail.compactedAt ? new Date(detail.compactedAt).toLocaleString() : t('common.never')}</dd>
+            <dt>{t('label.created')}</dt><dd>{new Date(detail.createdAt).toLocaleString()}</dd>
+            <dt>{t('label.updated')}</dt><dd>{new Date(detail.updatedAt).toLocaleString()}</dd>
           </dl>
 
           {detail.activeRunDetails && detail.activeRunDetails.length > 0 ? (
             <div style={{marginTop: 12}}>
-              <h4>Active Runs ({detail.activeRunDetails.length})</h4>
+              <h4>{t('dashboard.activeRuns')} ({detail.activeRunDetails.length})</h4>
               <div style={{maxHeight: 150, overflow: 'auto'}}>
                 {detail.activeRunDetails.map(r => (
                   <div key={r.id} style={{marginBottom: 4, padding: '4px 8px', fontSize: '0.85em', background: 'var(--color-surface)', borderRadius: 4}}>
@@ -377,17 +379,17 @@ export default function Sessions() {
 
           {detail.providerBindings && detail.providerBindings.length > 0 ? (
             <div style={{marginTop: 12}}>
-              <h4>Provider Bindings ({detail.providerBindings.length})</h4>
+              <h4>{t('sessions.providerBindings')} ({detail.providerBindings.length})</h4>
               <div className="table-wrap">
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>Provider</th>
-                      <th>Account</th>
-                      <th>Purpose</th>
-                      <th>Chat ID</th>
-                      <th>Worker</th>
-                      <th>Updated</th>
+                      <th>{t('label.provider')}</th>
+                      <th>{t('label.account')}</th>
+                      <th>{t('label.purpose')}</th>
+                      <th>{t('label.chatId')}</th>
+                      <th>{t('label.worker')}</th>
+                      <th>{t('label.updated')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -409,7 +411,7 @@ export default function Sessions() {
 
           {detail.overflowChain && detail.overflowChain.length > 0 ? (
             <div style={{marginTop: 12}}>
-              <h4>Overflow Chain ({detail.overflowChain.length})</h4>
+              <h4>{t('sessions.overflowChain')} ({detail.overflowChain.length})</h4>
               <div style={{maxHeight: 200, overflow: 'auto'}}>
                 {detail.overflowChain.map((a, i) => (
                   <div key={i} style={{marginBottom: 4, padding: 4, fontSize: '0.85em', background: 'var(--color-surface)', borderRadius: 4}}>
@@ -423,14 +425,14 @@ export default function Sessions() {
 
           {detail.summary ? (
             <div style={{marginTop: 12}}>
-              <h4>Summary</h4>
+              <h4>{t('sessions.summary')}</h4>
               <pre className="detail-pre" style={{maxHeight: 200, overflow: 'auto'}}>{detail.summary}</pre>
             </div>
           ) : null}
 
           {detail.messages && detail.messages.length > 0 ? (
             <div style={{marginTop: 12}}>
-              <h4>Recent Messages ({detail.messages.length})</h4>
+              <h4>{t('sessions.recentMessages')} ({detail.messages.length})</h4>
               <div style={{maxHeight: 400, overflow: 'auto'}}>
                 {detail.messages.slice(-20).map((m, i) => (
                   <div key={m.id || i} style={{marginBottom: 8, padding: 8, background: 'var(--color-surface)', borderRadius: 4}}>

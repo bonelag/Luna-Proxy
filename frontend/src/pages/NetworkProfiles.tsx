@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type NetworkProfile = {
   id: string;
@@ -28,6 +29,7 @@ type ProviderWorker = {
 };
 
 export default function NetworkProfiles() {
+  const {t} = useI18n();
   const [profiles, setProfiles] = useState<NetworkProfile[]>([]);
   const [workers, setWorkers] = useState<ProviderWorker[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,35 +101,35 @@ export default function NetworkProfiles() {
     <section aria-labelledby="np-title" className={`page-panel${modalOpen ? ' modal-open' : ''}`}>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Egress paths and remote workers</p>
-          <h2 id="np-title">Network & Workers</h2>
+          <p className="eyebrow">{t('network.eyebrow')}</p>
+          <h2 id="np-title">{t('network.title')}</h2>
         </div>
         <div className="action-row">
-          <span className="muted" style={{fontSize: '0.85em', marginRight: 12}}>Direct IP: {directIp || '...'}</span>
-          <button onClick={verifyAllWorkers}>Verify All Workers</button>
-          <button onClick={loadAll}>Refresh</button>
+          <span className="muted" style={{fontSize: '0.85em', marginRight: 12}}>{t('label.directIp')}: {directIp || '...'}</span>
+          <button onClick={verifyAllWorkers}>{t('network.verifyAll')}</button>
+          <button onClick={loadAll}>{t('common.refresh')}</button>
         </div>
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>
         <div className="surface-card-head">
-          <h3>Network Profiles</h3>
+          <h3>{t('network.profiles')}</h3>
           <button onClick={() => setEditingProfile({
             id: crypto.randomUUID().slice(0,8), name: '', mode: 'direct',
             enabled: true, maxConcurrentRuns: 5,
-          } as any)}>Add Profile</button>
+          } as any)}>{t('network.addProfile')}</button>
         </div>
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Mode</th>
-                <th>Enabled</th>
-                <th>Expected IP</th>
-                <th>Verified IP</th>
-                <th>Last Verified</th>
+                <th>{t('label.name')}</th>
+                <th>{t('label.mode')}</th>
+                <th>{t('label.enabled')}</th>
+                <th>{t('label.expectedIp')}</th>
+                <th>{t('label.verifiedIp')}</th>
+                <th>{t('label.lastVerified')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -137,14 +139,14 @@ export default function NetworkProfiles() {
                   <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{p.id}</td>
                   <td>{p.name}</td>
                   <td>{p.mode}</td>
-                  <td>{p.enabled ? 'Yes' : 'No'}</td>
+                  <td>{p.enabled ? t('common.yes') : t('common.no')}</td>
                   <td>{p.expectedIp || '-'}</td>
                   <td>{p.lastVerifiedIp || '-'}</td>
                   <td>{p.lastVerifiedAt ? new Date(p.lastVerifiedAt).toLocaleString() : '-'}</td>
                   <td>
-                    <button onClick={() => setEditingProfile({...p})} style={{fontSize: '0.8em', marginRight: 4}}>Edit</button>
-                    <button onClick={() => verifyProfile(p.id)} style={{fontSize: '0.8em', marginRight: 4}}>Verify</button>
-                    <button onClick={() => deleteProfile(p.id)} style={{fontSize: '0.8em'}}>Delete</button>
+                    <button onClick={() => setEditingProfile({...p})} style={{fontSize: '0.8em', marginRight: 4}}>{t('common.edit')}</button>
+                    <button onClick={() => verifyProfile(p.id)} style={{fontSize: '0.8em', marginRight: 4}}>{t('common.verify')}</button>
+                    <button onClick={() => deleteProfile(p.id)} style={{fontSize: '0.8em'}}>{t('common.delete')}</button>
                   </td>
                 </tr>
               ))}
@@ -155,26 +157,26 @@ export default function NetworkProfiles() {
 
       <div className="surface-card" style={{marginBottom: 16}}>
         <div className="surface-card-head">
-          <h3>Workers</h3>
+          <h3>{t('network.workers')}</h3>
           <button onClick={() => setEditingWorker({
             id: crypto.randomUUID().slice(0,8), providerId: 'qwen-ai', baseUrl: '',
             enabled: true, networkProfileId: 'direct', maxConcurrentRuns: 5,
-          } as ProviderWorker)}>Add Worker</button>
+          } as ProviderWorker)}>{t('network.addWorker')}</button>
         </div>
         <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Provider</th>
-                <th>Account</th>
-                <th>Base URL</th>
-                <th>Status</th>
-                <th>Profile</th>
-                <th>Max Runs</th>
-                <th>Expected IP</th>
-                <th>Verified IP</th>
-                <th>Last Verified</th>
+                <th>{t('label.provider')}</th>
+                <th>{t('label.account')}</th>
+                <th>{t('label.baseUrl')}</th>
+                <th>{t('label.status')}</th>
+                <th>{t('label.profile')}</th>
+                <th>{t('label.maxRuns')}</th>
+                <th>{t('label.expectedIp')}</th>
+                <th>{t('label.verifiedIp')}</th>
+                <th>{t('label.lastVerified')}</th>
                 <th></th>
               </tr>
             </thead>
@@ -183,18 +185,18 @@ export default function NetworkProfiles() {
                 <tr key={w.id}>
                   <td style={{fontFamily: 'monospace', fontSize: '0.85em'}}>{w.id}</td>
                   <td>{w.providerId}</td>
-                  <td>{w.accountId || 'any'}</td>
+                  <td>{w.accountId || t('common.any')}</td>
                   <td style={{fontSize: '0.85em'}}>{w.baseUrl}</td>
-                  <td><span className={`status-pill ${statusClass(w.status)}`}>{w.status || 'unknown'}</span></td>
+                  <td><span className={`status-pill ${statusClass(w.status)}`}>{w.status || t('common.unknown')}</span></td>
                   <td style={{fontSize: '0.85em'}}>{w.networkProfileId}</td>
                   <td>{w.maxConcurrentRuns}</td>
                   <td>{w.expectedIp || '-'}</td>
                   <td>{w.lastVerifiedIp || '-'}</td>
                   <td>{w.lastVerifiedAt ? new Date(w.lastVerifiedAt).toLocaleString() : '-'}</td>
                   <td>
-                    <button onClick={() => setEditingWorker({...w})} style={{fontSize: '0.8em', marginRight: 4}}>Edit</button>
-                    <button onClick={() => verifyWorker(w.id)} style={{fontSize: '0.8em', marginRight: 4}}>Verify IP</button>
-                    <button onClick={() => deleteWorker(w.id)} style={{fontSize: '0.8em'}}>Delete</button>
+                    <button onClick={() => setEditingWorker({...w})} style={{fontSize: '0.8em', marginRight: 4}}>{t('common.edit')}</button>
+                    <button onClick={() => verifyWorker(w.id)} style={{fontSize: '0.8em', marginRight: 4}}>{t('network.verifyIp')}</button>
+                    <button onClick={() => deleteWorker(w.id)} style={{fontSize: '0.8em'}}>{t('common.delete')}</button>
                   </td>
                 </tr>
               ))}
@@ -218,16 +220,17 @@ function ProfileForm({profile, onSave, onCancel}: {
   onSave: (p: NetworkProfile) => void;
   onCancel: () => void;
 }) {
+  const {t} = useI18n();
   const [p, setP] = useState(profile);
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-panel" onClick={e => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onCancel}>x</button>
-        <h3>{profile.id ? 'Edit Network Profile' : 'Add Network Profile'}</h3>
+        <h3>{profile.id ? t('network.editProfile') : t('network.addNetworkProfile')}</h3>
         <div className="form-grid">
-          <label className="field"><span>Name</span><input value={p.name} onChange={e => setP({...p, name: e.target.value})} /></label>
+          <label className="field"><span>{t('label.name')}</span><input value={p.name} onChange={e => setP({...p, name: e.target.value})} /></label>
           <label className="field">
-            <span>Mode</span>
+            <span>{t('label.mode')}</span>
             <select value={p.mode} onChange={e => setP({...p, mode: e.target.value})}>
               <option value="direct">Direct</option>
               <option value="worker-managed">Worker-managed</option>
@@ -235,17 +238,17 @@ function ProfileForm({profile, onSave, onCancel}: {
               <option value="socks5">SOCKS5</option>
             </select>
           </label>
-          <label className="field"><span>Expected IP</span><input value={p.expectedIp || ''} onChange={e => setP({...p, expectedIp: e.target.value})} /></label>
-          <label className="field"><span>Proxy URL</span><input value={p.proxyUrl || ''} onChange={e => setP({...p, proxyUrl: e.target.value})} placeholder="http://..." /></label>
-          <label className="field"><span>Verify IP URL</span><input value={p.verifyIpUrl || ''} onChange={e => setP({...p, verifyIpUrl: e.target.value})} placeholder="https://api.ipify.org?format=json" /></label>
+          <label className="field"><span>{t('label.expectedIp')}</span><input value={p.expectedIp || ''} onChange={e => setP({...p, expectedIp: e.target.value})} /></label>
+          <label className="field"><span>{t('label.proxyUrl')}</span><input value={p.proxyUrl || ''} onChange={e => setP({...p, proxyUrl: e.target.value})} placeholder="http://..." /></label>
+          <label className="field"><span>{t('label.verifyIpUrl')}</span><input value={p.verifyIpUrl || ''} onChange={e => setP({...p, verifyIpUrl: e.target.value})} placeholder="https://api.ipify.org?format=json" /></label>
           <label className="toggle-field">
             <input type="checkbox" checked={p.enabled} onChange={e => setP({...p, enabled: e.target.checked})} />
-            <span>Enabled</span>
+            <span>{t('label.enabled')}</span>
           </label>
         </div>
         <div className="action-row">
-          <button onClick={() => onSave(p)}>Save</button>
-          <button onClick={onCancel}>Cancel</button>
+          <button onClick={() => onSave(p)}>{t('common.save')}</button>
+          <button onClick={onCancel}>{t('common.cancel')}</button>
         </div>
       </div>
     </div>
@@ -258,32 +261,33 @@ function WorkerForm({worker, profiles, onSave, onCancel}: {
   onSave: (w: ProviderWorker) => void;
   onCancel: () => void;
 }) {
+  const {t} = useI18n();
   const [w, setW] = useState(worker);
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-panel" onClick={e => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onCancel}>x</button>
-        <h3>{worker.id ? 'Edit Worker' : 'Add Worker'}</h3>
+        <h3>{worker.id ? t('network.editWorker') : t('network.addWorker')}</h3>
         <div className="form-grid">
           <label className="field"><span>Provider ID</span><input value={w.providerId} onChange={e => setW({...w, providerId: e.target.value})} /></label>
-          <label className="field"><span>Account ID</span><input value={w.accountId || ''} onChange={e => setW({...w, accountId: e.target.value})} placeholder="optional" /></label>
-          <label className="field"><span>Base URL</span><input value={w.baseUrl} onChange={e => setW({...w, baseUrl: e.target.value})} placeholder="http://localhost:3001" /></label>
+          <label className="field"><span>Account ID</span><input value={w.accountId || ''} onChange={e => setW({...w, accountId: e.target.value})} placeholder={t('common.optional')} /></label>
+          <label className="field"><span>{t('label.baseUrl')}</span><input value={w.baseUrl} onChange={e => setW({...w, baseUrl: e.target.value})} placeholder="http://localhost:3001" /></label>
           <label className="field">
-            <span>Network Profile</span>
+            <span>{t('label.networkProfile')}</span>
             <select value={w.networkProfileId} onChange={e => setW({...w, networkProfileId: e.target.value})}>
               {profiles.map(p => <option key={p.id} value={p.id}>{p.name} ({p.id})</option>)}
             </select>
           </label>
-          <label className="field"><span>Max Concurrent Runs</span><input type="number" value={w.maxConcurrentRuns} onChange={e => setW({...w, maxConcurrentRuns: Number(e.target.value)})} min={1} /></label>
-          <label className="field"><span>Expected IP</span><input value={w.expectedIp || ''} onChange={e => setW({...w, expectedIp: e.target.value})} /></label>
+          <label className="field"><span>{t('label.maxConcurrentRuns')}</span><input type="number" value={w.maxConcurrentRuns} onChange={e => setW({...w, maxConcurrentRuns: Number(e.target.value)})} min={1} /></label>
+          <label className="field"><span>{t('label.expectedIp')}</span><input value={w.expectedIp || ''} onChange={e => setW({...w, expectedIp: e.target.value})} /></label>
           <label className="toggle-field">
             <input type="checkbox" checked={w.enabled} onChange={e => setW({...w, enabled: e.target.checked})} />
-            <span>Enabled</span>
+            <span>{t('label.enabled')}</span>
           </label>
         </div>
         <div className="action-row">
-          <button onClick={() => onSave(w)}>Save</button>
-          <button onClick={onCancel}>Cancel</button>
+          <button onClick={() => onSave(w)}>{t('common.save')}</button>
+          <button onClick={onCancel}>{t('common.cancel')}</button>
         </div>
       </div>
     </div>

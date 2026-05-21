@@ -783,7 +783,7 @@ var require_react_development = __commonJS({
           }
           return children;
         }
-        function createContext3(defaultValue) {
+        function createContext4(defaultValue) {
           var context = {
             $$typeof: REACT_CONTEXT_TYPE,
             // As a workaround to support multiple concurrent renderers, we categorize
@@ -1069,7 +1069,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher;
         }
-        function useContext3(Context) {
+        function useContext4(Context) {
           var dispatcher = resolveDispatcher();
           {
             if (Context._context !== void 0) {
@@ -1083,7 +1083,7 @@ var require_react_development = __commonJS({
           }
           return dispatcher.useContext(Context);
         }
-        function useState12(initialState) {
+        function useState13(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -1095,7 +1095,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect12(create, deps) {
+        function useEffect13(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create, deps);
         }
@@ -1111,7 +1111,7 @@ var require_react_development = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
-        function useMemo8(create, deps) {
+        function useMemo9(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useMemo(create, deps);
         }
@@ -1864,7 +1864,7 @@ var require_react_development = __commonJS({
         exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals;
         exports.act = act;
         exports.cloneElement = cloneElement$1;
-        exports.createContext = createContext3;
+        exports.createContext = createContext4;
         exports.createElement = createElement$1;
         exports.createFactory = createFactory;
         exports.createRef = createRef;
@@ -1875,18 +1875,18 @@ var require_react_development = __commonJS({
         exports.startTransition = startTransition;
         exports.unstable_act = act;
         exports.useCallback = useCallback4;
-        exports.useContext = useContext3;
+        exports.useContext = useContext4;
         exports.useDebugValue = useDebugValue;
         exports.useDeferredValue = useDeferredValue;
-        exports.useEffect = useEffect12;
+        exports.useEffect = useEffect13;
         exports.useId = useId;
         exports.useImperativeHandle = useImperativeHandle;
         exports.useInsertionEffect = useInsertionEffect;
         exports.useLayoutEffect = useLayoutEffect3;
-        exports.useMemo = useMemo8;
+        exports.useMemo = useMemo9;
         exports.useReducer = useReducer;
         exports.useRef = useRef4;
-        exports.useState = useState12;
+        exports.useState = useState13;
         exports.useSyncExternalStore = useSyncExternalStore;
         exports.useTransition = useTransition;
         exports.version = ReactVersion;
@@ -2382,9 +2382,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React13 = require_react();
+        var React14 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React13.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3989,7 +3989,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React13.Children.forEach(props.children, function(child) {
+                React14.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -23558,7 +23558,7 @@ var require_react_jsx_runtime_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React13 = require_react();
+        var React14 = require_react();
         var REACT_ELEMENT_TYPE = Symbol.for("react.element");
         var REACT_PORTAL_TYPE = Symbol.for("react.portal");
         var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23584,7 +23584,7 @@ var require_react_jsx_runtime_development = __commonJS({
           }
           return null;
         }
-        var ReactSharedInternals = React13.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React14.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function error(format) {
           {
             {
@@ -24434,10 +24434,10 @@ var require_react_jsx_runtime_development = __commonJS({
             return jsxWithValidation(type, props, key, false);
           }
         }
-        var jsx13 = jsxWithValidationDynamic;
+        var jsx14 = jsxWithValidationDynamic;
         var jsxs12 = jsxWithValidationStatic;
         exports.Fragment = REACT_FRAGMENT_TYPE;
-        exports.jsx = jsx13;
+        exports.jsx = jsx14;
         exports.jsxs = jsxs12;
       })();
     }
@@ -24457,7 +24457,7 @@ var require_jsx_runtime = __commonJS({
 });
 
 // frontend/src/main.tsx
-var import_react10 = __toESM(require_react());
+var import_react11 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // frontend/node_modules/react-router-dom/dist/index.js
@@ -26506,35 +26506,702 @@ function useViewTransitionState(to, opts) {
   return matchPath(path.pathname, nextPath) != null || matchPath(path.pathname, currentPath) != null;
 }
 
-// frontend/src/components/Layout.tsx
+// frontend/src/i18n.tsx
+var import_react = __toESM(require_react());
 var import_jsx_runtime = __toESM(require_jsx_runtime());
+var dictionaries = {
+  en: {
+    "app.title": "Luna Proxy Manager",
+    "nav.dashboard": "Dashboard",
+    "nav.providers": "Providers",
+    "nav.proxy": "Proxy",
+    "nav.models": "Models",
+    "nav.sessions": "Sessions",
+    "nav.runs": "Runs",
+    "nav.network": "Network",
+    "nav.logs": "Logs",
+    "nav.settings": "Settings",
+    "common.loading": "Loading...",
+    "common.saving": "Saving...",
+    "common.deleting": "Deleting...",
+    "common.refresh": "Refresh",
+    "common.delete": "Delete",
+    "common.cancel": "Cancel",
+    "common.save": "Save",
+    "common.edit": "Edit",
+    "common.verify": "Verify",
+    "common.close": "Close",
+    "common.yes": "Yes",
+    "common.no": "No",
+    "common.any": "any",
+    "common.unknown": "unknown",
+    "common.optional": "optional",
+    "common.updated": "Updated",
+    "common.showingOf": "Showing {shown} of {total}. Scroll to load more.",
+    "common.saveFailed": "Save failed",
+    "common.loadFailed": "Failed to load",
+    "common.deleteFailed": "Failed to delete",
+    "common.clear": "Clear",
+    "common.rename": "Rename",
+    "common.compact": "Compact",
+    "common.reset": "Reset",
+    "common.never": "Never",
+    "common.message": "Message",
+    "label.time": "Time",
+    "label.level": "Level",
+    "label.path": "Path",
+    "label.status": "Status",
+    "label.provider": "Provider",
+    "label.account": "Account",
+    "label.model": "Model",
+    "label.session": "Session",
+    "label.worker": "Worker",
+    "label.started": "Started",
+    "label.created": "Created",
+    "label.queued": "Queued",
+    "label.completed": "Completed",
+    "label.updated": "Updated",
+    "label.active": "Active",
+    "label.max": "Max",
+    "label.owner": "Owner",
+    "label.name": "Name",
+    "label.mode": "Mode",
+    "label.enabled": "Enabled",
+    "label.source": "Source",
+    "label.workspace": "Workspace",
+    "label.thread": "Thread",
+    "label.messages": "Messages",
+    "label.overflow": "Overflow",
+    "label.profile": "Profile",
+    "label.fingerprint": "Fingerprint",
+    "label.confidence": "Confidence",
+    "label.duration": "Duration",
+    "label.task": "Task",
+    "label.error": "Error",
+    "label.stream": "Stream",
+    "label.directIp": "Direct IP",
+    "label.expectedIp": "Expected IP",
+    "label.verifiedIp": "Verified IP",
+    "label.lastVerified": "Last Verified",
+    "label.baseUrl": "Base URL",
+    "label.proxyUrl": "Proxy URL",
+    "label.verifyIpUrl": "Verify IP URL",
+    "label.networkProfile": "Network Profile",
+    "label.maxRuns": "Max Runs",
+    "label.maxConcurrentRuns": "Max Concurrent Runs",
+    "label.providerChat": "Provider Chat",
+    "label.host": "Host",
+    "label.port": "Port",
+    "label.totalSessions": "Total sessions on disk",
+    "label.persistent": "Persistent",
+    "label.fileBacked": "File-backed",
+    "label.transient": "Transient",
+    "label.dataFileExists": "Data file exists",
+    "label.dataFileParseable": "Data file parseable",
+    "logs.thinkingMode": "Thinking mode",
+    "logs.reasoningEffort": "Reasoning effort",
+    "logs.files": "Files",
+    "logs.sanitized": "Sanitized",
+    "logs.detectedClient": "Detected client",
+    "logs.responseContract": "Response contract",
+    "logs.activeTaskIdx": "Active task idx",
+    "logs.activeTaskPreview": "Active task preview",
+    "logs.activeTaskSource": "Active task source",
+    "logs.activeTaskPartIndex": "Active task part index",
+    "logs.overflowFile": "Overflow file",
+    "logs.keptStripped": "Kept / stripped",
+    "logs.clientRetryDetected": "Client retry detected",
+    "logs.clientRetrySource": "Client retry source",
+    "logs.snapshotIncluded": "Snapshot included",
+    "logs.removedContainerConf": "Removed container conf",
+    "logs.removedAutoReminder": "Removed auto reminder",
+    "logs.removedPartialReminder": "Removed partial reminder",
+    "logs.removedAssistantFail": "Removed assistant fail",
+    "logs.removedDupAssistant": "Removed dup assistant",
+    "logs.partialNoise": "Partial noise",
+    "logs.sessionMode": "Session mode",
+    "logs.sessionResolveReason": "Session resolve reason",
+    "logs.sessionExplicit": "Session explicit",
+    "logs.sessionSource": "Session source",
+    "logs.sessionWorkspace": "Session workspace",
+    "logs.sessionThread": "Session thread",
+    "logs.sessionProviderId": "Session provider ID",
+    "logs.dedupeMeta": "Dedupe meta",
+    "label.chatId": "Chat ID",
+    "label.queueReason": "Queue Reason",
+    "label.outboundIp": "Outbound IP",
+    "label.purpose": "Purpose",
+    "dashboard.eyebrow": "Local control plane",
+    "dashboard.title": "Dashboard",
+    "dashboard.autoUpdate": "Auto-updating every 2 seconds.",
+    "dashboard.proxyHealth": "Proxy health",
+    "dashboard.ready": "Ready",
+    "dashboard.down": "Down",
+    "dashboard.checking": "Checking",
+    "dashboard.configuredProviders": "Configured providers",
+    "dashboard.activeRuns": "Active runs",
+    "dashboard.schedulerState": "Live scheduler state.",
+    "dashboard.queuedRuns": "Queued runs",
+    "dashboard.waitingCapacity": "Waiting on capacity or locks.",
+    "dashboard.capacityInUse": "Capacity in use",
+    "dashboard.recentRequests": "Recent requests",
+    "dashboard.recentErrors": "Recent errors",
+    "dashboard.runtimeScheduler": "Runtime Scheduler",
+    "dashboard.noActiveRuns": "No active runs.",
+    "dashboard.lockCapacityKey": "Lock / capacity key",
+    "dashboard.noRequestLogs": "No request logs yet.",
+    "proxy.eyebrow": "OpenAI compatible gateway",
+    "proxy.saved": "Proxy config saved",
+    "proxy.saveFailed": "Failed to save proxy config",
+    "proxy.key": "Proxy Key",
+    "proxy.keyPlaceholder": "Set proxy password/key",
+    "proxy.save": "Save Proxy Config",
+    "proxy.checkHealth": "Check Health",
+    "proxy.connection": "Connection",
+    "proxy.endpoint": "OpenAI Endpoint",
+    "proxy.authHeader": "Auth Header",
+    "models.eyebrow": "Provider catalog",
+    "models.count": "{count} models",
+    "models.providerSource": "Provider: Qwen AI (International). Source: built-in catalog.",
+    "models.refreshing": "Refreshing...",
+    "models.refreshCatalog": "Refresh catalog",
+    "models.loading": "Loading models...",
+    "models.empty": "No models loaded yet.",
+    "models.detail": "Model detail",
+    "models.loadFailed": "Failed to load models",
+    "models.refreshFailed": "Failed to refresh models",
+    "models.refreshingCatalog": "Refreshing from built-in Qwen catalog...",
+    "models.loadedCatalog": "Loaded {count} models from built-in Qwen catalog",
+    "models.context": "Context",
+    "models.maxContext": "Maximum context length",
+    "models.maxSummary": "Max summary generation length",
+    "models.maxGeneration": "Maximum generation length",
+    "models.maxThinking": "Max thinking generation length",
+    "models.modality": "Modality",
+    "providers.add": "Add Provider",
+    "providers.empty": "No providers yet",
+    "providers.available": "Available",
+    "providers.config": "Config",
+    "providers.select": "Select a provider to configure",
+    "providers.token": "Token (paste here)",
+    "providers.tokenHint": "Paste token if you have one. Alternatively paste cookie below after login.",
+    "providers.cookie": "Cookie / Session (paste raw cookie string)",
+    "providers.openLogin": "Open login page",
+    "providers.startOAuth": "Start OAuth",
+    "providers.oauthHint": "Open the Qwen AI international login window. After login, Proxy-Luna captures the web token from Local Storage and validates it automatically.",
+    "providers.waitLogin": "Waiting for login...",
+    "providers.validate": "Validate",
+    "providers.save": "Save Provider",
+    "providers.oauthOpening": "Opening Qwen AI login window. Complete login in Chromium...",
+    "providers.oauthFailed": "OAuth capture failed",
+    "providers.oauthCaptured": "OAuth credentials captured and validated",
+    "providers.oauthStartFailed": "Failed to start OAuth",
+    "providers.checking": "Checking...",
+    "providers.startFirst": "Start OAuth first",
+    "providers.provideCredential": "Provide token or cookie to validate",
+    "providers.valid": "Account valid",
+    "providers.invalid": "Invalid account",
+    "providers.validationFailed": "Validation failed",
+    "providers.nothingToSave": "Nothing to save - provide token or cookie",
+    "logs.eyebrow": "Runtime events",
+    "logs.filter": "Filter logs",
+    "logs.allLevels": "All levels",
+    "logs.empty": "No logs found.",
+    "logs.promptMessage": "Prompt / Message",
+    "logs.latency": "Latency",
+    "logs.detail": "Request detail",
+    "logs.entry": "Log entry",
+    "logs.tabs": "Log detail tabs",
+    "logs.metrics": "Metrics",
+    "logs.requestHeaders": "Request headers",
+    "logs.responseHeaders": "Response headers",
+    "logs.response": "Response",
+    "logs.prompt": "Prompt",
+    "logs.noPrompts": "No prompts for selected role.",
+    "logs.noRequestHeaders": "This log has no request headers.",
+    "logs.noResponseHeaders": "This log has no response headers.",
+    "logs.noResponseBody": "The current log has no response body. Backend capture can be added later.",
+    "sessions.eyebrow": "Conversation sessions",
+    "sessions.filterSource": "Filter by source",
+    "sessions.allSources": "All sources",
+    "sessions.reload": "Reload",
+    "sessions.reloadDone": "Sessions reloaded from disk",
+    "sessions.emptyTitle": "Why is this empty?",
+    "sessions.disabled": 'Session memory is disabled in Settings. Enable "Session Memory" to start tracking conversations.',
+    "sessions.statelessHint": "Session memory is in stateless mode. No sessions are stored unless the client sends an explicit session ID (x-luna-session-id header or session_id in the request body).",
+    "sessions.statelessTip": "The API clients you are using may not provide session metadata. Try switching Settings -> Session -> Fallback Mode to file-backed to auto-create sessions when overflow files are generated.",
+    "sessions.fileBackedHint": "Session memory is in file-backed mode. Sessions are only created when overflow files are generated, meaning the conversation exceeds the token threshold. Before overflow, all requests are stateless.",
+    "sessions.fileBackedTip": "If you have not seen any overflow files, no file-backed sessions will appear. Once a conversation triggers overflow, a file-backed session will be created and visible here.",
+    "sessions.noneFound": "No sessions found. Total on disk: {count}. File exists: {exists}.",
+    "sessions.diagnostics": "Diagnostics",
+    "sessions.titleId": "Title / ID",
+    "sessions.detail": "Session detail",
+    "sessions.loadingDetail": "Loading detail...",
+    "sessions.confirmDelete": "Delete this session?",
+    "sessions.confirmClear": "Clear history for this session?",
+    "sessions.confirmClearAll": "Clear ALL sessions?",
+    "sessions.newTitle": "New title:",
+    "sessions.compacting": "Compacting...",
+    "sessions.compactComplete": "Compact complete",
+    "sessions.compactFailed": "Compact failed",
+    "sessions.renameFailed": "Rename failed",
+    "sessions.clearFailed": "Failed to clear",
+    "sessions.providerReset": "Provider chat ID reset",
+    "sessions.resetFailed": "Reset failed",
+    "sessions.providerBindings": "Provider Bindings",
+    "sessions.overflowChain": "Overflow Chain",
+    "sessions.summary": "Summary",
+    "sessions.recentMessages": "Recent Messages",
+    "runs.eyebrow": "Request runs (including stateless)",
+    "runs.emptyTitle": "No runs recorded yet",
+    "runs.emptyHint": "Send a request via /v1/chat/completions to create a run record.",
+    "runs.detail": "Run detail",
+    "runs.confirmDelete": "Delete this run?",
+    "runs.confirmDeleteAll": "Delete all runs?",
+    "runs.loadFailed": "Failed to load runs",
+    "runs.deleteFailed": "Failed to delete run",
+    "runs.deleteAllFailed": "Failed to delete runs",
+    "network.eyebrow": "Egress paths and remote workers",
+    "network.title": "Network & Workers",
+    "network.verifyAll": "Verify All Workers",
+    "network.profiles": "Network Profiles",
+    "network.addProfile": "Add Profile",
+    "network.workers": "Workers",
+    "network.addWorker": "Add Worker",
+    "network.editProfile": "Edit Network Profile",
+    "network.editWorker": "Edit Worker",
+    "network.addNetworkProfile": "Add Network Profile",
+    "network.verifyIp": "Verify IP",
+    "settings.eyebrow": "Runtime behavior",
+    "settings.title": "Settings",
+    "settings.ui.title": "Interface",
+    "settings.ui.language": "Language",
+    "settings.ui.languageHint": "Changes apply immediately and are saved with the settings.",
+    "settings.ui.english": "English",
+    "settings.ui.vietnamese": "Vietnamese",
+    "settings.tokenOverflow.title": "Token Overflow",
+    "settings.tokenOverflow.enableRawFile": "Enable raw overflow file",
+    "settings.tokenOverflow.threshold": "Token threshold",
+    "settings.session.title": "Session Memory",
+    "settings.session.enable": "Enable session memory",
+    "settings.session.historyLimit": "History limit (messages)",
+    "settings.session.autoCompact": "Auto compact",
+    "settings.session.compactAfter": "Compact after N messages",
+    "settings.session.keepRecent": "Compact keep recent",
+    "settings.session.compactModel": "Compact model",
+    "settings.session.requireExplicitId": "Require explicit session ID",
+    "settings.session.fileBacked": "File-backed sessions (create on overflow)",
+    "settings.session.createOnOverflow": "Create on overflow",
+    "settings.session.fallbackMode": "Fallback mode",
+    "settings.session.fileBackedOption": "File-backed (create session on overflow)",
+    "settings.session.statelessOption": "Stateless (no persistent session)",
+    "settings.session.transientOption": "Transient (auto-create)",
+    "settings.session.sharedDefaultOption": "Shared default",
+    "settings.session.fileBackedHint": "Recommended. Sessions are created only when overflow files are generated. Before overflow, requests are stateless. Once an overflow file is created, a file-backed session anchors the conversation.",
+    "settings.session.statelessHint": "Sessions only exist if the client sends x-luna-session-id. The Sessions page will appear empty for clients without explicit session IDs. Best for stateless API usage.",
+    "settings.session.transientHint": "A session is auto-created for every request that lacks an explicit ID. Sessions page will show all conversations, but session grouping may not reflect actual logical threads. Best for debugging and diagnostics.",
+    "settings.session.sharedDefaultHint": "All requests without explicit session IDs share a single default session. Different sources/workspaces still create separate sessions. Use with caution as unrelated conversations mix.",
+    "settings.multiThread.title": "Multi-thread",
+    "settings.multiThread.enable": "Enable multi-thread scheduler",
+    "settings.multiThread.globalMax": "Global max concurrent runs",
+    "settings.multiThread.providerMax": "Provider max concurrent runs",
+    "settings.multiThread.accountMax": "Account max concurrent runs",
+    "settings.multiThread.queueTimeout": "Queue timeout (ms)",
+    "settings.multiThread.runTimeout": "Run timeout (ms)",
+    "settings.egress.title": "Provider IP Isolation",
+    "settings.egress.enable": "Enable IP isolation",
+    "settings.egress.strict": "Strict mode (no fallback to direct)",
+    "settings.egress.fallback": "Allow fallback to direct",
+    "settings.egress.verify": "Verify IP before use",
+    "settings.egress.directIp": "Direct IP",
+    "settings.egress.checking": "checking...",
+    "settings.egress.warning": "IP isolation requires workers running through VPN/proxy/network namespaces. If strict mode is enabled, Proxy-Luna will not call providers directly when no verified worker is available.",
+    "settings.save": "Save Settings",
+    "settings.saved": "Settings saved"
+  },
+  vi: {
+    "app.title": "Tr\xECnh qu\u1EA3n l\xFD Luna Proxy",
+    "nav.dashboard": "T\u1ED5ng quan",
+    "nav.providers": "Nh\xE0 cung c\u1EA5p",
+    "nav.proxy": "Proxy",
+    "nav.models": "M\xF4 h\xECnh",
+    "nav.sessions": "Phi\xEAn",
+    "nav.runs": "L\u01B0\u1EE3t ch\u1EA1y",
+    "nav.network": "M\u1EA1ng",
+    "nav.logs": "Nh\u1EADt k\xFD",
+    "nav.settings": "C\xE0i \u0111\u1EB7t",
+    "common.loading": "\u0110ang t\u1EA3i...",
+    "common.saving": "\u0110ang l\u01B0u...",
+    "common.deleting": "\u0110ang x\xF3a...",
+    "common.refresh": "L\xE0m m\u1EDBi",
+    "common.delete": "X\xF3a",
+    "common.cancel": "H\u1EE7y",
+    "common.save": "L\u01B0u",
+    "common.edit": "S\u1EEDa",
+    "common.verify": "X\xE1c minh",
+    "common.close": "\u0110\xF3ng",
+    "common.yes": "C\xF3",
+    "common.no": "Kh\xF4ng",
+    "common.any": "b\u1EA5t k\u1EF3",
+    "common.unknown": "kh\xF4ng r\xF5",
+    "common.optional": "t\xF9y ch\u1ECDn",
+    "common.updated": "\u0110\xE3 c\u1EADp nh\u1EADt",
+    "common.showingOf": "\u0110ang hi\u1EC3n th\u1ECB {shown} / {total}. Cu\u1ED9n \u0111\u1EC3 t\u1EA3i th\xEAm.",
+    "common.saveFailed": "L\u01B0u th\u1EA5t b\u1EA1i",
+    "common.loadFailed": "T\u1EA3i th\u1EA5t b\u1EA1i",
+    "common.deleteFailed": "X\xF3a th\u1EA5t b\u1EA1i",
+    "common.clear": "X\xF3a l\u1ECBch s\u1EED",
+    "common.rename": "\u0110\u1ED5i t\xEAn",
+    "common.compact": "N\xE9n",
+    "common.reset": "\u0110\u1EB7t l\u1EA1i",
+    "common.never": "Ch\u01B0a bao gi\u1EDD",
+    "common.message": "Tin nh\u1EAFn",
+    "label.time": "Th\u1EDDi gian",
+    "label.level": "M\u1EE9c",
+    "label.path": "\u0110\u01B0\u1EDDng d\u1EABn",
+    "label.status": "Tr\u1EA1ng th\xE1i",
+    "label.provider": "Nh\xE0 cung c\u1EA5p",
+    "label.account": "T\xE0i kho\u1EA3n",
+    "label.model": "M\xF4 h\xECnh",
+    "label.session": "Phi\xEAn",
+    "label.worker": "Worker",
+    "label.started": "B\u1EAFt \u0111\u1EA7u",
+    "label.created": "T\u1EA1o l\xFAc",
+    "label.queued": "X\u1EBFp h\xE0ng",
+    "label.completed": "Ho\xE0n t\u1EA5t",
+    "label.updated": "C\u1EADp nh\u1EADt",
+    "label.active": "\u0110ang ch\u1EA1y",
+    "label.max": "T\u1ED1i \u0111a",
+    "label.owner": "Ch\u1EE7 s\u1EDF h\u1EEFu",
+    "label.name": "T\xEAn",
+    "label.mode": "Ch\u1EBF \u0111\u1ED9",
+    "label.enabled": "\u0110\xE3 b\u1EADt",
+    "label.source": "Ngu\u1ED3n",
+    "label.workspace": "Workspace",
+    "label.thread": "Lu\u1ED3ng",
+    "label.messages": "Tin nh\u1EAFn",
+    "label.overflow": "Tr\xE0n",
+    "label.profile": "Profile",
+    "label.fingerprint": "Fingerprint",
+    "label.confidence": "\u0110\u1ED9 tin c\u1EADy",
+    "label.duration": "Th\u1EDDi l\u01B0\u1EE3ng",
+    "label.task": "T\xE1c v\u1EE5",
+    "label.error": "L\u1ED7i",
+    "label.stream": "Stream",
+    "label.directIp": "IP tr\u1EF1c ti\u1EBFp",
+    "label.expectedIp": "IP k\u1EF3 v\u1ECDng",
+    "label.verifiedIp": "IP \u0111\xE3 x\xE1c minh",
+    "label.lastVerified": "X\xE1c minh l\u1EA7n cu\u1ED1i",
+    "label.baseUrl": "Base URL",
+    "label.proxyUrl": "Proxy URL",
+    "label.verifyIpUrl": "URL x\xE1c minh IP",
+    "label.networkProfile": "Network Profile",
+    "label.maxRuns": "L\u01B0\u1EE3t ch\u1EA1y t\u1ED1i \u0111a",
+    "label.maxConcurrentRuns": "L\u01B0\u1EE3t ch\u1EA1y \u0111\u1ED3ng th\u1EDDi t\u1ED1i \u0111a",
+    "label.providerChat": "Chat nh\xE0 cung c\u1EA5p",
+    "label.host": "Host",
+    "label.port": "Port",
+    "label.totalSessions": "T\u1ED5ng phi\xEAn tr\xEAn \u0111\u0129a",
+    "label.persistent": "L\u01B0u b\u1EC1n",
+    "label.fileBacked": "L\u01B0u b\u1EB1ng file",
+    "label.transient": "T\u1EA1m th\u1EDDi",
+    "label.dataFileExists": "File d\u1EEF li\u1EC7u t\u1ED3n t\u1EA1i",
+    "label.dataFileParseable": "File d\u1EEF li\u1EC7u \u0111\u1ECDc \u0111\u01B0\u1EE3c",
+    "logs.thinkingMode": "Ch\u1EBF \u0111\u1ED9 suy lu\u1EADn",
+    "logs.reasoningEffort": "M\u1EE9c suy lu\u1EADn",
+    "logs.files": "File",
+    "logs.sanitized": "\u0110\xE3 l\xE0m s\u1EA1ch",
+    "logs.detectedClient": "Client ph\xE1t hi\u1EC7n",
+    "logs.responseContract": "Giao th\u1EE9c response",
+    "logs.activeTaskIdx": "Ch\u1EC9 m\u1EE5c t\xE1c v\u1EE5 active",
+    "logs.activeTaskPreview": "Xem tr\u01B0\u1EDBc t\xE1c v\u1EE5 active",
+    "logs.activeTaskSource": "Ngu\u1ED3n t\xE1c v\u1EE5 active",
+    "logs.activeTaskPartIndex": "Ch\u1EC9 m\u1EE5c ph\u1EA7n t\xE1c v\u1EE5 active",
+    "logs.overflowFile": "File tr\xE0n",
+    "logs.keptStripped": "Gi\u1EEF l\u1EA1i / lo\u1EA1i b\u1ECF",
+    "logs.clientRetryDetected": "Ph\xE1t hi\u1EC7n client retry",
+    "logs.clientRetrySource": "Ngu\u1ED3n client retry",
+    "logs.snapshotIncluded": "\u0110\xE3 k\xE8m snapshot",
+    "logs.removedContainerConf": "\u0110\xE3 b\u1ECF nhi\u1EC5u container",
+    "logs.removedAutoReminder": "\u0110\xE3 b\u1ECF nh\u1EAFc t\u1EF1 \u0111\u1ED9ng",
+    "logs.removedPartialReminder": "\u0110\xE3 b\u1ECF nh\u1EAFc m\u1ED9t ph\u1EA7n",
+    "logs.removedAssistantFail": "\u0110\xE3 b\u1ECF l\u1ED7i assistant",
+    "logs.removedDupAssistant": "\u0110\xE3 b\u1ECF assistant tr\xF9ng",
+    "logs.partialNoise": "Nhi\u1EC5u m\u1ED9t ph\u1EA7n",
+    "logs.sessionMode": "Ch\u1EBF \u0111\u1ED9 phi\xEAn",
+    "logs.sessionResolveReason": "L\xFD do resolve phi\xEAn",
+    "logs.sessionExplicit": "Phi\xEAn r\xF5 r\xE0ng",
+    "logs.sessionSource": "Ngu\u1ED3n phi\xEAn",
+    "logs.sessionWorkspace": "Workspace phi\xEAn",
+    "logs.sessionThread": "Lu\u1ED3ng phi\xEAn",
+    "logs.sessionProviderId": "Provider ID c\u1EE7a phi\xEAn",
+    "logs.dedupeMeta": "Metadata ch\u1ED1ng tr\xF9ng",
+    "label.chatId": "Chat ID",
+    "label.queueReason": "L\xFD do x\u1EBFp h\xE0ng",
+    "label.outboundIp": "IP \u0111i ra",
+    "label.purpose": "M\u1EE5c \u0111\xEDch",
+    "dashboard.eyebrow": "B\u1EA3ng \u0111i\u1EC1u khi\u1EC3n local",
+    "dashboard.title": "T\u1ED5ng quan",
+    "dashboard.autoUpdate": "T\u1EF1 c\u1EADp nh\u1EADt m\u1ED7i 2 gi\xE2y.",
+    "dashboard.proxyHealth": "S\u1EE9c kh\u1ECFe proxy",
+    "dashboard.ready": "S\u1EB5n s\xE0ng",
+    "dashboard.down": "Ng\u1EEBng",
+    "dashboard.checking": "\u0110ang ki\u1EC3m tra",
+    "dashboard.configuredProviders": "Nh\xE0 cung c\u1EA5p \u0111\xE3 c\u1EA5u h\xECnh",
+    "dashboard.activeRuns": "L\u01B0\u1EE3t ch\u1EA1y \u0111ang ho\u1EA1t \u0111\u1ED9ng",
+    "dashboard.schedulerState": "Tr\u1EA1ng th\xE1i b\u1ED9 l\u1EADp l\u1ECBch tr\u1EF1c ti\u1EBFp.",
+    "dashboard.queuedRuns": "L\u01B0\u1EE3t ch\u1EA1y \u0111ang ch\u1EDD",
+    "dashboard.waitingCapacity": "\u0110ang ch\u1EDD dung l\u01B0\u1EE3ng ho\u1EB7c kh\xF3a.",
+    "dashboard.capacityInUse": "Dung l\u01B0\u1EE3ng \u0111ang d\xF9ng",
+    "dashboard.recentRequests": "Request g\u1EA7n \u0111\xE2y",
+    "dashboard.recentErrors": "L\u1ED7i g\u1EA7n \u0111\xE2y",
+    "dashboard.runtimeScheduler": "B\u1ED9 l\u1EADp l\u1ECBch runtime",
+    "dashboard.noActiveRuns": "Kh\xF4ng c\xF3 l\u01B0\u1EE3t ch\u1EA1y \u0111ang ho\u1EA1t \u0111\u1ED9ng.",
+    "dashboard.lockCapacityKey": "Kh\xF3a / key dung l\u01B0\u1EE3ng",
+    "dashboard.noRequestLogs": "Ch\u01B0a c\xF3 log request.",
+    "proxy.eyebrow": "Gateway t\u01B0\u01A1ng th\xEDch OpenAI",
+    "proxy.saved": "\u0110\xE3 l\u01B0u c\u1EA5u h\xECnh proxy",
+    "proxy.saveFailed": "L\u01B0u c\u1EA5u h\xECnh proxy th\u1EA5t b\u1EA1i",
+    "proxy.key": "Proxy Key",
+    "proxy.keyPlaceholder": "\u0110\u1EB7t m\u1EADt kh\u1EA9u/key proxy",
+    "proxy.save": "L\u01B0u c\u1EA5u h\xECnh proxy",
+    "proxy.checkHealth": "Ki\u1EC3m tra s\u1EE9c kh\u1ECFe",
+    "proxy.connection": "K\u1EBFt n\u1ED1i",
+    "proxy.endpoint": "Endpoint OpenAI",
+    "proxy.authHeader": "Header x\xE1c th\u1EF1c",
+    "models.eyebrow": "Catalog nh\xE0 cung c\u1EA5p",
+    "models.count": "{count} m\xF4 h\xECnh",
+    "models.providerSource": "Nh\xE0 cung c\u1EA5p: Qwen AI (International). Ngu\u1ED3n: catalog t\xEDch h\u1EE3p.",
+    "models.refreshing": "\u0110ang l\xE0m m\u1EDBi...",
+    "models.refreshCatalog": "L\xE0m m\u1EDBi catalog",
+    "models.loading": "\u0110ang t\u1EA3i m\xF4 h\xECnh...",
+    "models.empty": "Ch\u01B0a t\u1EA3i m\xF4 h\xECnh n\xE0o.",
+    "models.detail": "Chi ti\u1EBFt m\xF4 h\xECnh",
+    "models.loadFailed": "T\u1EA3i m\xF4 h\xECnh th\u1EA5t b\u1EA1i",
+    "models.refreshFailed": "L\xE0m m\u1EDBi m\xF4 h\xECnh th\u1EA5t b\u1EA1i",
+    "models.refreshingCatalog": "\u0110ang l\xE0m m\u1EDBi t\u1EEB catalog Qwen t\xEDch h\u1EE3p...",
+    "models.loadedCatalog": "\u0110\xE3 t\u1EA3i {count} m\xF4 h\xECnh t\u1EEB catalog Qwen t\xEDch h\u1EE3p",
+    "models.context": "Context",
+    "models.maxContext": "\u0110\u1ED9 d\xE0i context t\u1ED1i \u0111a",
+    "models.maxSummary": "\u0110\u1ED9 d\xE0i sinh t\xF3m t\u1EAFt t\u1ED1i \u0111a",
+    "models.maxGeneration": "\u0110\u1ED9 d\xE0i sinh t\u1ED1i \u0111a",
+    "models.maxThinking": "\u0110\u1ED9 d\xE0i suy lu\u1EADn t\u1ED1i \u0111a",
+    "models.modality": "Lo\u1EA1i d\u1EEF li\u1EC7u",
+    "providers.add": "Th\xEAm nh\xE0 cung c\u1EA5p",
+    "providers.empty": "Ch\u01B0a c\xF3 nh\xE0 cung c\u1EA5p",
+    "providers.available": "Kh\u1EA3 d\u1EE5ng",
+    "providers.config": "C\u1EA5u h\xECnh",
+    "providers.select": "Ch\u1ECDn nh\xE0 cung c\u1EA5p \u0111\u1EC3 c\u1EA5u h\xECnh",
+    "providers.token": "Token (d\xE1n v\xE0o \u0111\xE2y)",
+    "providers.tokenHint": "D\xE1n token n\u1EBFu c\xF3. Ho\u1EB7c d\xE1n cookie b\xEAn d\u01B0\u1EDBi sau khi \u0111\u0103ng nh\u1EADp.",
+    "providers.cookie": "Cookie / Session (d\xE1n chu\u1ED7i cookie th\xF4)",
+    "providers.openLogin": "M\u1EDF trang \u0111\u0103ng nh\u1EADp",
+    "providers.startOAuth": "B\u1EAFt \u0111\u1EA7u OAuth",
+    "providers.oauthHint": "M\u1EDF c\u1EEDa s\u1ED5 \u0111\u0103ng nh\u1EADp Qwen AI international. Sau khi \u0111\u0103ng nh\u1EADp, Proxy-Luna t\u1EF1 b\u1EAFt web token t\u1EEB Local Storage v\xE0 x\xE1c minh.",
+    "providers.waitLogin": "\u0110ang ch\u1EDD \u0111\u0103ng nh\u1EADp...",
+    "providers.validate": "X\xE1c minh",
+    "providers.save": "L\u01B0u nh\xE0 cung c\u1EA5p",
+    "providers.oauthOpening": "\u0110ang m\u1EDF c\u1EEDa s\u1ED5 \u0111\u0103ng nh\u1EADp Qwen AI. H\xE3y ho\xE0n t\u1EA5t \u0111\u0103ng nh\u1EADp trong Chromium...",
+    "providers.oauthFailed": "B\u1EAFt OAuth th\u1EA5t b\u1EA1i",
+    "providers.oauthCaptured": "\u0110\xE3 b\u1EAFt v\xE0 x\xE1c minh th\xF4ng tin OAuth",
+    "providers.oauthStartFailed": "Kh\xF4ng th\u1EC3 b\u1EAFt \u0111\u1EA7u OAuth",
+    "providers.checking": "\u0110ang ki\u1EC3m tra...",
+    "providers.startFirst": "H\xE3y b\u1EAFt \u0111\u1EA7u OAuth tr\u01B0\u1EDBc",
+    "providers.provideCredential": "Cung c\u1EA5p token ho\u1EB7c cookie \u0111\u1EC3 x\xE1c minh",
+    "providers.valid": "T\xE0i kho\u1EA3n h\u1EE3p l\u1EC7",
+    "providers.invalid": "T\xE0i kho\u1EA3n kh\xF4ng h\u1EE3p l\u1EC7",
+    "providers.validationFailed": "X\xE1c minh th\u1EA5t b\u1EA1i",
+    "providers.nothingToSave": "Kh\xF4ng c\xF3 g\xEC \u0111\u1EC3 l\u01B0u - h\xE3y cung c\u1EA5p token ho\u1EB7c cookie",
+    "logs.eyebrow": "S\u1EF1 ki\u1EC7n runtime",
+    "logs.filter": "L\u1ECDc log",
+    "logs.allLevels": "T\u1EA5t c\u1EA3 m\u1EE9c",
+    "logs.empty": "Kh\xF4ng t\xECm th\u1EA5y log.",
+    "logs.promptMessage": "Prompt / Tin nh\u1EAFn",
+    "logs.latency": "\u0110\u1ED9 tr\u1EC5",
+    "logs.detail": "Chi ti\u1EBFt request",
+    "logs.entry": "M\u1EE5c log",
+    "logs.tabs": "Tab chi ti\u1EBFt log",
+    "logs.metrics": "Th\xF4ng s\u1ED1",
+    "logs.requestHeaders": "Request headers",
+    "logs.responseHeaders": "Response headers",
+    "logs.response": "Response",
+    "logs.prompt": "Prompt",
+    "logs.noPrompts": "Kh\xF4ng c\xF3 prompt cho role \u0111\xE3 ch\u1ECDn.",
+    "logs.noRequestHeaders": "Log n\xE0y ch\u01B0a c\xF3 request headers.",
+    "logs.noResponseHeaders": "Log n\xE0y ch\u01B0a c\xF3 response headers.",
+    "logs.noResponseBody": "Log hi\u1EC7n t\u1EA1i ch\u01B0a c\xF3 response body. C\xF3 th\u1EC3 b\u1ED5 sung backend capture sau.",
+    "sessions.eyebrow": "Phi\xEAn h\u1ED9i tho\u1EA1i",
+    "sessions.filterSource": "L\u1ECDc theo ngu\u1ED3n",
+    "sessions.allSources": "T\u1EA5t c\u1EA3 ngu\u1ED3n",
+    "sessions.reload": "T\u1EA3i l\u1EA1i",
+    "sessions.reloadDone": "\u0110\xE3 t\u1EA3i l\u1EA1i phi\xEAn t\u1EEB \u0111\u0129a",
+    "sessions.emptyTitle": "V\xEC sao tr\u1ED1ng?",
+    "sessions.disabled": 'B\u1ED9 nh\u1EDB phi\xEAn \u0111ang t\u1EAFt trong C\xE0i \u0111\u1EB7t. B\u1EADt "B\u1ED9 nh\u1EDB phi\xEAn" \u0111\u1EC3 b\u1EAFt \u0111\u1EA7u theo d\xF5i h\u1ED9i tho\u1EA1i.',
+    "sessions.statelessHint": "B\u1ED9 nh\u1EDB phi\xEAn \u0111ang \u1EDF ch\u1EBF \u0111\u1ED9 kh\xF4ng tr\u1EA1ng th\xE1i. Phi\xEAn kh\xF4ng \u0111\u01B0\u1EE3c l\u01B0u tr\u1EEB khi client g\u1EEDi session ID r\xF5 r\xE0ng (header x-luna-session-id ho\u1EB7c session_id trong body request).",
+    "sessions.statelessTip": "Client API b\u1EA1n d\xF9ng c\xF3 th\u1EC3 kh\xF4ng cung c\u1EA5p metadata phi\xEAn. H\xE3y th\u1EED chuy\u1EC3n C\xE0i \u0111\u1EB7t -> Phi\xEAn -> Ch\u1EBF \u0111\u1ED9 fallback sang l\u01B0u b\u1EB1ng file \u0111\u1EC3 t\u1EF1 t\u1EA1o phi\xEAn khi sinh file tr\xE0n.",
+    "sessions.fileBackedHint": "B\u1ED9 nh\u1EDB phi\xEAn \u0111ang \u1EDF ch\u1EBF \u0111\u1ED9 l\u01B0u b\u1EB1ng file. Phi\xEAn ch\u1EC9 \u0111\u01B0\u1EE3c t\u1EA1o khi sinh file tr\xE0n, t\u1EE9c h\u1ED9i tho\u1EA1i v\u01B0\u1EE3t ng\u01B0\u1EE1ng token. Tr\u01B0\u1EDBc khi tr\xE0n, m\u1ECDi request kh\xF4ng l\u01B0u tr\u1EA1ng th\xE1i.",
+    "sessions.fileBackedTip": "N\u1EBFu ch\u01B0a th\u1EA5y file tr\xE0n n\xE0o, phi\xEAn l\u01B0u b\u1EB1ng file s\u1EBD ch\u01B0a xu\u1EA5t hi\u1EC7n. Khi h\u1ED9i tho\u1EA1i k\xEDch ho\u1EA1t tr\xE0n, m\u1ED9t phi\xEAn l\u01B0u b\u1EB1ng file s\u1EBD \u0111\u01B0\u1EE3c t\u1EA1o v\xE0 hi\u1EC3n th\u1ECB \u1EDF \u0111\xE2y.",
+    "sessions.noneFound": "Kh\xF4ng t\xECm th\u1EA5y phi\xEAn. T\u1ED5ng tr\xEAn \u0111\u0129a: {count}. File t\u1ED3n t\u1EA1i: {exists}.",
+    "sessions.diagnostics": "Ch\u1EA9n \u0111o\xE1n",
+    "sessions.titleId": "Ti\xEAu \u0111\u1EC1 / ID",
+    "sessions.detail": "Chi ti\u1EBFt phi\xEAn",
+    "sessions.loadingDetail": "\u0110ang t\u1EA3i chi ti\u1EBFt...",
+    "sessions.confirmDelete": "X\xF3a phi\xEAn n\xE0y?",
+    "sessions.confirmClear": "X\xF3a l\u1ECBch s\u1EED c\u1EE7a phi\xEAn n\xE0y?",
+    "sessions.confirmClearAll": "X\xF3a T\u1EA4T C\u1EA2 phi\xEAn?",
+    "sessions.newTitle": "Ti\xEAu \u0111\u1EC1 m\u1EDBi:",
+    "sessions.compacting": "\u0110ang n\xE9n...",
+    "sessions.compactComplete": "N\xE9n ho\xE0n t\u1EA5t",
+    "sessions.compactFailed": "N\xE9n th\u1EA5t b\u1EA1i",
+    "sessions.renameFailed": "\u0110\u1ED5i t\xEAn th\u1EA5t b\u1EA1i",
+    "sessions.clearFailed": "X\xF3a l\u1ECBch s\u1EED th\u1EA5t b\u1EA1i",
+    "sessions.providerReset": "\u0110\xE3 \u0111\u1EB7t l\u1EA1i provider chat ID",
+    "sessions.resetFailed": "\u0110\u1EB7t l\u1EA1i th\u1EA5t b\u1EA1i",
+    "sessions.providerBindings": "Li\xEAn k\u1EBFt nh\xE0 cung c\u1EA5p",
+    "sessions.overflowChain": "Chu\u1ED7i tr\xE0n",
+    "sessions.summary": "T\xF3m t\u1EAFt",
+    "sessions.recentMessages": "Tin nh\u1EAFn g\u1EA7n \u0111\xE2y",
+    "runs.eyebrow": "L\u01B0\u1EE3t ch\u1EA1y request (bao g\u1ED3m kh\xF4ng tr\u1EA1ng th\xE1i)",
+    "runs.emptyTitle": "Ch\u01B0a ghi nh\u1EADn l\u01B0\u1EE3t ch\u1EA1y",
+    "runs.emptyHint": "G\u1EEDi request qua /v1/chat/completions \u0111\u1EC3 t\u1EA1o b\u1EA3n ghi l\u01B0\u1EE3t ch\u1EA1y.",
+    "runs.detail": "Chi ti\u1EBFt l\u01B0\u1EE3t ch\u1EA1y",
+    "runs.confirmDelete": "X\xF3a l\u01B0\u1EE3t ch\u1EA1y n\xE0y?",
+    "runs.confirmDeleteAll": "X\xF3a t\u1EA5t c\u1EA3 l\u01B0\u1EE3t ch\u1EA1y?",
+    "runs.loadFailed": "T\u1EA3i l\u01B0\u1EE3t ch\u1EA1y th\u1EA5t b\u1EA1i",
+    "runs.deleteFailed": "X\xF3a l\u01B0\u1EE3t ch\u1EA1y th\u1EA5t b\u1EA1i",
+    "runs.deleteAllFailed": "X\xF3a l\u01B0\u1EE3t ch\u1EA1y th\u1EA5t b\u1EA1i",
+    "network.eyebrow": "\u0110\u01B0\u1EDDng ra m\u1EA1ng v\xE0 worker t\u1EEB xa",
+    "network.title": "M\u1EA1ng & Workers",
+    "network.verifyAll": "X\xE1c minh t\u1EA5t c\u1EA3 worker",
+    "network.profiles": "Network Profiles",
+    "network.addProfile": "Th\xEAm profile",
+    "network.workers": "Workers",
+    "network.addWorker": "Th\xEAm worker",
+    "network.editProfile": "S\u1EEDa Network Profile",
+    "network.editWorker": "S\u1EEDa Worker",
+    "network.addNetworkProfile": "Th\xEAm Network Profile",
+    "network.verifyIp": "X\xE1c minh IP",
+    "settings.eyebrow": "H\xE0nh vi runtime",
+    "settings.title": "C\xE0i \u0111\u1EB7t",
+    "settings.ui.title": "Giao di\u1EC7n",
+    "settings.ui.language": "Ng\xF4n ng\u1EEF",
+    "settings.ui.languageHint": "Thay \u0111\u1ED5i c\xF3 hi\u1EC7u l\u1EF1c ngay v\xE0 \u0111\u01B0\u1EE3c l\u01B0u c\xF9ng c\u1EA5u h\xECnh.",
+    "settings.ui.english": "Ti\u1EBFng Anh",
+    "settings.ui.vietnamese": "Ti\u1EBFng Vi\u1EC7t",
+    "settings.tokenOverflow.title": "Tr\xE0n token",
+    "settings.tokenOverflow.enableRawFile": "B\u1EADt file tr\xE0n n\u1ED9i dung g\u1ED1c",
+    "settings.tokenOverflow.threshold": "Ng\u01B0\u1EE1ng token",
+    "settings.session.title": "B\u1ED9 nh\u1EDB phi\xEAn",
+    "settings.session.enable": "B\u1EADt b\u1ED9 nh\u1EDB phi\xEAn",
+    "settings.session.historyLimit": "Gi\u1EDBi h\u1EA1n l\u1ECBch s\u1EED (tin nh\u1EAFn)",
+    "settings.session.autoCompact": "T\u1EF1 \u0111\u1ED9ng n\xE9n",
+    "settings.session.compactAfter": "N\xE9n sau N tin nh\u1EAFn",
+    "settings.session.keepRecent": "Gi\u1EEF l\u1EA1i tin nh\u1EAFn g\u1EA7n nh\u1EA5t",
+    "settings.session.compactModel": "M\xF4 h\xECnh n\xE9n",
+    "settings.session.requireExplicitId": "Y\xEAu c\u1EA7u session ID r\xF5 r\xE0ng",
+    "settings.session.fileBacked": "Phi\xEAn l\u01B0u b\u1EB1ng file (t\u1EA1o khi tr\xE0n)",
+    "settings.session.createOnOverflow": "T\u1EA1o khi tr\xE0n",
+    "settings.session.fallbackMode": "Ch\u1EBF \u0111\u1ED9 fallback",
+    "settings.session.fileBackedOption": "L\u01B0u b\u1EB1ng file (t\u1EA1o phi\xEAn khi tr\xE0n)",
+    "settings.session.statelessOption": "Kh\xF4ng tr\u1EA1ng th\xE1i (kh\xF4ng l\u01B0u phi\xEAn)",
+    "settings.session.transientOption": "T\u1EA1m th\u1EDDi (t\u1EF1 t\u1EA1o)",
+    "settings.session.sharedDefaultOption": "D\xF9ng phi\xEAn m\u1EB7c \u0111\u1ECBnh chung",
+    "settings.session.fileBackedHint": "Khuy\u1EBFn ngh\u1ECB. Phi\xEAn ch\u1EC9 \u0111\u01B0\u1EE3c t\u1EA1o khi sinh file tr\xE0n, t\u1EE9c h\u1ED9i tho\u1EA1i v\u01B0\u1EE3t ng\u01B0\u1EE1ng token. Tr\u01B0\u1EDBc khi tr\xE0n, request kh\xF4ng l\u01B0u tr\u1EA1ng th\xE1i. Khi \u0111\xE3 c\xF3 file tr\xE0n, phi\xEAn l\u01B0u b\u1EB1ng file s\u1EBD neo h\u1ED9i tho\u1EA1i.",
+    "settings.session.statelessHint": "Phi\xEAn ch\u1EC9 t\u1ED3n t\u1EA1i n\u1EBFu client g\u1EEDi x-luna-session-id. Trang Phi\xEAn s\u1EBD tr\u1ED1ng v\u1EDBi client kh\xF4ng g\u1EEDi session ID r\xF5 r\xE0ng. Ph\xF9 h\u1EE3p cho API kh\xF4ng tr\u1EA1ng th\xE1i.",
+    "settings.session.transientHint": "T\u1EF1 t\u1EA1o phi\xEAn cho m\u1ECDi request thi\u1EBFu ID r\xF5 r\xE0ng. Trang Phi\xEAn s\u1EBD hi\u1EC3n th\u1ECB m\u1ECDi h\u1ED9i tho\u1EA1i, nh\u01B0ng nh\xF3m phi\xEAn c\xF3 th\u1EC3 kh\xF4ng kh\u1EDBp lu\u1ED3ng logic th\u1EF1c t\u1EBF. Ph\xF9 h\u1EE3p \u0111\u1EC3 debug/ch\u1EA9n \u0111o\xE1n.",
+    "settings.session.sharedDefaultHint": "M\u1ECDi request kh\xF4ng c\xF3 session ID r\xF5 r\xE0ng d\xF9ng chung m\u1ED9t phi\xEAn m\u1EB7c \u0111\u1ECBnh. Ngu\u1ED3n/workspace kh\xE1c nhau v\u1EABn t\u1EA1o phi\xEAn ri\xEAng. C\u1EA7n c\u1EA9n th\u1EADn v\xEC h\u1ED9i tho\u1EA1i kh\xF4ng li\xEAn quan c\xF3 th\u1EC3 b\u1ECB tr\u1ED9n.",
+    "settings.multiThread.title": "\u0110a lu\u1ED3ng",
+    "settings.multiThread.enable": "B\u1EADt b\u1ED9 l\u1EADp l\u1ECBch \u0111a lu\u1ED3ng",
+    "settings.multiThread.globalMax": "S\u1ED1 l\u01B0\u1EE3t ch\u1EA1y \u0111\u1ED3ng th\u1EDDi t\u1ED1i \u0111a to\xE0n c\u1EE5c",
+    "settings.multiThread.providerMax": "S\u1ED1 l\u01B0\u1EE3t ch\u1EA1y \u0111\u1ED3ng th\u1EDDi t\u1ED1i \u0111a m\u1ED7i nh\xE0 cung c\u1EA5p",
+    "settings.multiThread.accountMax": "S\u1ED1 l\u01B0\u1EE3t ch\u1EA1y \u0111\u1ED3ng th\u1EDDi t\u1ED1i \u0111a m\u1ED7i t\xE0i kho\u1EA3n",
+    "settings.multiThread.queueTimeout": "Th\u1EDDi gian ch\u1EDD h\xE0ng \u0111\u1EE3i (ms)",
+    "settings.multiThread.runTimeout": "Th\u1EDDi gian ch\u1EDD l\u01B0\u1EE3t ch\u1EA1y (ms)",
+    "settings.egress.title": "C\xF4 l\u1EADp IP nh\xE0 cung c\u1EA5p",
+    "settings.egress.enable": "B\u1EADt c\xF4 l\u1EADp IP",
+    "settings.egress.strict": "Ch\u1EBF \u0111\u1ED9 nghi\xEAm ng\u1EB7t (kh\xF4ng fallback tr\u1EF1c ti\u1EBFp)",
+    "settings.egress.fallback": "Cho ph\xE9p fallback tr\u1EF1c ti\u1EBFp",
+    "settings.egress.verify": "X\xE1c minh IP tr\u01B0\u1EDBc khi d\xF9ng",
+    "settings.egress.directIp": "IP tr\u1EF1c ti\u1EBFp",
+    "settings.egress.checking": "\u0111ang ki\u1EC3m tra...",
+    "settings.egress.warning": "C\xF4 l\u1EADp IP y\xEAu c\u1EA7u worker ch\u1EA1y qua VPN/proxy/network namespace. N\u1EBFu b\u1EADt ch\u1EBF \u0111\u1ED9 nghi\xEAm ng\u1EB7t, Proxy-Luna s\u1EBD kh\xF4ng g\u1ECDi tr\u1EF1c ti\u1EBFp nh\xE0 cung c\u1EA5p khi kh\xF4ng c\xF3 worker \u0111\xE3 x\xE1c minh.",
+    "settings.save": "L\u01B0u c\xE0i \u0111\u1EB7t",
+    "settings.saved": "\u0110\xE3 l\u01B0u c\xE0i \u0111\u1EB7t"
+  }
+};
+var I18nContext = (0, import_react.createContext)(null);
+function normalizeLanguage(value) {
+  return value === "vi" ? "vi" : "en";
+}
+function I18nProvider({ children }) {
+  const [language, setLanguageState] = (0, import_react.useState)(() => normalizeLanguage(window.localStorage.getItem("luna-ui-language")));
+  (0, import_react.useEffect)(() => {
+    let cancelled = false;
+    fetch("/api/config").then((res) => res.ok ? res.json() : null).then((data) => {
+      if (!cancelled && data?.settings?.ui?.language) {
+        setLanguageState(normalizeLanguage(data.settings.ui.language));
+      }
+    }).catch(() => {
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const value = (0, import_react.useMemo)(() => ({
+    language,
+    setLanguage: (nextLanguage) => {
+      window.localStorage.setItem("luna-ui-language", nextLanguage);
+      setLanguageState(nextLanguage);
+    },
+    t: (key, values) => {
+      const template = dictionaries[language][key] || dictionaries.en[key] || key;
+      if (!values)
+        return template;
+      return Object.entries(values).reduce(
+        (text, [name, value2]) => text.replaceAll(`{${name}}`, String(value2)),
+        template
+      );
+    }
+  }), [language]);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(I18nContext.Provider, { value, children });
+}
+function useI18n() {
+  const ctx = (0, import_react.useContext)(I18nContext);
+  if (!ctx)
+    throw new Error("useI18n must be used inside I18nProvider");
+  return ctx;
+}
+
+// frontend/src/components/Layout.tsx
+var import_jsx_runtime2 = __toESM(require_jsx_runtime());
 var navItems = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/providers", label: "Providers" },
-  { to: "/proxy", label: "Proxy" },
-  { to: "/models", label: "Models" },
-  { to: "/sessions", label: "Sessions" },
-  { to: "/runs", label: "Runs" },
-  { to: "/network", label: "Network" },
-  { to: "/logs", label: "Logs" },
-  { to: "/settings", label: "Settings" }
+  { to: "/dashboard", labelKey: "nav.dashboard" },
+  { to: "/providers", labelKey: "nav.providers" },
+  { to: "/proxy", labelKey: "nav.proxy" },
+  { to: "/models", labelKey: "nav.models" },
+  { to: "/sessions", labelKey: "nav.sessions" },
+  { to: "/runs", labelKey: "nav.runs" },
+  { to: "/network", labelKey: "nav.network" },
+  { to: "/logs", labelKey: "nav.logs" },
+  { to: "/settings", labelKey: "nav.settings" }
 ];
 function Layout() {
-  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "app-root", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", { className: "header", role: "navigation", "aria-label": "Primary", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "brand", children: "Luna Proxy" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "nav", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { className: "nav-list", children: navItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(NavLink, { to: item.to, className: ({ isActive }) => isActive ? "active nav-link" : "nav-link", children: item.label }) }, item.to)) }) })
+  const { t } = useI18n();
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "app-root", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("header", { className: "header", role: "navigation", "aria-label": "Primary", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "brand", children: "Luna Proxy" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("nav", { className: "nav", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { className: "nav-list", children: navItems.map((item) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(NavLink, { to: item.to, className: ({ isActive }) => isActive ? "active nav-link" : "nav-link", children: t(item.labelKey) }) }, item.to)) }) })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "main", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", { className: "topbar", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "page-title", children: "Luna Proxy Manager" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", { className: "content", tabIndex: -1, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "main", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("header", { className: "topbar", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h1", { className: "page-title", children: t("app.title") }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("main", { className: "content", tabIndex: -1, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Outlet, {}) })
     ] })
   ] });
 }
 
 // frontend/src/pages/Dashboard.tsx
-var import_react = __toESM(require_react());
-var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+var import_react2 = __toESM(require_react());
+var import_jsx_runtime3 = __toESM(require_jsx_runtime());
 function parseLog(log) {
   try {
     return JSON.parse(log.message);
@@ -26543,14 +27210,15 @@ function parseLog(log) {
   }
 }
 function Dashboard() {
-  const [config, setConfig] = (0, import_react.useState)(null);
-  const [logs, setLogs] = (0, import_react.useState)([]);
-  const [logStats, setLogStats] = (0, import_react.useState)({ total: 0, errors: 0, chatRequests: 0 });
-  const [runtime, setRuntime] = (0, import_react.useState)(null);
-  const [health, setHealth] = (0, import_react.useState)("checking");
-  const [loading, setLoading] = (0, import_react.useState)(true);
-  const [lastUpdated, setLastUpdated] = (0, import_react.useState)(null);
-  const requestInFlight = (0, import_react.useRef)(false);
+  const { t } = useI18n();
+  const [config, setConfig] = (0, import_react2.useState)(null);
+  const [logs, setLogs] = (0, import_react2.useState)([]);
+  const [logStats, setLogStats] = (0, import_react2.useState)({ total: 0, errors: 0, chatRequests: 0 });
+  const [runtime, setRuntime] = (0, import_react2.useState)(null);
+  const [health, setHealth] = (0, import_react2.useState)("checking");
+  const [loading, setLoading] = (0, import_react2.useState)(true);
+  const [lastUpdated, setLastUpdated] = (0, import_react2.useState)(null);
+  const requestInFlight = (0, import_react2.useRef)(false);
   async function loadDashboard(initial = false) {
     if (requestInFlight.current)
       return;
@@ -26583,7 +27251,7 @@ function Dashboard() {
       requestInFlight.current = false;
     }
   }
-  (0, import_react.useEffect)(() => {
+  (0, import_react2.useEffect)(() => {
     let active = true;
     const tick = async () => {
       if (!active)
@@ -26599,7 +27267,7 @@ function Dashboard() {
       window.clearInterval(timer);
     };
   }, []);
-  const stats = (0, import_react.useMemo)(() => {
+  const stats = (0, import_react2.useMemo)(() => {
     const providers = config?.providers || [];
     const configuredProviders = providers.filter((p) => p.credentials && Object.keys(p.credentials).length > 0);
     const activeRuns = runtime?.activeRuns || [];
@@ -26615,117 +27283,119 @@ function Dashboard() {
       errors: logStats.errors
     };
   }, [config, logStats, runtime]);
-  return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { "aria-labelledby": "dashboard-title", className: "page-panel dashboard-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "eyebrow", children: "Local control plane" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h2", { id: "dashboard-title", children: "Dashboard" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Auto-updating every 2 seconds." })
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { "aria-labelledby": "dashboard-title", className: "page-panel dashboard-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "eyebrow", children: t("dashboard.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "dashboard-title", children: t("dashboard.title") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: t("dashboard.autoUpdate") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "metric-grid", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Proxy health" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: health === "online" ? "Ready" : health === "offline" ? "Down" : "Checking" })
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "metric-grid", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.proxyHealth") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: health === "online" ? t("dashboard.ready") : health === "offline" ? t("dashboard.down") : t("dashboard.checking") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Configured providers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.providers })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.configuredProviders") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.providers })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Active runs" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.activeRuns }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Live scheduler state." })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.activeRuns") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.activeRuns }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: t("dashboard.schedulerState") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Queued runs" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.queued }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "Waiting on capacity or locks." })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.queuedRuns") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.queued }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: t("dashboard.waitingCapacity") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Capacity in use" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.activeCapacity })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.capacityInUse") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.activeCapacity })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Recent requests" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.requests })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.recentRequests") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.requests })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("article", { className: "metric-card", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { children: "Recent errors" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "metric-value", children: stats.errors })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("article", { className: "metric-card", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: t("dashboard.recentErrors") }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "metric-value", children: stats.errors })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { className: "surface-card", "aria-labelledby": "runtime-title", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { id: "runtime-title", children: "Runtime Scheduler" }),
-        lastUpdated ? /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "muted", children: [
-          "Updated ",
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "surface-card", "aria-labelledby": "runtime-title", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "surface-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { id: "runtime-title", children: t("dashboard.runtimeScheduler") }),
+        lastUpdated ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "muted", children: [
+          t("common.updated"),
+          " ",
           new Date(lastUpdated).toLocaleTimeString()
         ] }) : null
       ] }),
-      runtime?.activeRuns?.length ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "data-table", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Run" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Status" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Provider" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Account" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Session" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Worker" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Started" })
+      runtime?.activeRuns?.length ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("nav.runs") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.status") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.provider") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.account") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.session") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.worker") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.started") })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: runtime.activeRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.id.slice(0, 8) }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${run.status === "streaming" ? "alive" : run.status === "queued" ? "warn" : "alive"}`, children: run.status }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.providerId || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.accountId || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.sessionId ? run.sessionId.slice(0, 8) : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.workerId || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : "-" })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("tbody", { children: runtime.activeRuns.map((run) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.id.slice(0, 8) }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `status-pill status-${run.status === "streaming" ? "alive" : run.status === "queued" ? "warn" : "alive"}`, children: run.status }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: run.providerId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: run.accountId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: run.sessionId ? run.sessionId.slice(0, 8) : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: run.workerId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : "-" })
         ] }, run.id)) })
-      ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "No active runs." }),
-      runtime?.locks && Object.keys(runtime.locks).length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "table-wrap", style: { marginTop: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "data-table", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Lock / capacity key" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Active" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Max" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Queued" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Owner" })
+      ] }) }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: t("dashboard.noActiveRuns") }),
+      runtime?.locks && Object.keys(runtime.locks).length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "table-wrap", style: { marginTop: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("dashboard.lockCapacityKey") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.active") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.max") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.queued") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.owner") })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: Object.entries(runtime.locks).map(([key, lock]) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: key }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.capacity || 0 }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.capacityMax || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: lock.queued || 0 }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: lock.ownerId ? lock.ownerId.slice(0, 8) : "-" })
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("tbody", { children: Object.entries(runtime.locks).map(([key, lock]) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: key }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: lock.capacity || 0 }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: lock.capacityMax || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: lock.queued || 0 }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: lock.ownerId ? lock.ownerId.slice(0, 8) : "-" })
         ] }, key)) })
       ] }) }) : null
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("section", { className: "surface-card", "aria-labelledby": "recent-title", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { id: "recent-title", children: "Recent requests" }),
-        lastUpdated ? /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "muted", children: [
-          "Updated ",
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { className: "surface-card", "aria-labelledby": "recent-title", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "surface-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { id: "recent-title", children: t("dashboard.recentRequests") }),
+        lastUpdated ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "muted", children: [
+          t("common.updated"),
+          " ",
           new Date(lastUpdated).toLocaleTimeString()
         ] }) : null
       ] }),
-      logs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "muted", children: "No request logs yet." }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("table", { className: "data-table", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Time" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Level" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Path" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Model" }),
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("th", { children: "Status" })
+      logs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: t("dashboard.noRequestLogs") }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.time") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.level") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.path") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.model") }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("th", { children: t("label.status") })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: logs.slice(0, 20).map((log, index) => {
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("tbody", { children: logs.slice(0, 20).map((log, index) => {
           const meta = parseLog(log);
-          return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: new Date(log.timestamp).toLocaleTimeString() }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `status-pill status-${log.level === "error" ? "dead" : "alive"}`, children: log.level }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: meta.path || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: meta.model || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("td", { children: meta.status || "-" })
+          return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: new Date(log.timestamp).toLocaleTimeString() }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `status-pill status-${log.level === "error" ? "dead" : "alive"}`, children: log.level }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: meta.path || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: meta.model || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("td", { children: meta.status || "-" })
           ] }, `${log.timestamp}-${index}`);
         }) })
       ] }) })
@@ -26734,24 +27404,25 @@ function Dashboard() {
 }
 
 // frontend/src/pages/Providers.tsx
-var import_react2 = __toESM(require_react());
-var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+var import_react3 = __toESM(require_react());
+var import_jsx_runtime4 = __toESM(require_jsx_runtime());
 var builtinProviders = [
   { id: "qwen-ai", name: "Qwen AI (International)", loginUrl: "https://chat.qwen.ai" }
 ];
 function Providers() {
-  const [providers, setProviders] = (0, import_react2.useState)([]);
-  const [loading, setLoading] = (0, import_react2.useState)(true);
-  const [showAdd, setShowAdd] = (0, import_react2.useState)(false);
-  const [selected, setSelected] = (0, import_react2.useState)(null);
-  const [activeTab, setActiveTab] = (0, import_react2.useState)("config");
-  const [tokenValue, setTokenValue] = (0, import_react2.useState)("");
-  const [cookieValue, setCookieValue] = (0, import_react2.useState)("");
-  const [validationMsg, setValidationMsg] = (0, import_react2.useState)(null);
-  const [oauthPolling, setOauthPolling] = (0, import_react2.useState)(false);
-  const [oauthConfig, setOauthConfig] = (0, import_react2.useState)(null);
-  const [providerStatus, setProviderStatus] = (0, import_react2.useState)({});
-  (0, import_react2.useEffect)(() => {
+  const { t } = useI18n();
+  const [providers, setProviders] = (0, import_react3.useState)([]);
+  const [loading, setLoading] = (0, import_react3.useState)(true);
+  const [showAdd, setShowAdd] = (0, import_react3.useState)(false);
+  const [selected, setSelected] = (0, import_react3.useState)(null);
+  const [activeTab, setActiveTab] = (0, import_react3.useState)("config");
+  const [tokenValue, setTokenValue] = (0, import_react3.useState)("");
+  const [cookieValue, setCookieValue] = (0, import_react3.useState)("");
+  const [validationMsg, setValidationMsg] = (0, import_react3.useState)(null);
+  const [oauthPolling, setOauthPolling] = (0, import_react3.useState)(false);
+  const [oauthConfig, setOauthConfig] = (0, import_react3.useState)(null);
+  const [providerStatus, setProviderStatus] = (0, import_react3.useState)({});
+  (0, import_react3.useEffect)(() => {
     loadConfig();
   }, []);
   async function loadConfig() {
@@ -26837,7 +27508,7 @@ function Providers() {
     setValidationMsg(null);
     setOauthPolling(true);
     try {
-      setValidationMsg("Opening Qwen AI login window. Complete login in Chromium...");
+      setValidationMsg(t("providers.oauthOpening"));
       const resp = await fetch("/api/provider/oauth/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -26845,7 +27516,7 @@ function Providers() {
       });
       const data = await resp.json();
       if (!resp.ok || !data.success) {
-        setValidationMsg(data.error || "OAuth capture failed");
+        setValidationMsg(data.error || t("providers.oauthFailed"));
         return;
       }
       const creds = data.credentials || {};
@@ -26854,10 +27525,10 @@ function Providers() {
       if (creds.cookies)
         setCookieValue(creds.cookies);
       await loadConfig();
-      setValidationMsg("OAuth credentials captured and validated");
+      setValidationMsg(t("providers.oauthCaptured"));
     } catch (err) {
       console.error("startOAuth failed", err);
-      setValidationMsg(err instanceof Error ? err.message : "Failed to start OAuth");
+      setValidationMsg(err instanceof Error ? err.message : t("providers.oauthStartFailed"));
     } finally {
       setOauthPolling(false);
     }
@@ -26865,7 +27536,7 @@ function Providers() {
   async function validate() {
     if (!selected)
       return;
-    setValidationMsg("Checking...");
+    setValidationMsg(t("providers.checking"));
     const creds = {};
     const tokenKey = selected.id === "qwen-ai" ? "token" : "ticket";
     const cookieKey = selected.id === "qwen-ai" ? "cookies" : "cookie";
@@ -26876,7 +27547,7 @@ function Providers() {
       creds[cookieKey] = cookieValue.trim();
     }
     if (Object.keys(creds).length === 0) {
-      setValidationMsg(activeTab === "oauth" ? "Start OAuth first" : "Provide token or cookie to validate");
+      setValidationMsg(activeTab === "oauth" ? t("providers.startFirst") : t("providers.provideCredential"));
       return;
     }
     try {
@@ -26887,12 +27558,12 @@ function Providers() {
       });
       const data = await resp.json();
       if (data && data.ok)
-        setValidationMsg("Account valid");
+        setValidationMsg(t("providers.valid"));
       else
-        setValidationMsg("Invalid account");
+        setValidationMsg(t("providers.invalid"));
     } catch (err) {
       console.error(err);
-      setValidationMsg("Validation failed");
+      setValidationMsg(t("providers.validationFailed"));
     }
   }
   async function save() {
@@ -26915,7 +27586,7 @@ function Providers() {
           body: JSON.stringify({ providerId: selected.id, credentials })
         });
       } else {
-        setValidationMsg(activeTab === "oauth" ? "Start OAuth first" : "Nothing to save \u2014 provide token or cookie");
+        setValidationMsg(activeTab === "oauth" ? t("providers.startFirst") : t("providers.nothingToSave"));
         return;
       }
       await loadConfig();
@@ -26924,22 +27595,22 @@ function Providers() {
       console.error("save failed", err);
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("section", { "aria-labelledby": "providers-title", className: `providers-section ${showAdd ? "modal-open" : ""}`, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "providers-title", children: "Providers" }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: { display: "flex", justifyContent: "center", gap: 16, marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: "add-button", onClick: openAdd, children: "Add Provider" }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: `providers-wrapper ${showAdd ? "modal-open" : ""}`, children: loading ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { children: "Loading\u2026" }) : configured.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "muted", children: "Ch\u01B0a c\xF3 provider" }) : configured.map((p) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("button", { className: "provider-card provider-card-button", onClick: () => openEditorForProvider(p), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "provider-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "provider-name", children: p.name || p.id }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: `provider-status-dot status-${providerStatus[p.id] || "warn"}` })
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("section", { "aria-labelledby": "providers-title", className: `providers-section ${showAdd ? "modal-open" : ""}`, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { id: "providers-title", children: t("nav.providers") }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: { display: "flex", justifyContent: "center", gap: 16, marginBottom: 16 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { className: "add-button", onClick: openAdd, children: t("providers.add") }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: `providers-wrapper ${showAdd ? "modal-open" : ""}`, children: loading ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { children: t("common.loading") }) : configured.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "muted", children: t("providers.empty") }) : configured.map((p) => /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("button", { className: "provider-card provider-card-button", onClick: () => openEditorForProvider(p), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "provider-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "provider-name", children: p.name || p.id }),
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: `provider-status-dot status-${providerStatus[p.id] || "warn"}` })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "provider-credentials", children: p.credentials ? Object.keys(p.credentials).map((k) => `${k}: ${String(p.credentials[k]).slice(0, 6)}...`).join(" \u2022 ") : "" })
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "provider-credentials", children: p.credentials ? Object.keys(p.credentials).map((k) => `${k}: ${String(p.credentials[k]).slice(0, 6)}...`).join(" \u2022 ") : "" })
     ] }, p.id)) }),
-    showAdd && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "modal-overlay", role: "dialog", "aria-modal": "true", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "modal-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { "aria-label": "Close", className: "modal-close-btn", onClick: closeAdd, children: "\xD7" }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "available-list", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { children: "Available" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "available-items", children: builtinProviders.map((bp) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+    showAdd && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "modal-overlay", role: "dialog", "aria-modal": "true", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "modal-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { "aria-label": t("common.close"), className: "modal-close-btn", onClick: closeAdd, children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "available-list", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { children: t("providers.available") }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "available-items", children: builtinProviders.map((bp) => /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
             "button",
             {
               className: selected && selected.id === bp.id ? "provider-select-btn selected" : "provider-select-btn",
@@ -26948,48 +27619,48 @@ function Providers() {
             },
             bp.id
           )) }),
-          selected && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "provider-action-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: activeTab === "config" ? "provider-action-btn active" : "provider-action-btn", onClick: () => setActiveTab("config"), children: "Config" }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { className: activeTab === "oauth" ? "provider-action-btn active" : "provider-action-btn", onClick: () => setActiveTab("oauth"), children: "OAuth" })
+          selected && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "provider-action-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { className: activeTab === "config" ? "provider-action-btn active" : "provider-action-btn", onClick: () => setActiveTab("config"), children: t("providers.config") }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { className: activeTab === "oauth" ? "provider-action-btn active" : "provider-action-btn", onClick: () => setActiveTab("oauth"), children: "OAuth" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "provider-detail-center", children: !selected ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "muted", children: "Select a provider to configure" }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { textAlign: "left" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h3", { style: { textAlign: "center" }, children: selected.name }),
-          activeTab === "config" ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "input-area", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: "Token (paste here)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("input", { value: tokenValue, onChange: (e) => setTokenValue(e.target.value), style: { width: "100%" } }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: "Paste token if you have one. Alternatively paste cookie below after login." })
+        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "provider-detail-center", children: !selected ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "muted", children: t("providers.select") }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { textAlign: "left" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { style: { textAlign: "center" }, children: selected.name }),
+          activeTab === "config" ? /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "input-area", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: t("providers.token") }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { value: tokenValue, onChange: (e) => setTokenValue(e.target.value), style: { width: "100%" } }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "muted", children: t("providers.tokenHint") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "input-area", style: { marginTop: 8 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { children: "Cookie / Session (paste raw cookie string)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("textarea", { value: cookieValue, onChange: (e) => setCookieValue(e.target.value), style: { width: "100%", height: 120 } })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "input-area", style: { marginTop: 8 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("label", { children: t("providers.cookie") }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("textarea", { value: cookieValue, onChange: (e) => setCookieValue(e.target.value), style: { width: "100%", height: 120 } })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { marginTop: 8 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: openLoginAndSwitch, className: "nav-link", children: "Open login page" }),
-              /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: startOAuth, className: "nav-link", style: { marginLeft: 8 }, children: "Start OAuth" })
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { marginTop: 8 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: openLoginAndSwitch, className: "nav-link", children: t("providers.openLogin") }),
+              /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: startOAuth, className: "nav-link", style: { marginLeft: 8 }, children: t("providers.startOAuth") })
             ] })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { textAlign: "left" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { className: "muted", children: "Open the Qwen AI international login window. After login, Proxy-Luna captures the web token from Local Storage and validates it automatically." }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: { display: "flex", justifyContent: "center", gap: 8, marginTop: 12 }, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: startOAuth, disabled: oauthPolling, className: "add-button", children: oauthPolling ? "Waiting for login..." : "Start OAuth" }) }),
-            (tokenValue || cookieValue) && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { style: { marginTop: 12 }, children: [
-              tokenValue && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "provider-credentials", children: [
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { textAlign: "left" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "muted", children: t("providers.oauthHint") }),
+            /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: { display: "flex", justifyContent: "center", gap: 8, marginTop: 12 }, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: startOAuth, disabled: oauthPolling, className: "add-button", children: oauthPolling ? t("providers.waitLogin") : t("providers.startOAuth") }) }),
+            (tokenValue || cookieValue) && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { style: { marginTop: 12 }, children: [
+              tokenValue && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "provider-credentials", children: [
                 "token: ",
                 tokenValue.slice(0, 12),
                 "..."
               ] }),
-              cookieValue && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "provider-credentials", children: [
+              cookieValue && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "provider-credentials", children: [
                 "cookies: ",
                 cookieValue.slice(0, 12),
                 "..."
               ] })
             ] })
           ] }),
-          validationMsg && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { style: { marginTop: 8 }, className: "muted", children: validationMsg })
+          validationMsg && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { style: { marginTop: 8 }, className: "muted", children: validationMsg })
         ] }) }),
-        selected && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "modal-actions", style: { display: "flex", gap: 8, marginTop: 12, justifyContent: "flex-end" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: validate, className: "nav-link", children: "Validate" }),
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("button", { onClick: save, className: "add-button", children: "Save Provider" })
+        selected && /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "modal-actions", style: { display: "flex", gap: 8, marginTop: 12, justifyContent: "flex-end" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: validate, className: "nav-link", children: t("providers.validate") }),
+          /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { onClick: save, className: "add-button", children: t("providers.save") })
         ] })
       ] })
     ] }) })
@@ -26997,17 +27668,18 @@ function Providers() {
 }
 
 // frontend/src/pages/ProxyPage.tsx
-var import_react3 = __toESM(require_react());
-var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+var import_react4 = __toESM(require_react());
+var import_jsx_runtime5 = __toESM(require_jsx_runtime());
 function ProxyPage() {
-  const [host, setHost] = (0, import_react3.useState)("127.0.0.1");
-  const [port, setPort] = (0, import_react3.useState)(8080);
-  const [proxyKey, setProxyKey] = (0, import_react3.useState)("");
-  const [saving, setSaving] = (0, import_react3.useState)(false);
-  const [message, setMessage] = (0, import_react3.useState)(null);
-  const [health, setHealth] = (0, import_react3.useState)("checking");
-  const baseUrl = (0, import_react3.useMemo)(() => `http://${host}:${port}`, [host, port]);
-  (0, import_react3.useEffect)(() => {
+  const { t } = useI18n();
+  const [host, setHost] = (0, import_react4.useState)("127.0.0.1");
+  const [port, setPort] = (0, import_react4.useState)(8080);
+  const [proxyKey, setProxyKey] = (0, import_react4.useState)("");
+  const [saving, setSaving] = (0, import_react4.useState)(false);
+  const [message, setMessage] = (0, import_react4.useState)(null);
+  const [health, setHealth] = (0, import_react4.useState)("checking");
+  const baseUrl = (0, import_react4.useMemo)(() => `http://${host}:${port}`, [host, port]);
+  (0, import_react4.useEffect)(() => {
     loadConfig();
     checkHealth();
   }, []);
@@ -27034,9 +27706,9 @@ function ProxyPage() {
       });
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`);
-      setMessage("Proxy config saved");
+      setMessage(t("proxy.saved"));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to save proxy config");
+      setMessage(error instanceof Error ? error.message : t("proxy.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -27050,67 +27722,70 @@ function ProxyPage() {
       setHealth("offline");
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("section", { "aria-labelledby": "proxy-title", className: "page-panel proxy-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "eyebrow", children: "OpenAI compatible gateway" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h2", { id: "proxy-title", children: "Proxy" })
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("section", { "aria-labelledby": "proxy-title", className: "page-panel proxy-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "eyebrow", children: t("proxy.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { id: "proxy-title", children: "Proxy" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health === "online" ? "Online" : health === "offline" ? "Offline" : "Checking" })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { className: `status-pill status-${health === "online" ? "alive" : health === "offline" ? "dead" : "warn"}`, children: health === "online" ? "Online" : health === "offline" ? "Offline" : "Checking" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("form", { className: "surface-card form-grid", onSubmit: (e) => e.preventDefault(), "aria-label": "Proxy config", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Host" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { value: host, onChange: (e) => setHost(e.target.value) })
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("form", { className: "surface-card form-grid", onSubmit: (e) => e.preventDefault(), "aria-label": "Proxy config", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("label.host") }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { value: host, onChange: (e) => setHost(e.target.value) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Port" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "number", value: port, onChange: (e) => setPort(Number(e.target.value)), min: 1, max: 65535 })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("label.port") }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "number", value: port, onChange: (e) => setPort(Number(e.target.value)), min: 1, max: 65535 })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("label", { className: "field field-wide", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { children: "Proxy Key" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("input", { type: "password", value: proxyKey, onChange: (e) => setProxyKey(e.target.value), placeholder: "Set proxy password/key" })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { className: "field field-wide", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { children: t("proxy.key") }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "password", value: proxyKey, onChange: (e) => setProxyKey(e.target.value), placeholder: t("proxy.keyPlaceholder") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "action-row field-wide", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { type: "button", onClick: saveProxyConfig, disabled: saving, children: saving ? "Saving..." : "Save Proxy Config" }),
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("button", { type: "button", onClick: checkHealth, children: "Check Health" })
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "action-row field-wide", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { type: "button", onClick: saveProxyConfig, disabled: saving, children: saving ? t("common.saving") : t("proxy.save") }),
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { type: "button", onClick: checkHealth, children: t("proxy.checkHealth") })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "surface-card endpoint-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("h3", { children: "Connection" }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "muted", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "surface-card endpoint-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { children: t("proxy.connection") }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "muted", children: [
         "Base URL: ",
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: baseUrl })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { children: baseUrl })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "muted", children: [
-        "OpenAI Endpoint: ",
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("code", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "muted", children: [
+        t("proxy.endpoint"),
+        ": ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("code", { children: [
           baseUrl,
           "/v1/chat/completions"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("p", { className: "muted", children: [
-        "Auth Header: ",
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: "Authorization: Bearer <proxy-key>" }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("p", { className: "muted", children: [
+        t("proxy.authHeader"),
+        ": ",
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { children: "Authorization: Bearer <proxy-key>" }),
         " or ",
-        /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("code", { children: "X-Proxy-Key" })
+        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("code", { children: "X-Proxy-Key" })
       ] })
     ] }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("p", { className: "muted", children: message }) : null
+    message ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: message }) : null
   ] });
 }
 
 // frontend/src/pages/Models.tsx
-var import_react4 = __toESM(require_react());
-var import_jsx_runtime5 = __toESM(require_jsx_runtime());
+var import_react5 = __toESM(require_react());
+var import_jsx_runtime6 = __toESM(require_jsx_runtime());
 function Models() {
-  const [models, setModels] = (0, import_react4.useState)([]);
-  const [updatedAt, setUpdatedAt] = (0, import_react4.useState)(null);
-  const [loading, setLoading] = (0, import_react4.useState)(false);
-  const [refreshing, setRefreshing] = (0, import_react4.useState)(false);
-  const [message, setMessage] = (0, import_react4.useState)(null);
-  const [selectedModel, setSelectedModel] = (0, import_react4.useState)(null);
-  const loadModels = (0, import_react4.useCallback)(async () => {
+  const { t } = useI18n();
+  const [models, setModels] = (0, import_react5.useState)([]);
+  const [updatedAt, setUpdatedAt] = (0, import_react5.useState)(null);
+  const [loading, setLoading] = (0, import_react5.useState)(false);
+  const [refreshing, setRefreshing] = (0, import_react5.useState)(false);
+  const [message, setMessage] = (0, import_react5.useState)(null);
+  const [selectedModel, setSelectedModel] = (0, import_react5.useState)(null);
+  const loadModels = (0, import_react5.useCallback)(async () => {
     setLoading(true);
     setMessage(null);
     try {
@@ -27120,17 +27795,17 @@ function Models() {
       setModels(items);
       setUpdatedAt(data?.updatedAt || null);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to load models");
+      setMessage(error instanceof Error ? error.message : t("models.loadFailed"));
     } finally {
       setLoading(false);
     }
   }, []);
-  (0, import_react4.useEffect)(() => {
+  (0, import_react5.useEffect)(() => {
     loadModels();
   }, [loadModels]);
   async function refreshModels() {
     setRefreshing(true);
-    setMessage("Refreshing from built-in Qwen catalog...");
+    setMessage(t("models.refreshingCatalog"));
     try {
       const res = await fetch("/api/models/refresh", {
         method: "POST",
@@ -27138,42 +27813,40 @@ function Models() {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setMessage(data?.error || "Failed to refresh models");
+        setMessage(data?.error || t("models.refreshFailed"));
         return;
       }
-      setMessage(`Loaded ${data.count} models from built-in Qwen catalog`);
+      setMessage(t("models.loadedCatalog", { count: data.count }));
       await loadModels();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to refresh models");
+      setMessage(error instanceof Error ? error.message : t("models.refreshFailed"));
     } finally {
       setRefreshing(false);
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("section", { "aria-labelledby": "models-title", className: "page-panel models-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "eyebrow", children: "Provider catalog" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h2", { id: "models-title", children: "Models" })
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { "aria-labelledby": "models-title", className: "page-panel models-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "eyebrow", children: t("models.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { id: "models-title", children: t("nav.models") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "status-pill status-alive", children: [
-        models.length,
-        " models"
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "status-pill status-alive", children: t("models.count", { count: models.length }) })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "surface-card", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: "Provider: Qwen AI (International). Source: built-in catalog." }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { onClick: refreshModels, disabled: refreshing || loading, children: refreshing ? "Refreshing..." : "Refresh catalog" }),
-        updatedAt ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("span", { className: "muted", children: [
-          "Updated: ",
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "surface-card", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: t("models.providerSource") }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: refreshModels, disabled: refreshing || loading, children: refreshing ? t("models.refreshing") : t("models.refreshCatalog") }),
+        updatedAt ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { className: "muted", children: [
+          t("common.updated"),
+          ": ",
           new Date(updatedAt).toLocaleString()
         ] }) : null
       ] })
     ] }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: message }) : null,
-    loading ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: "Loading models..." }) : null,
-    !loading && models.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: "No models loaded yet." }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("ul", { className: "model-grid", children: models.map((m) => /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
+    message ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: message }) : null,
+    loading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: t("models.loading") }) : null,
+    !loading && models.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: t("models.empty") }) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("ul", { className: "model-grid", children: models.map((m) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
       "li",
       {
         className: "model-item clickable-row",
@@ -27184,36 +27857,37 @@ function Models() {
             setSelectedModel(m);
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "model-name", children: m.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "model-meta muted", children: m.id }),
-          m.maxContextLength ? /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "model-meta muted", children: [
-            "Context: ",
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "model-name", children: m.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "model-meta muted", children: m.id }),
+          m.maxContextLength ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "model-meta muted", children: [
+            t("models.context"),
+            ": ",
             m.maxContextLength
           ] }) : null
         ]
       },
       m.id
     )) }),
-    selectedModel ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "model-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("aside", { className: "detail-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("button", { className: "modal-close-btn", "aria-label": "Close model detail", onClick: () => setSelectedModel(null), children: "\xD7" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "detail-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "eyebrow", children: "Model detail" }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("h3", { id: "model-detail-title", children: selectedModel.name }),
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { className: "muted", children: selectedModel.id })
+    selectedModel ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "model-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "modal-close-btn", "aria-label": t("common.close"), onClick: () => setSelectedModel(null), children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "eyebrow", children: t("models.detail") }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { id: "model-detail-title", children: selectedModel.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: selectedModel.id })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { className: "detail-content", style: { marginTop: 16 }, children: [
-        selectedModel.description ? /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("p", { style: { marginTop: 0 }, children: selectedModel.description }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("dl", { className: "detail-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dt", { children: "Maximum context length" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dd", { children: selectedModel.maxContextLength || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dt", { children: "Max summary generation length" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dd", { children: selectedModel.maxSummaryGenerationLength || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dt", { children: "Maximum generation length" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dd", { children: selectedModel.maxGenerationLength || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dt", { children: "Max thinking generation length" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dd", { children: selectedModel.maxThinkingGenerationLength || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dt", { children: "Modality" }),
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("dd", { children: selectedModel.modality?.join(", ") || "-" })
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "detail-content", style: { marginTop: 16 }, children: [
+        selectedModel.description ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { style: { marginTop: 0 }, children: selectedModel.description }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("dl", { className: "detail-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: t("models.maxContext") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: selectedModel.maxContextLength || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: t("models.maxSummary") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: selectedModel.maxSummaryGenerationLength || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: t("models.maxGeneration") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: selectedModel.maxGenerationLength || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: t("models.maxThinking") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: selectedModel.maxThinkingGenerationLength || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: t("models.modality") }),
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: selectedModel.modality?.join(", ") || "-" })
         ] })
       ] })
     ] }) }) : null
@@ -27221,24 +27895,25 @@ function Models() {
 }
 
 // frontend/src/pages/Sessions.tsx
-var import_react5 = __toESM(require_react());
-var import_jsx_runtime6 = __toESM(require_jsx_runtime());
+var import_react6 = __toESM(require_react());
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
 var LIST_BATCH_SIZE = 50;
 function Sessions() {
-  const [sessions, setSessions] = (0, import_react5.useState)([]);
-  const [loading, setLoading] = (0, import_react5.useState)(true);
-  const [message, setMessage] = (0, import_react5.useState)(null);
-  const [selectedId, setSelectedId] = (0, import_react5.useState)(null);
-  const [detail, setDetail] = (0, import_react5.useState)(null);
-  const [detailLoading, setDetailLoading] = (0, import_react5.useState)(false);
-  const [filterSource, setFilterSource] = (0, import_react5.useState)("all");
-  const [diagnostics, setDiagnostics] = (0, import_react5.useState)(null);
-  const [visibleCount, setVisibleCount] = (0, import_react5.useState)(LIST_BATCH_SIZE);
-  (0, import_react5.useEffect)(() => {
+  const { t } = useI18n();
+  const [sessions, setSessions] = (0, import_react6.useState)([]);
+  const [loading, setLoading] = (0, import_react6.useState)(true);
+  const [message, setMessage] = (0, import_react6.useState)(null);
+  const [selectedId, setSelectedId] = (0, import_react6.useState)(null);
+  const [detail, setDetail] = (0, import_react6.useState)(null);
+  const [detailLoading, setDetailLoading] = (0, import_react6.useState)(false);
+  const [filterSource, setFilterSource] = (0, import_react6.useState)("all");
+  const [diagnostics, setDiagnostics] = (0, import_react6.useState)(null);
+  const [visibleCount, setVisibleCount] = (0, import_react6.useState)(LIST_BATCH_SIZE);
+  (0, import_react6.useEffect)(() => {
     loadSessions();
     loadDiagnostics();
   }, []);
-  (0, import_react5.useEffect)(() => {
+  (0, import_react6.useEffect)(() => {
     if (selectedId)
       loadDetail(selectedId);
   }, [selectedId]);
@@ -27259,7 +27934,7 @@ function Sessions() {
         throw new Error(`HTTP ${res.status}`);
       setSessions(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to load sessions");
+      setMessage(error instanceof Error ? error.message : `${t("common.loadFailed")} ${t("nav.sessions")}`);
     } finally {
       setLoading(false);
     }
@@ -27272,13 +27947,13 @@ function Sessions() {
         throw new Error(`HTTP ${res.status}`);
       setDetail(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to load session detail");
+      setMessage(error instanceof Error ? error.message : `${t("common.loadFailed")} ${t("sessions.detail")}`);
     } finally {
       setDetailLoading(false);
     }
   }
   async function deleteSession(id) {
-    if (!confirm("Delete this session?"))
+    if (!confirm(t("sessions.confirmDelete")))
       return;
     try {
       const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
@@ -27290,11 +27965,11 @@ function Sessions() {
       }
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete");
+      setMessage(error instanceof Error ? error.message : t("common.deleteFailed"));
     }
   }
   async function clearSession(id) {
-    if (!confirm("Clear history for this session?"))
+    if (!confirm(t("sessions.confirmClear")))
       return;
     try {
       const res = await fetch(`/api/sessions/${id}/clear`, { method: "POST" });
@@ -27303,24 +27978,24 @@ function Sessions() {
       await loadDetail(id);
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to clear");
+      setMessage(error instanceof Error ? error.message : t("sessions.clearFailed"));
     }
   }
   async function compactSession(id) {
-    setMessage("Compacting...");
+    setMessage(t("sessions.compacting"));
     try {
       const res = await fetch(`/api/sessions/${id}/compact`, { method: "POST" });
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`);
-      setMessage("Compact complete");
+      setMessage(t("sessions.compactComplete"));
       await loadDetail(id);
       await loadSessions();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Compact failed");
+      setMessage(error instanceof Error ? error.message : t("sessions.compactFailed"));
     }
   }
   async function renameSession(id) {
-    const title = prompt("New title:");
+    const title = prompt(t("sessions.newTitle"));
     if (!title)
       return;
     try {
@@ -27335,19 +28010,19 @@ function Sessions() {
       if (selectedId === id)
         await loadDetail(id);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Rename failed");
+      setMessage(error instanceof Error ? error.message : t("sessions.renameFailed"));
     }
   }
   const sources = Array.from(new Set(sessions.map((s) => s.source)));
-  const filtered = (0, import_react5.useMemo)(
+  const filtered = (0, import_react6.useMemo)(
     () => filterSource === "all" ? sessions : sessions.filter((s) => s.source === filterSource),
     [filterSource, sessions]
   );
-  const renderedSessions = (0, import_react5.useMemo)(
+  const renderedSessions = (0, import_react6.useMemo)(
     () => filtered.slice(0, visibleCount),
     [filtered, visibleCount]
   );
-  (0, import_react5.useEffect)(() => {
+  (0, import_react6.useEffect)(() => {
     setVisibleCount(LIST_BATCH_SIZE);
   }, [filterSource, sessions]);
   function handleListScroll(event) {
@@ -27357,126 +28032,104 @@ function Sessions() {
       setVisibleCount((count) => Math.min(count + LIST_BATCH_SIZE, filtered.length));
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("section", { "aria-labelledby": "sessions-title", className: "page-panel sessions-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "eyebrow", children: "Conversation sessions" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h2", { id: "sessions-title", children: "Sessions" })
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("section", { "aria-labelledby": "sessions-title", className: "page-panel sessions-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: t("sessions.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { id: "sessions-title", children: t("nav.sessions") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("select", { value: filterSource, onChange: (e) => setFilterSource(e.target.value), "aria-label": "Filter by source", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: "all", children: "All sources" }),
-          sources.map((s) => /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: s, children: s }, s))
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("select", { value: filterSource, onChange: (e) => setFilterSource(e.target.value), "aria-label": t("sessions.filterSource"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: "all", children: t("sessions.allSources") }),
+          sources.map((s) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("option", { value: s, children: s }, s))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: loadSessions, disabled: loading, children: loading ? "Loading..." : "Refresh" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "danger", onClick: async () => {
-          if (!confirm("Clear ALL sessions?"))
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: loadSessions, disabled: loading, children: loading ? t("common.loading") : t("common.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: async () => {
+          if (!confirm(t("sessions.confirmClearAll")))
             return;
           await fetch("/api/sessions", { method: "DELETE" });
           setSelectedId(null);
           setDetail(null);
           await loadSessions();
-        }, children: "X\xF3a" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
+        }, children: t("common.delete") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: async () => {
           await fetch("/api/sessions/reload", { method: "POST" });
           await loadSessions();
-          setMessage("Sessions reloaded from disk");
-        }, children: "Reload" })
+          setMessage(t("sessions.reloadDone"));
+        }, children: t("sessions.reload") })
       ] })
     ] }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: message }) : null,
-    !loading && filtered.length === 0 && diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "surface-card", style: { marginBottom: 16, padding: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h4", { style: { marginBottom: 8 }, children: "Why is this empty?" }),
-      !diagnostics.sessionEnabled ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: 'Session memory is disabled in Settings. Enable "Session Memory" to start tracking conversations.' }) : diagnostics.fallbackMode === "stateless" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted", children: [
-          "Session memory is in ",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "stateless" }),
-          " mode. No sessions are stored unless the client sends an explicit session ID (",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("code", { children: "x-luna-session-id" }),
-          " header or ",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("code", { children: "session_id" }),
-          " in the request body)."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted", style: { marginTop: 8 }, children: [
-          "The API clients you are using may not provide session metadata. Try switching Settings \u2192 Session \u2192 Fallback Mode to ",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "file-backed" }),
-          " to auto-create sessions when overflow files are generated."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("details", { style: { marginTop: 12 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("summary", { style: { cursor: "pointer", color: "var(--color-text-secondary)" }, children: "Diagnostics" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("dl", { className: "detail-grid", style: { marginTop: 8, fontSize: "0.85em" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Config enabled" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.sessionEnabled) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Fallback mode" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.fallbackMode }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Require explicit ID" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.requireExplicitId) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Total sessions on disk" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.totalSessions }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Persistent" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.persistent ?? diagnostics.stats?.persistent ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "File-backed" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Transient" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.transient ?? diagnostics.stats?.transient ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Data file exists" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.dataFile.exists) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Data file parseable" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.dataFile.parseable) })
+    message ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: message }) : null,
+    !loading && filtered.length === 0 && diagnostics ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "surface-card", style: { marginBottom: 16, padding: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { style: { marginBottom: 8 }, children: t("sessions.emptyTitle") }),
+      !diagnostics.sessionEnabled ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: t("sessions.disabled") }) : diagnostics.fallbackMode === "stateless" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: t("sessions.statelessHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", style: { marginTop: 8 }, children: t("sessions.statelessTip") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("details", { style: { marginTop: 12 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("summary", { style: { cursor: "pointer", color: "var(--color-text-secondary)" }, children: t("sessions.diagnostics") }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dl", { className: "detail-grid", style: { marginTop: 8, fontSize: "0.85em" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.enabled") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.sessionEnabled) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("settings.session.fallbackMode") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.fallbackMode }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("settings.session.requireExplicitId") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.requireExplicitId) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.totalSessions") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.totalSessions }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.persistent") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.persistent ?? diagnostics.stats?.persistent ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.fileBacked") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.transient") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.transient ?? diagnostics.stats?.transient ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.dataFileExists") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.dataFile.exists) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.dataFileParseable") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.dataFile.parseable) })
           ] })
         ] })
-      ] }) : diagnostics.fallbackMode === "file-backed" ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted", children: [
-          "Session memory is in ",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("strong", { children: "file-backed" }),
-          " mode. Sessions are only created when overflow files are generated (i.e., when the conversation exceeds the token threshold). Before overflow, all requests are stateless."
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", style: { marginTop: 8 }, children: "If you have not seen any overflow files, no file-backed sessions will appear. Once a conversation triggers overflow, a file-backed session will be created and visible here." }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("details", { style: { marginTop: 12 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("summary", { style: { cursor: "pointer", color: "var(--color-text-secondary)" }, children: "Diagnostics" }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("dl", { className: "detail-grid", style: { marginTop: 8, fontSize: "0.85em" }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Config enabled" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.sessionEnabled) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Fallback mode" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.fallbackMode }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Require explicit ID" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.requireExplicitId) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Total sessions on disk" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.totalSessions }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "File-backed" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Persistent" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.persistent ?? diagnostics.stats?.persistent ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Transient" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: diagnostics.transient ?? diagnostics.stats?.transient ?? "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Data file exists" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.dataFile.exists) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Data file parseable" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: String(diagnostics.dataFile.parseable) })
+      ] }) : diagnostics.fallbackMode === "file-backed" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: t("sessions.fileBackedHint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", style: { marginTop: 8 }, children: t("sessions.fileBackedTip") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("details", { style: { marginTop: 12 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("summary", { style: { cursor: "pointer", color: "var(--color-text-secondary)" }, children: t("sessions.diagnostics") }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dl", { className: "detail-grid", style: { marginTop: 8, fontSize: "0.85em" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.enabled") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.sessionEnabled) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("settings.session.fallbackMode") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.fallbackMode }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("settings.session.requireExplicitId") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.requireExplicitId) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.totalSessions") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.totalSessions }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.fileBacked") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.fileBacked ?? diagnostics.stats?.fileBacked ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.persistent") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.persistent ?? diagnostics.stats?.persistent ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.transient") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: diagnostics.transient ?? diagnostics.stats?.transient ?? "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.dataFileExists") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.dataFile.exists) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.dataFileParseable") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: String(diagnostics.dataFile.parseable) })
           ] })
         ] })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted", children: [
-        "No sessions found. Total on disk: ",
-        diagnostics.totalSessions,
-        ". File exists: ",
-        String(diagnostics.dataFile.exists),
-        "."
-      ] })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: t("sessions.noneFound", { count: diagnostics.totalSessions, exists: String(diagnostics.dataFile.exists) }) })
     ] }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("table", { className: "data-table", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("tr", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Title / ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Source" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Workspace" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Thread" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Messages" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Overflow" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Provider Chat" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Updated" })
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("table", { className: "data-table", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("tr", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("sessions.titleId") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.mode") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.source") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.workspace") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.thread") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.model") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.messages") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.overflow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.providerChat") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.updated") })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("tbody", { children: renderedSessions.map((s) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("tbody", { children: renderedSessions.map((s) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
         "tr",
         {
           className: `clickable-row ${selectedId === s.id ? "selected-row" : ""}`,
@@ -27487,160 +28140,165 @@ function Sessions() {
               setSelectedId(s.id);
           },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.title || s.id.slice(0, 8) + "..." }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: `status-pill status-${s.mode === "file-backed" ? "warn" : s.mode === "persistent" || !s.mode ? "alive" : "dead"}`, children: s.mode || "persistent" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.source }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.workspace || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.threadId }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.model || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.messageCount }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.overflowChain?.length ? s.overflowChain.length : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: s.providerSessionId ? s.providerSessionId.slice(0, 8) + "..." : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: new Date(s.updatedAt).toLocaleString() })
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.title || s.id.slice(0, 8) + "..." }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-pill status-${s.mode === "file-backed" ? "warn" : s.mode === "persistent" || !s.mode ? "alive" : "dead"}`, children: s.mode || "persistent" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.source }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.workspace || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.threadId }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.model || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.messageCount }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.overflowChain?.length ? s.overflowChain.length : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: s.providerSessionId ? s.providerSessionId.slice(0, 8) + "..." : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: new Date(s.updatedAt).toLocaleString() })
           ]
         },
         s.id
       )) })
     ] }) }),
-    filtered.length > renderedSessions.length ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("p", { className: "muted list-lazy-status", children: [
-      "Showing ",
-      renderedSessions.length,
-      " of ",
-      filtered.length,
-      ". Scroll to load more."
-    ] }) : null,
-    detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: "Loading detail..." }) : null,
-    detail && !detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "session-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("aside", { className: "detail-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "modal-close-btn", "aria-label": "Close session detail", onClick: () => {
+    filtered.length > renderedSessions.length ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted list-lazy-status", children: t("common.showingOf", { shown: renderedSessions.length, total: filtered.length }) }) : null,
+    detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: t("sessions.loadingDetail") }) : null,
+    detail && !detailLoading ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "session-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "modal-close-btn", "aria-label": t("common.close"), onClick: () => {
         setSelectedId(null);
         setDetail(null);
       }, children: "\xD7" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "detail-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "eyebrow", children: "Session detail" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h3", { id: "session-detail-title", children: detail.title || detail.id.slice(0, 8) + "..." }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("p", { className: "muted", children: new Date(detail.updatedAt).toLocaleString() })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: t("sessions.detail") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { id: "session-detail-title", children: detail.title || detail.id.slice(0, 8) + "..." }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: new Date(detail.updatedAt).toLocaleString() })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "surface-card-head", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => renameSession(detail.id), children: "Rename" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => compactSession(detail.id), children: "Compact" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: () => clearSession(detail.id), children: "Clear" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { onClick: async () => {
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "surface-card-head", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => renameSession(detail.id), children: t("common.rename") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => compactSession(detail.id), children: t("common.compact") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => clearSession(detail.id), children: t("common.clear") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("button", { onClick: async () => {
           const res = await fetch(`/api/sessions/${detail.id}/reset-provider`, { method: "POST" });
           if (res.ok) {
-            setMessage("Provider chat ID reset");
+            setMessage(t("sessions.providerReset"));
             await loadDetail(detail.id);
           } else
-            setMessage("Reset failed");
-        }, children: "Reset Provider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("button", { className: "danger", onClick: () => deleteSession(detail.id), children: "Delete" })
+            setMessage(t("sessions.resetFailed"));
+        }, children: [
+          t("common.reset"),
+          " ",
+          t("label.provider")
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: () => deleteSession(detail.id), children: t("common.delete") })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("dl", { className: "detail-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.id }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.mode || "persistent" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Source" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.source }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Workspace" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.workspace || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Thread" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.threadId }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.model || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Profile" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.profileId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Fingerprint" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.fingerprint ? detail.fingerprint.slice(0, 16) + "..." : "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Confidence" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.confidence || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Messages" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.messageCount }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Provider Chat ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.providerSessionId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Compacted" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: detail.compactedAt ? new Date(detail.compactedAt).toLocaleString() : "Never" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Created" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: new Date(detail.createdAt).toLocaleString() }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dt", { children: "Updated" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("dd", { children: new Date(detail.updatedAt).toLocaleString() })
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dl", { className: "detail-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.id }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.mode") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.mode || "persistent" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.source") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.source }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.workspace") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.workspace || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.thread") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.threadId }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.model") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.model || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.profile") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.profileId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.fingerprint") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.fingerprint ? detail.fingerprint.slice(0, 16) + "..." : "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.confidence") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.confidence || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.messages") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.messageCount }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dt", { children: [
+          t("label.providerChat"),
+          " ID"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: detail.providerSessionId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("common.compact") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: detail.compactedAt ? new Date(detail.compactedAt).toLocaleString() : t("common.never") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.created") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: new Date(detail.createdAt).toLocaleString() }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: t("label.updated") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: new Date(detail.updatedAt).toLocaleString() })
       ] }),
-      detail.activeRunDetails && detail.activeRunDetails.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h4", { children: [
-          "Active Runs (",
+      detail.activeRunDetails && detail.activeRunDetails.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h4", { children: [
+          t("dashboard.activeRuns"),
+          " (",
           detail.activeRunDetails.length,
           ")"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: { maxHeight: 150, overflow: "auto" }, children: detail.activeRunDetails.map((r) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginBottom: 4, padding: "4px 8px", fontSize: "0.85em", background: "var(--color-surface)", borderRadius: 4 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { fontFamily: "monospace" }, children: r.id.slice(0, 8) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: `status-pill`, style: { marginLeft: 8 }, children: r.status }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { marginLeft: 8, color: "var(--color-text-secondary)" }, children: r.model })
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: { maxHeight: 150, overflow: "auto" }, children: detail.activeRunDetails.map((r) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginBottom: 4, padding: "4px 8px", fontSize: "0.85em", background: "var(--color-surface)", borderRadius: 4 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { fontFamily: "monospace" }, children: r.id.slice(0, 8) }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-pill`, style: { marginLeft: 8 }, children: r.status }),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { marginLeft: 8, color: "var(--color-text-secondary)" }, children: r.model })
         ] }, r.id)) })
       ] }) : null,
-      detail.providerBindings && detail.providerBindings.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h4", { children: [
-          "Provider Bindings (",
+      detail.providerBindings && detail.providerBindings.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h4", { children: [
+          t("sessions.providerBindings"),
+          " (",
           detail.providerBindings.length,
           ")"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("table", { className: "data-table", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Provider" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Account" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Purpose" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Chat ID" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Worker" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("th", { children: "Updated" })
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("table", { className: "data-table", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.provider") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.account") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.purpose") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.chatId") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.worker") }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: t("label.updated") })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("tbody", { children: detail.providerBindings.map((b, i) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: b.providerId }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: b.accountId }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: `status-pill`, children: b.purpose }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: b.providerSessionId ? b.providerSessionId.slice(0, 12) + "..." : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: b.workerId || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("td", { children: new Date(b.updatedAt).toLocaleString() })
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("tbody", { children: detail.providerBindings.map((b, i) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: b.providerId }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: b.accountId }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-pill`, children: b.purpose }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: b.providerSessionId ? b.providerSessionId.slice(0, 12) + "..." : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: b.workerId || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: new Date(b.updatedAt).toLocaleString() })
           ] }, i)) })
         ] }) })
       ] }) : null,
-      detail.overflowChain && detail.overflowChain.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h4", { children: [
-          "Overflow Chain (",
+      detail.overflowChain && detail.overflowChain.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h4", { children: [
+          t("sessions.overflowChain"),
+          " (",
           detail.overflowChain.length,
           ")"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: { maxHeight: 200, overflow: "auto" }, children: detail.overflowChain.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginBottom: 4, padding: 4, fontSize: "0.85em", background: "var(--color-surface)", borderRadius: 4 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { style: { color: "var(--color-text-secondary)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: { maxHeight: 200, overflow: "auto" }, children: detail.overflowChain.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginBottom: 4, padding: 4, fontSize: "0.85em", background: "var(--color-surface)", borderRadius: 4 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { style: { color: "var(--color-text-secondary)" }, children: [
             "[",
             i,
             "]"
           ] }),
           " ",
           a.fileName,
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { color: "var(--color-text-secondary)", marginLeft: 8 }, children: new Date(a.createdAt).toLocaleString() })
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { color: "var(--color-text-secondary)", marginLeft: 8 }, children: new Date(a.createdAt).toLocaleString() })
         ] }, i)) })
       ] }) : null,
-      detail.summary ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("h4", { children: "Summary" }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("pre", { className: "detail-pre", style: { maxHeight: 200, overflow: "auto" }, children: detail.summary })
+      detail.summary ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { children: t("sessions.summary") }),
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("pre", { className: "detail-pre", style: { maxHeight: 200, overflow: "auto" }, children: detail.summary })
       ] }) : null,
-      detail.messages && detail.messages.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("h4", { children: [
-          "Recent Messages (",
+      detail.messages && detail.messages.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("h4", { children: [
+          t("sessions.recentMessages"),
+          " (",
           detail.messages.length,
           ")"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("div", { style: { maxHeight: 400, overflow: "auto" }, children: detail.messages.slice(-20).map((m, i) => /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { marginBottom: 8, padding: 8, background: "var(--color-surface)", borderRadius: 4 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { fontSize: "0.8rem", color: "var(--color-text-secondary)", marginBottom: 4 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { style: { maxHeight: 400, overflow: "auto" }, children: detail.messages.slice(-20).map((m, i) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { marginBottom: 8, padding: 8, background: "var(--color-surface)", borderRadius: 4 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { fontSize: "0.8rem", color: "var(--color-text-secondary)", marginBottom: 4 }, children: [
             "[",
             m.role,
             "] ",
             new Date(m.createdAt).toLocaleTimeString(),
-            m.runId ? /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("span", { style: { marginLeft: 8, fontFamily: "monospace" }, children: [
+            m.runId ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { style: { marginLeft: 8, fontFamily: "monospace" }, children: [
               "run: ",
               m.runId.slice(0, 8)
             ] }) : null,
-            m.providerId ? /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { marginLeft: 8 }, children: m.providerId }) : null
+            m.providerId ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { marginLeft: 8 }, children: m.providerId }) : null
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("pre", { className: "detail-pre", style: { fontSize: "0.85em", maxHeight: 120, overflow: "auto" }, children: typeof m.content === "string" ? m.content.slice(0, 1e3) : JSON.stringify(m.content).slice(0, 1e3) })
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("pre", { className: "detail-pre", style: { fontSize: "0.85em", maxHeight: 120, overflow: "auto" }, children: typeof m.content === "string" ? m.content.slice(0, 1e3) : JSON.stringify(m.content).slice(0, 1e3) })
         ] }, m.id || i)) })
       ] }) : null
     ] }) }) : null
@@ -27648,23 +28306,24 @@ function Sessions() {
 }
 
 // frontend/src/pages/Runs.tsx
-var import_react6 = __toESM(require_react());
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_react7 = __toESM(require_react());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 var LIST_BATCH_SIZE2 = 50;
 function Runs() {
-  const [runs, setRuns] = (0, import_react6.useState)([]);
-  const [loading, setLoading] = (0, import_react6.useState)(true);
-  const [message, setMessage] = (0, import_react6.useState)(null);
-  const [selectedRun, setSelectedRun] = (0, import_react6.useState)(null);
-  const [deleting, setDeleting] = (0, import_react6.useState)(false);
-  const [visibleCount, setVisibleCount] = (0, import_react6.useState)(LIST_BATCH_SIZE2);
-  (0, import_react6.useEffect)(() => {
+  const { t } = useI18n();
+  const [runs, setRuns] = (0, import_react7.useState)([]);
+  const [loading, setLoading] = (0, import_react7.useState)(true);
+  const [message, setMessage] = (0, import_react7.useState)(null);
+  const [selectedRun, setSelectedRun] = (0, import_react7.useState)(null);
+  const [deleting, setDeleting] = (0, import_react7.useState)(false);
+  const [visibleCount, setVisibleCount] = (0, import_react7.useState)(LIST_BATCH_SIZE2);
+  (0, import_react7.useEffect)(() => {
     loadRuns();
   }, []);
-  (0, import_react6.useEffect)(() => {
+  (0, import_react7.useEffect)(() => {
     setVisibleCount(LIST_BATCH_SIZE2);
   }, [runs]);
-  const renderedRuns = (0, import_react6.useMemo)(
+  const renderedRuns = (0, import_react7.useMemo)(
     () => runs.slice(0, visibleCount),
     [runs, visibleCount]
   );
@@ -27677,7 +28336,7 @@ function Runs() {
         throw new Error(`HTTP ${res.status}`);
       setRuns(await res.json());
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to load runs");
+      setMessage(error instanceof Error ? error.message : t("runs.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -27690,7 +28349,7 @@ function Runs() {
     }
   }
   async function deleteRun(runId) {
-    if (!confirm("X\xF3a run n\xE0y?"))
+    if (!confirm(t("runs.confirmDelete")))
       return;
     try {
       const res = await fetch(`/api/runs/${runId}`, { method: "DELETE" });
@@ -27700,11 +28359,11 @@ function Runs() {
         setSelectedRun(null);
       await loadRuns();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete run");
+      setMessage(error instanceof Error ? error.message : t("runs.deleteFailed"));
     }
   }
   async function deleteRuns() {
-    if (!confirm("X\xF3a t\u1EA5t c\u1EA3 runs?"))
+    if (!confirm(t("runs.confirmDeleteAll")))
       return;
     setDeleting(true);
     setMessage(null);
@@ -27715,7 +28374,7 @@ function Runs() {
       setSelectedRun(null);
       setRuns([]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete runs");
+      setMessage(error instanceof Error ? error.message : t("runs.deleteAllFailed"));
     } finally {
       setDeleting(false);
     }
@@ -27736,37 +28395,37 @@ function Runs() {
       setVisibleCount((count) => Math.min(count + LIST_BATCH_SIZE2, runs.length));
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("section", { "aria-labelledby": "runs-title", className: "page-panel runs-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: "Request runs (including stateless)" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h2", { id: "runs-title", children: "Runs" })
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("section", { "aria-labelledby": "runs-title", className: "page-panel runs-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "eyebrow", children: t("runs.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h2", { id: "runs-title", children: t("nav.runs") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: loadRuns, disabled: loading, children: loading ? "Loading..." : "Refresh" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: deleteRuns, disabled: deleting, children: deleting ? "Deleting..." : "X\xF3a" })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { onClick: loadRuns, disabled: loading, children: loading ? t("common.loading") : t("common.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "danger", onClick: deleteRuns, disabled: deleting, children: deleting ? t("common.deleting") : t("common.delete") })
       ] })
     ] }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: message }) : null,
-    !loading && runs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "surface-card", style: { marginBottom: 16, padding: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h4", { style: { marginBottom: 8 }, children: "No runs recorded yet" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: "Send a request via /v1/chat/completions to create a run record." })
+    message ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: message }) : null,
+    !loading && runs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "surface-card", style: { marginBottom: 16, padding: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h4", { style: { marginBottom: 8 }, children: t("runs.emptyTitle") }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: t("runs.emptyHint") })
     ] }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("table", { className: "data-table", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("tr", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Time" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Provider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Account" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Session" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Chat ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Queue Reason" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Task" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", { children: "Duration" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("th", {})
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("table", { className: "data-table", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.time") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.status") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.provider") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.account") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.model") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.session") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.chatId") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.queueReason") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.task") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: t("label.duration") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", {})
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("tbody", { children: renderedRuns.map((r) => /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("tbody", { children: renderedRuns.map((r) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
         "tr",
         {
           className: "clickable-row",
@@ -27777,96 +28436,90 @@ function Runs() {
               setSelectedRun(selectedRun?.id === r.id ? null : r);
           },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: new Date(r.createdAt).toLocaleString() }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-pill ${statusClass(r.status)}`, children: r.status }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.providerId }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.accountId || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.model }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: r.sessionId ? r.sessionId.slice(0, 8) + "..." : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.providerChatId ? r.providerChatId.slice(0, 8) + "..." : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { style: { fontSize: "0.85em" }, children: r.queueReason || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { className: "log-message", children: r.activeTaskPreview || "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("td", { children: typeof r.completedAt === "number" && typeof r.startedAt === "number" ? `${r.completedAt - r.startedAt}ms` : "-" }),
-            /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("td", { children: [
-              r.status === "streaming" || r.status === "queued" || r.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: (e) => {
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: new Date(r.createdAt).toLocaleString() }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: `status-pill ${statusClass(r.status)}`, children: r.status }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontSize: "0.85em" }, children: r.providerId }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontSize: "0.85em" }, children: r.accountId || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontSize: "0.85em" }, children: r.model }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: r.sessionId ? r.sessionId.slice(0, 8) + "..." : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontSize: "0.85em" }, children: r.providerChatId ? r.providerChatId.slice(0, 8) + "..." : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { style: { fontSize: "0.85em" }, children: r.queueReason || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "log-message", children: r.activeTaskPreview || "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: typeof r.completedAt === "number" && typeof r.startedAt === "number" ? `${r.completedAt - r.startedAt}ms` : "-" }),
+            /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("td", { children: [
+              r.status === "streaming" || r.status === "queued" || r.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { onClick: (e) => {
                 e.stopPropagation();
                 cancelRun(r.id);
-              }, style: { fontSize: "0.8em", padding: "2px 8px" }, children: "Cancel" }) : null,
-              /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: (e) => {
+              }, style: { fontSize: "0.8em", padding: "2px 8px" }, children: t("common.cancel") }) : null,
+              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "danger", onClick: (e) => {
                 e.stopPropagation();
                 deleteRun(r.id);
-              }, style: { fontSize: "0.8em", padding: "2px 8px", marginLeft: 6 }, children: "X\xF3a" })
+              }, style: { fontSize: "0.8em", padding: "2px 8px", marginLeft: 6 }, children: t("common.delete") })
             ] })
           ]
         },
         r.id
       )) })
     ] }) }),
-    runs.length > renderedRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("p", { className: "muted list-lazy-status", children: [
-      "Showing ",
-      renderedRuns.length,
-      " of ",
-      runs.length,
-      ". Scroll to load more."
-    ] }) : null,
-    selectedRun ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "run-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("aside", { className: "detail-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "modal-close-btn", "aria-label": "Close run detail", onClick: () => setSelectedRun(null), children: "\xD7" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "detail-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "eyebrow", children: "Run detail" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("h3", { id: "run-detail-title", children: selectedRun.model }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "muted", children: new Date(selectedRun.createdAt).toLocaleString() })
+    runs.length > renderedRuns.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted list-lazy-status", children: t("common.showingOf", { shown: renderedRuns.length, total: runs.length }) }) : null,
+    selectedRun ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "run-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "modal-close-btn", "aria-label": t("common.close"), onClick: () => setSelectedRun(null), children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "eyebrow", children: t("runs.detail") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { id: "run-detail-title", children: selectedRun.model }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: new Date(selectedRun.createdAt).toLocaleString() })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "action-row", style: { marginBottom: 16 }, children: [
-        selectedRun.status === "streaming" || selectedRun.status === "queued" || selectedRun.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { onClick: () => cancelRun(selectedRun.id), children: "Cancel" }) : null,
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("button", { className: "danger", onClick: () => deleteRun(selectedRun.id), children: "X\xF3a" })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "action-row", style: { marginBottom: 16 }, children: [
+        selectedRun.status === "streaming" || selectedRun.status === "queued" || selectedRun.status === "routing" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { onClick: () => cancelRun(selectedRun.id), children: t("common.cancel") }) : null,
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "danger", onClick: () => deleteRun(selectedRun.id), children: t("common.delete") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("dl", { className: "detail-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.id }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { className: `status-pill ${statusClass(selectedRun.status)}`, children: selectedRun.status }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Created" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: new Date(selectedRun.createdAt).toLocaleString() }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Queued" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: new Date(selectedRun.queuedAt).toLocaleString() }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Started" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.startedAt ? new Date(selectedRun.startedAt).toLocaleString() : "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Completed" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.completedAt ? new Date(selectedRun.completedAt).toLocaleString() : "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Provider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.providerId }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Account" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.accountId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Worker" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.workerId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Network Profile" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.networkProfileId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Outbound IP" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.outboundIp || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Provider Chat" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.providerChatId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Session ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.sessionId || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.model }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Stream" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.stream ? "Yes" : "No" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Queue Reason" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.queueReason || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Error" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { style: { color: "var(--color-danger)" }, children: selectedRun.error || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Task" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: selectedRun.activeTaskPreview || "-" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dt", { children: "Duration" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("dd", { children: typeof selectedRun.completedAt === "number" && typeof selectedRun.startedAt === "number" ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : "-" })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("dl", { className: "detail-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.id }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.status") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: `status-pill ${statusClass(selectedRun.status)}`, children: selectedRun.status }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.created") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: new Date(selectedRun.createdAt).toLocaleString() }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.queued") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: new Date(selectedRun.queuedAt).toLocaleString() }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.started") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.startedAt ? new Date(selectedRun.startedAt).toLocaleString() : "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.completed") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.completedAt ? new Date(selectedRun.completedAt).toLocaleString() : "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.provider") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.providerId }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.account") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.accountId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.worker") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.workerId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.networkProfile") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.networkProfileId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.outboundIp") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.outboundIp || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.providerChat") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.providerChatId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: selectedRun.sessionId || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.model") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.model }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.stream") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.stream ? t("common.yes") : t("common.no") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.queueReason") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.queueReason || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.error") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { style: { color: "var(--color-danger)" }, children: selectedRun.error || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.task") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedRun.activeTaskPreview || "-" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: t("label.duration") }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: typeof selectedRun.completedAt === "number" && typeof selectedRun.startedAt === "number" ? `${selectedRun.completedAt - selectedRun.startedAt}ms` : "-" })
       ] })
     ] }) }) : null
   ] });
 }
 
 // frontend/src/pages/Logs.tsx
-var import_react7 = __toESM(require_react());
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
+var import_react8 = __toESM(require_react());
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
 var LIST_BATCH_SIZE3 = 50;
 function parseLog2(log) {
   try {
@@ -27905,15 +28558,16 @@ function formatLogText(value) {
   return String(value);
 }
 function Logs() {
-  const [logs, setLogs] = (0, import_react7.useState)([]);
-  const [loading, setLoading] = (0, import_react7.useState)(true);
-  const [filter, setFilter] = (0, import_react7.useState)("all");
-  const [message, setMessage] = (0, import_react7.useState)(null);
-  const [deleting, setDeleting] = (0, import_react7.useState)(false);
-  const [selectedLog, setSelectedLog] = (0, import_react7.useState)(null);
-  const [activeTab, setActiveTab] = (0, import_react7.useState)("metrics");
-  const [selectedPromptRole, setSelectedPromptRole] = (0, import_react7.useState)("user");
-  const [visibleCount, setVisibleCount] = (0, import_react7.useState)(LIST_BATCH_SIZE3);
+  const { t } = useI18n();
+  const [logs, setLogs] = (0, import_react8.useState)([]);
+  const [loading, setLoading] = (0, import_react8.useState)(true);
+  const [filter, setFilter] = (0, import_react8.useState)("all");
+  const [message, setMessage] = (0, import_react8.useState)(null);
+  const [deleting, setDeleting] = (0, import_react8.useState)(false);
+  const [selectedLog, setSelectedLog] = (0, import_react8.useState)(null);
+  const [activeTab, setActiveTab] = (0, import_react8.useState)("metrics");
+  const [selectedPromptRole, setSelectedPromptRole] = (0, import_react8.useState)("user");
+  const [visibleCount, setVisibleCount] = (0, import_react8.useState)(LIST_BATCH_SIZE3);
   async function loadLogs() {
     setLoading(true);
     setMessage(null);
@@ -27928,7 +28582,7 @@ function Logs() {
       setLogs(data);
     } catch (error) {
       setLogs([]);
-      setMessage(error instanceof Error ? error.message : "Failed to load logs");
+      setMessage(error instanceof Error ? error.message : `${t("common.loadFailed")} ${t("nav.logs")}`);
     } finally {
       setLoading(false);
     }
@@ -27942,27 +28596,27 @@ function Logs() {
         throw new Error(`HTTP ${res.status}`);
       setLogs([]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete logs");
+      setMessage(error instanceof Error ? error.message : `${t("common.deleteFailed")} ${t("nav.logs")}`);
     } finally {
       setDeleting(false);
     }
   }
-  (0, import_react7.useEffect)(() => {
+  (0, import_react8.useEffect)(() => {
     loadLogs();
   }, []);
-  const visibleLogs = (0, import_react7.useMemo)(
+  const visibleLogs = (0, import_react8.useMemo)(
     () => logs.filter((log) => filter === "all" || log.level === filter),
     [logs, filter]
   );
-  const renderedLogs = (0, import_react7.useMemo)(
+  const renderedLogs = (0, import_react8.useMemo)(
     () => visibleLogs.slice(0, visibleCount),
     [visibleLogs, visibleCount]
   );
   const selectedMeta = selectedLog ? parseLog2(selectedLog) : null;
-  (0, import_react7.useEffect)(() => {
+  (0, import_react8.useEffect)(() => {
     setVisibleCount(LIST_BATCH_SIZE3);
   }, [filter, logs]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react8.useEffect)(() => {
     if (!selectedMeta)
       return;
     const items = parsePromptMessages(selectedMeta);
@@ -27983,9 +28637,9 @@ function Logs() {
   }
   function renderJsonBlock(value, emptyText) {
     if (value === void 0 || value === null || typeof value === "object" && Object.keys(value).length === 0) {
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: emptyText });
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: emptyText });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("pre", { className: "detail-pre", children: typeof value === "string" ? value : JSON.stringify(value, null, 2) });
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("pre", { className: "detail-pre", children: typeof value === "string" ? value : JSON.stringify(value, null, 2) });
   }
   function parsePromptMessages(meta) {
     const raw = meta?.prompt_messages ?? meta?.prompt ?? meta?.requestBody ?? meta?.request?.body ?? meta?.message ?? null;
@@ -28021,37 +28675,37 @@ function Logs() {
     }
     return [{ role: "user", content: String(raw) }];
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("section", { "aria-labelledby": "logs-title", className: "page-panel logs-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "eyebrow", children: "Runtime events" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h2", { id: "logs-title", children: "Logs" })
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("section", { "aria-labelledby": "logs-title", className: "page-panel logs-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "eyebrow", children: t("logs.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { id: "logs-title", children: t("nav.logs") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("select", { value: filter, onChange: (e) => setFilter(e.target.value), "aria-label": "Filter logs", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("option", { value: "all", children: "All levels" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("option", { value: "info", children: "Info" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("option", { value: "error", children: "Error" })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: filter, onChange: (e) => setFilter(e.target.value), "aria-label": t("logs.filter"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "all", children: t("logs.allLevels") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "info", children: "Info" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "error", children: "Error" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { onClick: loadLogs, disabled: loading, children: loading ? "Loading..." : "Refresh" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "danger", onClick: deleteLogs, disabled: deleting, children: deleting ? "Deleting..." : "X\xF3a" })
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: loadLogs, disabled: loading, children: loading ? t("common.loading") : t("common.refresh") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "danger", onClick: deleteLogs, disabled: deleting, children: deleting ? t("common.deleting") : t("common.delete") })
       ] })
     ] }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: message }) : null,
-    !loading && visibleLogs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: "No logs found." }) : null,
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("table", { className: "data-table logs-table", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("tr", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Time" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Level" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Path" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Status" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Model" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Prompt / Message" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("th", { children: "Latency" })
+    message ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: message }) : null,
+    !loading && visibleLogs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: t("logs.empty") }) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "table-wrap list-scroll", onScroll: handleListScroll, children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("table", { className: "data-table logs-table", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("tr", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("label.time") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("label.level") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("label.path") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("label.status") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("label.model") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("logs.promptMessage") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("th", { children: t("logs.latency") })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("tbody", { children: renderedLogs.map((log, index) => {
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("tbody", { children: renderedLogs.map((log, index) => {
         const meta = parseLog2(log);
-        return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+        return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
           "tr",
           {
             className: "clickable-row",
@@ -28062,114 +28716,108 @@ function Logs() {
                 openLog(log);
             },
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: new Date(log.timestamp).toLocaleString() }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { className: `status-pill status-${log.level === "error" ? "dead" : "alive"}`, children: log.level }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.path || "-" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.status || "-" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: meta.model || "-" }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { className: "log-message", children: formatLogText(meta.prompt || meta.prompt_messages || meta.error || meta.message || log.message) }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("td", { children: typeof meta.durationMs === "number" ? `${meta.durationMs}ms` : "-" })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: new Date(log.timestamp).toLocaleString() }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { className: `status-pill status-${log.level === "error" ? "dead" : "alive"}`, children: log.level }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: meta.path || "-" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: meta.status || "-" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: meta.model || "-" }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { className: "log-message", children: formatLogText(meta.prompt || meta.prompt_messages || meta.error || meta.message || log.message) }),
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("td", { children: typeof meta.durationMs === "number" ? `${meta.durationMs}ms` : "-" })
             ]
           },
           `${log.timestamp}-${index}`
         );
       }) })
     ] }) }),
-    visibleLogs.length > renderedLogs.length ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "muted list-lazy-status", children: [
-      "Showing ",
-      renderedLogs.length,
-      " of ",
-      visibleLogs.length,
-      ". Scroll to load more."
-    ] }) : null,
-    selectedLog && selectedMeta ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "log-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("aside", { className: "detail-panel", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: "modal-close-btn", "aria-label": "Close log detail", onClick: () => setSelectedLog(null), children: "\xD7" }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "detail-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "eyebrow", children: "Request detail" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("h3", { id: "log-detail-title", children: selectedMeta.path || selectedMeta.message || "Log entry" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: new Date(selectedLog.timestamp).toLocaleString() })
+    visibleLogs.length > renderedLogs.length ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted list-lazy-status", children: t("common.showingOf", { shown: renderedLogs.length, total: visibleLogs.length }) }) : null,
+    selectedLog && selectedMeta ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "detail-overlay", role: "dialog", "aria-modal": "true", "aria-labelledby": "log-detail-title", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("aside", { className: "detail-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: "modal-close-btn", "aria-label": t("common.close"), onClick: () => setSelectedLog(null), children: "\xD7" }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "detail-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "eyebrow", children: t("logs.detail") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { id: "log-detail-title", children: selectedMeta.path || selectedMeta.message || t("logs.entry") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: new Date(selectedLog.timestamp).toLocaleString() })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "detail-tabs", role: "tablist", "aria-label": "Log detail tabs", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: activeTab === "metrics" ? "tab active" : "tab", onClick: () => setActiveTab("metrics"), children: "Th\xF4ng s\u1ED1" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: activeTab === "requestHeaders" ? "tab active" : "tab", onClick: () => setActiveTab("requestHeaders"), children: "Request headers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: activeTab === "responseHeaders" ? "tab active" : "tab", onClick: () => setActiveTab("responseHeaders"), children: "Response headers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: activeTab === "response" ? "tab active" : "tab", onClick: () => setActiveTab("response"), children: "Response" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("button", { className: activeTab === "prompt" ? "tab active" : "tab", onClick: () => setActiveTab("prompt"), children: "Prompt" })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "detail-tabs", role: "tablist", "aria-label": t("logs.tabs"), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: activeTab === "metrics" ? "tab active" : "tab", onClick: () => setActiveTab("metrics"), children: t("logs.metrics") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: activeTab === "requestHeaders" ? "tab active" : "tab", onClick: () => setActiveTab("requestHeaders"), children: t("logs.requestHeaders") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: activeTab === "responseHeaders" ? "tab active" : "tab", onClick: () => setActiveTab("responseHeaders"), children: t("logs.responseHeaders") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: activeTab === "response" ? "tab active" : "tab", onClick: () => setActiveTab("response"), children: t("logs.response") }),
+        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { className: activeTab === "prompt" ? "tab active" : "tab", onClick: () => setActiveTab("prompt"), children: t("logs.prompt") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "detail-content", children: [
-        activeTab === "metrics" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("dl", { className: "detail-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Level" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedLog.level }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Status" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.status || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Model" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.model || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Stream" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: String(selectedMeta.stream ?? "-") }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Thinking mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.thinking_mode || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Reasoning effort" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.reasoning_effort || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Files" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.files ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Overflow" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: String(selectedMeta.overflow ?? "-") }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Sanitized" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitized === void 0 ? "-" : String(selectedMeta.sanitized) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Detected client" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.client || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Response contract" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientResponseContract || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Active task idx" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTaskMessageIndex ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Active task preview" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.textPreview?.slice(0, 100) || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Active task source" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.source || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Active task part index" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.fromPartIndex ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Overflow file" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.overflowFile || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Kept / stripped" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta ? `${selectedMeta.sanitizerMeta.keptMessageCount} / ${selectedMeta.sanitizerMeta.strippedMessageCount}` : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Client retry detected" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientRetryDetected === void 0 ? "-" : String(selectedMeta.sanitizerMeta.clientRetryDetected) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Client retry source" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientRetrySource || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Snapshot included" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.projectSnapshotIncluded === void 0 ? "-" : String(selectedMeta.sanitizerMeta.projectSnapshotIncluded) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Removed container conf" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.containerConfusion ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Removed auto reminder" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.automatedReminder ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Removed partial reminder" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.partialAutomatedReminder ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Removed assistant fail" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.assistantFailureEcho ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Removed dup assistant" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.duplicateAssistant ?? "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Partial noise" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.partialNoise?.length ? selectedMeta.sanitizerMeta.partialNoise.map((p) => `msg[${p.messageIndex}]: ${p.reason}`).join("; ") : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.mode || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session resolve reason" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.resolveReason || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session explicit" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.explicit === void 0 ? "-" : String(selectedMeta.session.explicit) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session source" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.source || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session workspace" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.workspace || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session thread" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.threadId || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Session provider ID" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.session?.providerSessionId || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Dedupe meta" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: selectedMeta.sanitizerMeta?.persistSkipped ? `skipped=${selectedMeta.sanitizerMeta.persistSkipped.skipped} persisted=${selectedMeta.sanitizerMeta.persistSkipped.persisted}` : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Latency" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: typeof selectedMeta.durationMs === "number" ? `${selectedMeta.durationMs}ms` : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dt", { children: "Prompt" }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("dd", { children: formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message) })
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "detail-content", children: [
+        activeTab === "metrics" ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("dl", { className: "detail-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("label.level") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedLog.level }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("label.status") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.status || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("label.model") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.model || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("label.stream") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: String(selectedMeta.stream ?? "-") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.thinkingMode") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.thinking_mode || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.reasoningEffort") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.reasoning_effort || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.files") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.files ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("label.overflow") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: String(selectedMeta.overflow ?? "-") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sanitized") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitized === void 0 ? "-" : String(selectedMeta.sanitized) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.detectedClient") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.client || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.responseContract") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientResponseContract || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.activeTaskIdx") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTaskMessageIndex ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.activeTaskPreview") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.textPreview?.slice(0, 100) || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.activeTaskSource") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.source || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.activeTaskPartIndex") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.activeTask?.fromPartIndex ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.overflowFile") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.overflowFile || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.keptStripped") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta ? `${selectedMeta.sanitizerMeta.keptMessageCount} / ${selectedMeta.sanitizerMeta.strippedMessageCount}` : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.clientRetryDetected") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientRetryDetected === void 0 ? "-" : String(selectedMeta.sanitizerMeta.clientRetryDetected) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.clientRetrySource") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.clientRetrySource || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.snapshotIncluded") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.projectSnapshotIncluded === void 0 ? "-" : String(selectedMeta.sanitizerMeta.projectSnapshotIncluded) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.removedContainerConf") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.containerConfusion ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.removedAutoReminder") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.automatedReminder ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.removedPartialReminder") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.partialAutomatedReminder ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.removedAssistantFail") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.assistantFailureEcho ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.removedDupAssistant") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.removedCounts?.duplicateAssistant ?? "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.partialNoise") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.partialNoise?.length ? selectedMeta.sanitizerMeta.partialNoise.map((p) => `msg[${p.messageIndex}]: ${p.reason}`).join("; ") : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionMode") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.mode || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionResolveReason") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.resolveReason || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionExplicit") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.explicit === void 0 ? "-" : String(selectedMeta.session.explicit) }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionSource") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.source || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionWorkspace") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.workspace || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionThread") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.threadId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.sessionProviderId") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.session?.providerSessionId || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.dedupeMeta") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: selectedMeta.sanitizerMeta?.persistSkipped ? `skipped=${selectedMeta.sanitizerMeta.persistSkipped.skipped} persisted=${selectedMeta.sanitizerMeta.persistSkipped.persisted}` : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.latency") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: typeof selectedMeta.durationMs === "number" ? `${selectedMeta.durationMs}ms` : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: t("logs.prompt") }),
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dd", { children: formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message) })
         ] }) : null,
         activeTab === "prompt" ? (() => {
           const promptItems = selectedMeta ? parsePromptMessages(selectedMeta) : [{ role: "user", content: "" }];
@@ -28177,8 +28825,8 @@ function Logs() {
           if (!roles.includes("user"))
             roles.unshift("user");
           const visible = promptItems.filter((p) => p.role === selectedPromptRole) || [];
-          return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "provider-action-row", style: { marginBottom: 12 }, children: roles.map((r) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "provider-action-row", style: { marginBottom: 12 }, children: roles.map((r) => /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               "button",
               {
                 className: `provider-action-btn ${selectedPromptRole === r ? "active" : ""}`,
@@ -28188,60 +28836,65 @@ function Logs() {
               },
               r
             )) }),
-            visible.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { className: "muted", children: "No prompts for selected role." }) : visible.length === 1 ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("pre", { className: "detail-pre", children: visible[0].content }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: visible.map((v, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: { marginBottom: 12 }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { style: { fontSize: "0.9rem", color: "var(--color-text-secondary)", marginBottom: 6 }, children: [
-                "Message ",
+            visible.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: t("logs.noPrompts") }) : visible.length === 1 ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("pre", { className: "detail-pre", children: visible[0].content }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: visible.map((v, idx) => /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: { marginBottom: 12 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: { fontSize: "0.9rem", color: "var(--color-text-secondary)", marginBottom: 6 }, children: [
+                t("common.message"),
+                " ",
                 v.index ?? idx
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("pre", { className: "detail-pre", children: v.content })
+              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("pre", { className: "detail-pre", children: v.content })
             ] }, idx)) })
           ] });
         })() : null,
-        activeTab === "requestHeaders" ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, "Log n\xE0y ch\u01B0a c\xF3 request headers.") : null,
-        activeTab === "responseHeaders" ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, "Log n\xE0y ch\u01B0a c\xF3 response headers.") : null,
-        activeTab === "response" ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, "Ch\u01B0a c\xF3 response body trong log hi\u1EC7n t\u1EA1i. C\xF3 th\u1EC3 b\u1ED5 sung backend capture sau.") : null
+        activeTab === "requestHeaders" ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, t("logs.noRequestHeaders")) : null,
+        activeTab === "responseHeaders" ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, t("logs.noResponseHeaders")) : null,
+        activeTab === "response" ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, t("logs.noResponseBody")) : null
       ] })
     ] }) }) : null
   ] });
 }
 
 // frontend/src/pages/Settings.tsx
-var import_react8 = __toESM(require_react());
-var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+var import_react9 = __toESM(require_react());
+var import_jsx_runtime10 = __toESM(require_jsx_runtime());
 function Settings() {
-  const [overflowEnabled, setOverflowEnabled] = (0, import_react8.useState)(true);
-  const [threshold, setThreshold] = (0, import_react8.useState)(1e4);
-  const [sessionEnabled, setSessionEnabled] = (0, import_react8.useState)(true);
-  const [requireExplicitId, setRequireExplicitId] = (0, import_react8.useState)(true);
-  const [fileBackedEnabled, setFileBackedEnabled] = (0, import_react8.useState)(true);
-  const [createOnOverflow, setCreateOnOverflow] = (0, import_react8.useState)(true);
-  const [fallbackMode, setFallbackMode] = (0, import_react8.useState)("stateless");
-  const [historyLimit, setHistoryLimit] = (0, import_react8.useState)(10);
-  const [autoCompact, setAutoCompact] = (0, import_react8.useState)(true);
-  const [compactAfterMessages, setCompactAfterMessages] = (0, import_react8.useState)(40);
-  const [compactKeepRecent, setCompactKeepRecent] = (0, import_react8.useState)(5);
-  const [compactModel, setCompactModel] = (0, import_react8.useState)("Qwen3.6-Plus");
-  const [mtEnabled, setMtEnabled] = (0, import_react8.useState)(true);
-  const [globalMaxConcurrent, setGlobalMaxConcurrent] = (0, import_react8.useState)(20);
-  const [providerMaxConcurrent, setProviderMaxConcurrent] = (0, import_react8.useState)(5);
-  const [accountMaxConcurrent, setAccountMaxConcurrent] = (0, import_react8.useState)(2);
-  const [queueTimeoutMs, setQueueTimeoutMs] = (0, import_react8.useState)(12e4);
-  const [runTimeoutMs, setRunTimeoutMs] = (0, import_react8.useState)(3e5);
-  const [egressEnabled, setEgressEnabled] = (0, import_react8.useState)(false);
-  const [egressStrict, setEgressStrict] = (0, import_react8.useState)(true);
-  const [egressFallback, setEgressFallback] = (0, import_react8.useState)(false);
-  const [egressVerify, setEgressVerify] = (0, import_react8.useState)(true);
-  const [directIp, setDirectIp] = (0, import_react8.useState)("");
-  const [directIpSource, setDirectIpSource] = (0, import_react8.useState)("");
-  const [saving, setSaving] = (0, import_react8.useState)(false);
-  const [message, setMessage] = (0, import_react8.useState)(null);
-  (0, import_react8.useEffect)(() => {
+  const { language, setLanguage, t } = useI18n();
+  const [overflowEnabled, setOverflowEnabled] = (0, import_react9.useState)(true);
+  const [threshold, setThreshold] = (0, import_react9.useState)(1e4);
+  const [sessionEnabled, setSessionEnabled] = (0, import_react9.useState)(true);
+  const [requireExplicitId, setRequireExplicitId] = (0, import_react9.useState)(true);
+  const [fileBackedEnabled, setFileBackedEnabled] = (0, import_react9.useState)(true);
+  const [createOnOverflow, setCreateOnOverflow] = (0, import_react9.useState)(true);
+  const [fallbackMode, setFallbackMode] = (0, import_react9.useState)("stateless");
+  const [historyLimit, setHistoryLimit] = (0, import_react9.useState)(10);
+  const [autoCompact, setAutoCompact] = (0, import_react9.useState)(true);
+  const [compactAfterMessages, setCompactAfterMessages] = (0, import_react9.useState)(40);
+  const [compactKeepRecent, setCompactKeepRecent] = (0, import_react9.useState)(5);
+  const [compactModel, setCompactModel] = (0, import_react9.useState)("Qwen3.6-Plus");
+  const [mtEnabled, setMtEnabled] = (0, import_react9.useState)(true);
+  const [globalMaxConcurrent, setGlobalMaxConcurrent] = (0, import_react9.useState)(20);
+  const [providerMaxConcurrent, setProviderMaxConcurrent] = (0, import_react9.useState)(5);
+  const [accountMaxConcurrent, setAccountMaxConcurrent] = (0, import_react9.useState)(2);
+  const [queueTimeoutMs, setQueueTimeoutMs] = (0, import_react9.useState)(12e4);
+  const [runTimeoutMs, setRunTimeoutMs] = (0, import_react9.useState)(3e5);
+  const [egressEnabled, setEgressEnabled] = (0, import_react9.useState)(false);
+  const [egressStrict, setEgressStrict] = (0, import_react9.useState)(true);
+  const [egressFallback, setEgressFallback] = (0, import_react9.useState)(false);
+  const [egressVerify, setEgressVerify] = (0, import_react9.useState)(true);
+  const [directIp, setDirectIp] = (0, import_react9.useState)("");
+  const [directIpSource, setDirectIpSource] = (0, import_react9.useState)("");
+  const [saving, setSaving] = (0, import_react9.useState)(false);
+  const [message, setMessage] = (0, import_react9.useState)(null);
+  (0, import_react9.useEffect)(() => {
     loadConfig();
   }, []);
   async function loadConfig() {
     try {
       const res = await fetch("/api/config");
       const data = await res.json();
+      const ui = data?.settings?.ui || {};
+      if (ui.language === "vi" || ui.language === "en")
+        setLanguage(ui.language);
       const toc = data?.settings?.tokenOverflow || {};
       setOverflowEnabled(toc.enabled !== false);
       setThreshold(Number(toc.threshold || 1e4));
@@ -28288,6 +28941,9 @@ function Settings() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           settings: {
+            ui: {
+              language
+            },
             tokenOverflow: {
               enabled: overflowEnabled,
               threshold: Number(threshold) || 1e4
@@ -28325,23 +28981,34 @@ function Settings() {
       });
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`);
-      setMessage("Settings saved");
+      setMessage(t("settings.saved"));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Save failed");
+      setMessage(error instanceof Error ? error.message : t("common.saveFailed"));
     } finally {
       setSaving(false);
     }
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("section", { "aria-labelledby": "settings-title", className: "page-panel settings-panel", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "page-heading", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "eyebrow", children: "Runtime behavior" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h2", { id: "settings-title", children: "Settings" })
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { "aria-labelledby": "settings-title", className: "page-panel settings-panel", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "page-heading", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "eyebrow", children: t("settings.eyebrow") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { id: "settings-title", children: t("settings.title") })
     ] }) }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "Token Overflow" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "settings-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("settings.ui.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "settings-grid", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.ui.language") }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: language, onChange: (e) => setLanguage(e.target.value), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "en", children: t("settings.ui.english") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "vi", children: t("settings.ui.vietnamese") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "field-hint", style: { marginTop: 4, fontSize: "0.85em", color: "var(--color-text-secondary)" }, children: t("settings.ui.languageHint") })
+      ] }) })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("settings.tokenOverflow.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "settings-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "checkbox",
@@ -28349,11 +29016,11 @@ function Settings() {
               onChange: (e) => setOverflowEnabled(e.target.checked)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable raw overflow file" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.tokenOverflow.enableRawFile") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Token threshold" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.tokenOverflow.threshold") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "number",
@@ -28366,11 +29033,11 @@ function Settings() {
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "Session Memory" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "settings-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("settings.session.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "settings-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "checkbox",
@@ -28378,20 +29045,20 @@ function Settings() {
               onChange: (e) => setSessionEnabled(e.target.checked)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable session memory" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.enable") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "History limit (messages)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: historyLimit, onChange: (e) => setHistoryLimit(Number(e.target.value)), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: 1, children: "1" }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: 5, children: "5" }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: 10, children: "10" }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: 20, children: "20" }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: 50, children: "50" })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.historyLimit") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: historyLimit, onChange: (e) => setHistoryLimit(Number(e.target.value)), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: 1, children: "1" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: 5, children: "5" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: 10, children: "10" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: 20, children: "20" }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: 50, children: "50" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "checkbox",
@@ -28399,11 +29066,11 @@ function Settings() {
               onChange: (e) => setAutoCompact(e.target.checked)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Auto compact" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.autoCompact") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Compact after N messages" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.compactAfter") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "number",
@@ -28414,9 +29081,9 @@ function Settings() {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Compact keep recent" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.keepRecent") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "number",
@@ -28427,9 +29094,9 @@ function Settings() {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Compact model" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.compactModel") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               value: compactModel,
@@ -28437,8 +29104,8 @@ function Settings() {
             }
           )
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
             "input",
             {
               type: "checkbox",
@@ -28446,112 +29113,113 @@ function Settings() {
               onChange: (e) => setRequireExplicitId(e.target.checked)
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Require explicit session ID" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.requireExplicitId") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: fileBackedEnabled, onChange: (e) => setFileBackedEnabled(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "File-backed sessions (create on overflow)" })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: fileBackedEnabled, onChange: (e) => setFileBackedEnabled(e.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.fileBacked") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: createOnOverflow, onChange: (e) => setCreateOnOverflow(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Create on overflow" })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: createOnOverflow, onChange: (e) => setCreateOnOverflow(e.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.createOnOverflow") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Fallback mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("select", { value: fallbackMode, onChange: (e) => setFallbackMode(e.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "file-backed", children: "File-backed (create session on overflow)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "stateless", children: "Stateless (no persistent session)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "transient", children: "Transient (auto-create)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("option", { value: "shared-default", children: "Shared default" })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.session.fallbackMode") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: fallbackMode, onChange: (e) => setFallbackMode(e.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "file-backed", children: t("settings.session.fileBackedOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "stateless", children: t("settings.session.statelessOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "transient", children: t("settings.session.transientOption") }),
+              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "shared-default", children: t("settings.session.sharedDefaultOption") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "field-hint", style: { marginTop: 4, fontSize: "0.85em", color: "var(--color-text-secondary)" }, children: fallbackMode === "file-backed" ? "Recommended. Sessions are created only when overflow files are generated (i.e., conversation exceeds token threshold). Before overflow, requests are stateless. Once an overflow file is created, a file-backed session anchors the conversation." : fallbackMode === "stateless" ? "Sessions only exist if the client sends x-luna-session-id. The Sessions page will appear empty for clients without explicit session IDs. Best for stateless API usage." : fallbackMode === "transient" ? "A session is auto-created for every request that lacks an explicit ID. Sessions page will show all conversations, but session grouping may not reflect actual logical threads. Best for debugging/diagnostics." : 'All requests without explicit session IDs share a single "default" session. Different sources/workspaces still create separate sessions. Use with caution as unrelated conversations mix.' })
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "field-hint", style: { marginTop: 4, fontSize: "0.85em", color: "var(--color-text-secondary)" }, children: fallbackMode === "file-backed" ? t("settings.session.fileBackedHint") : fallbackMode === "stateless" ? t("settings.session.statelessHint") : fallbackMode === "transient" ? t("settings.session.transientHint") : t("settings.session.sharedDefaultHint") })
           ] })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "Multi-thread" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "settings-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: mtEnabled, onChange: (e) => setMtEnabled(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable multi-thread scheduler" })
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("settings.multiThread.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "settings-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: mtEnabled, onChange: (e) => setMtEnabled(e.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.enable") })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Global max concurrent runs" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", value: globalMaxConcurrent, onChange: (e) => setGlobalMaxConcurrent(Number(e.target.value)), min: 1 })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.globalMax") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: globalMaxConcurrent, onChange: (e) => setGlobalMaxConcurrent(Number(e.target.value)), min: 1 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Provider max concurrent runs" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", value: providerMaxConcurrent, onChange: (e) => setProviderMaxConcurrent(Number(e.target.value)), min: 1 })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.providerMax") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: providerMaxConcurrent, onChange: (e) => setProviderMaxConcurrent(Number(e.target.value)), min: 1 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Account max concurrent runs" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", value: accountMaxConcurrent, onChange: (e) => setAccountMaxConcurrent(Number(e.target.value)), min: 1 })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.accountMax") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: accountMaxConcurrent, onChange: (e) => setAccountMaxConcurrent(Number(e.target.value)), min: 1 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Queue timeout (ms)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", value: queueTimeoutMs, onChange: (e) => setQueueTimeoutMs(Number(e.target.value)), min: 5e3, step: 5e3 })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.queueTimeout") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: queueTimeoutMs, onChange: (e) => setQueueTimeoutMs(Number(e.target.value)), min: 5e3, step: 5e3 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Run timeout (ms)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "number", value: runTimeoutMs, onChange: (e) => setRunTimeoutMs(Number(e.target.value)), min: 1e4, step: 1e4 })
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.multiThread.runTimeout") }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: runTimeoutMs, onChange: (e) => setRunTimeoutMs(Number(e.target.value)), min: 1e4, step: 1e4 })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h3", { children: "Provider IP Isolation" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "settings-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: egressEnabled, onChange: (e) => setEgressEnabled(e.target.checked) }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Enable IP isolation" })
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: t("settings.egress.title") }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "settings-grid", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: egressEnabled, onChange: (e) => setEgressEnabled(e.target.checked) }),
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.egress.enable") })
         ] }),
-        egressEnabled && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: egressStrict, onChange: (e) => setEgressStrict(e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Strict mode (no fallback to direct)" })
+        egressEnabled && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: egressStrict, onChange: (e) => setEgressStrict(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.egress.strict") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: egressFallback, onChange: (e) => setEgressFallback(e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Allow fallback to direct" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: egressFallback, onChange: (e) => setEgressFallback(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.egress.fallback") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("label", { className: "toggle-field", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("input", { type: "checkbox", checked: egressVerify, onChange: (e) => setEgressVerify(e.target.checked) }),
-            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { children: "Verify IP before use" })
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: egressVerify, onChange: (e) => setEgressVerify(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: t("settings.egress.verify") })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "detail-grid", style: { marginTop: 12 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("dt", { children: "Direct IP" }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("dd", { children: [
-          directIp || "checking...",
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "detail-grid", style: { marginTop: 12 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("dt", { children: t("settings.egress.directIp") }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("dd", { children: [
+          directIp || t("settings.egress.checking"),
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { className: "muted", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "muted", children: [
             "(",
             directIpSource,
             ")"
           ] })
         ] })
       ] }),
-      egressEnabled && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { style: { marginTop: 8, fontSize: "0.85em", padding: "8px 12px", background: "var(--color-warning-bg)", borderRadius: 4 }, children: "IP isolation requires workers running through VPN/proxy/network namespaces. If strict mode is enabled, Proxy-Luna will not call providers directly when no verified worker is available." })
+      egressEnabled && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { style: { marginTop: 8, fontSize: "0.85em", padding: "8px 12px", background: "var(--color-warning-bg)", borderRadius: 4 }, children: t("settings.egress.warning") })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { className: "action-row", children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("button", { onClick: saveSettings, disabled: saving, children: saving ? "Saving..." : "Save Settings" }) }),
-    message ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { className: "muted", children: message }) : null
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "action-row", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: saveSettings, disabled: saving, children: saving ? t("common.saving") : t("settings.save") }) }),
+    message ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "muted", children: message }) : null
   ] });
 }
 
 // frontend/src/pages/NetworkProfiles.tsx
-var import_react9 = __toESM(require_react());
-var import_jsx_runtime10 = __toESM(require_jsx_runtime());
+var import_react10 = __toESM(require_react());
+var import_jsx_runtime11 = __toESM(require_jsx_runtime());
 function NetworkProfiles() {
-  const [profiles, setProfiles] = (0, import_react9.useState)([]);
-  const [workers, setWorkers] = (0, import_react9.useState)([]);
-  const [loading, setLoading] = (0, import_react9.useState)(true);
-  const [editingProfile, setEditingProfile] = (0, import_react9.useState)(null);
-  const [editingWorker, setEditingWorker] = (0, import_react9.useState)(null);
-  const [directIp, setDirectIp] = (0, import_react9.useState)("");
+  const { t } = useI18n();
+  const [profiles, setProfiles] = (0, import_react10.useState)([]);
+  const [workers, setWorkers] = (0, import_react10.useState)([]);
+  const [loading, setLoading] = (0, import_react10.useState)(true);
+  const [editingProfile, setEditingProfile] = (0, import_react10.useState)(null);
+  const [editingWorker, setEditingWorker] = (0, import_react10.useState)(null);
+  const [directIp, setDirectIp] = (0, import_react10.useState)("");
   const modalOpen = Boolean(editingProfile || editingWorker);
-  (0, import_react9.useEffect)(() => {
+  (0, import_react10.useEffect)(() => {
     loadAll();
   }, []);
   async function loadAll() {
@@ -28607,222 +29275,225 @@ function NetworkProfiles() {
       return "status-dead";
     return "status-warn";
   }
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { "aria-labelledby": "np-title", className: `page-panel${modalOpen ? " modal-open" : ""}`, children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "page-heading", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("p", { className: "eyebrow", children: "Egress paths and remote workers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h2", { id: "np-title", children: "Network & Workers" })
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("section", { "aria-labelledby": "np-title", className: `page-panel${modalOpen ? " modal-open" : ""}`, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "page-heading", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("p", { className: "eyebrow", children: t("network.eyebrow") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h2", { id: "np-title", children: t("network.title") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "action-row", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("span", { className: "muted", style: { fontSize: "0.85em", marginRight: 12 }, children: [
-          "Direct IP: ",
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "action-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("span", { className: "muted", style: { fontSize: "0.85em", marginRight: 12 }, children: [
+          t("label.directIp"),
+          ": ",
           directIp || "..."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: verifyAllWorkers, children: "Verify All Workers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: loadAll, children: "Refresh" })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: verifyAllWorkers, children: t("network.verifyAll") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: loadAll, children: t("common.refresh") })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: "Network Profiles" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => setEditingProfile({
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "surface-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("network.profiles") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => setEditingProfile({
           id: crypto.randomUUID().slice(0, 8),
           name: "",
           mode: "direct",
           enabled: true,
           maxConcurrentRuns: 5
-        }), children: "Add Profile" })
+        }), children: t("network.addProfile") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("table", { className: "data-table", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "ID" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Mode" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Enabled" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Expected IP" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Verified IP" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Last Verified" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", {})
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: "ID" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.name") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.mode") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.enabled") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.expectedIp") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.verifiedIp") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.lastVerified") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", {})
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("tbody", { children: profiles.map((p) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: p.id }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.mode }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.enabled ? "Yes" : "No" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.expectedIp || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.lastVerifiedIp || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: p.lastVerifiedAt ? new Date(p.lastVerifiedAt).toLocaleString() : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("td", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => setEditingProfile({ ...p }), style: { fontSize: "0.8em", marginRight: 4 }, children: "Edit" }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => verifyProfile(p.id), style: { fontSize: "0.8em", marginRight: 4 }, children: "Verify" }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => deleteProfile(p.id), style: { fontSize: "0.8em" }, children: "Delete" })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tbody", { children: profiles.map((p) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: p.id }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.mode }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.enabled ? t("common.yes") : t("common.no") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.expectedIp || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.lastVerifiedIp || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: p.lastVerifiedAt ? new Date(p.lastVerifiedAt).toLocaleString() : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("td", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => setEditingProfile({ ...p }), style: { fontSize: "0.8em", marginRight: 4 }, children: t("common.edit") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => verifyProfile(p.id), style: { fontSize: "0.8em", marginRight: 4 }, children: t("common.verify") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => deleteProfile(p.id), style: { fontSize: "0.8em" }, children: t("common.delete") })
           ] })
         ] }, p.id)) })
       ] }) })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "surface-card-head", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: "Workers" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => setEditingWorker({
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "surface-card", style: { marginBottom: 16 }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "surface-card-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: t("network.workers") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => setEditingWorker({
           id: crypto.randomUUID().slice(0, 8),
           providerId: "qwen-ai",
           baseUrl: "",
           enabled: true,
           networkProfileId: "direct",
           maxConcurrentRuns: 5
-        }), children: "Add Worker" })
+        }), children: t("network.addWorker") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("table", { className: "data-table", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "ID" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Provider" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Account" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Base URL" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Status" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Profile" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Max Runs" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Expected IP" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Verified IP" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", { children: "Last Verified" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("th", {})
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "table-wrap", children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("table", { className: "data-table", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: "ID" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.provider") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.account") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.baseUrl") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.status") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.profile") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.maxRuns") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.expectedIp") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.verifiedIp") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", { children: t("label.lastVerified") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("th", {})
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("tbody", { children: workers.map((w) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("tr", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: w.id }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.providerId }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.accountId || "any" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { style: { fontSize: "0.85em" }, children: w.baseUrl }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { className: `status-pill ${statusClass(w.status)}`, children: w.status || "unknown" }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { style: { fontSize: "0.85em" }, children: w.networkProfileId }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.maxConcurrentRuns }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.expectedIp || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.lastVerifiedIp || "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("td", { children: w.lastVerifiedAt ? new Date(w.lastVerifiedAt).toLocaleString() : "-" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("td", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => setEditingWorker({ ...w }), style: { fontSize: "0.8em", marginRight: 4 }, children: "Edit" }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => verifyWorker(w.id), style: { fontSize: "0.8em", marginRight: 4 }, children: "Verify IP" }),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => deleteWorker(w.id), style: { fontSize: "0.8em" }, children: "Delete" })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tbody", { children: workers.map((w) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("tr", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { style: { fontFamily: "monospace", fontSize: "0.85em" }, children: w.id }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.providerId }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.accountId || t("common.any") }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { style: { fontSize: "0.85em" }, children: w.baseUrl }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { className: `status-pill ${statusClass(w.status)}`, children: w.status || t("common.unknown") }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { style: { fontSize: "0.85em" }, children: w.networkProfileId }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.maxConcurrentRuns }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.expectedIp || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.lastVerifiedIp || "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("td", { children: w.lastVerifiedAt ? new Date(w.lastVerifiedAt).toLocaleString() : "-" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("td", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => setEditingWorker({ ...w }), style: { fontSize: "0.8em", marginRight: 4 }, children: t("common.edit") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => verifyWorker(w.id), style: { fontSize: "0.8em", marginRight: 4 }, children: t("network.verifyIp") }),
+            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => deleteWorker(w.id), style: { fontSize: "0.8em" }, children: t("common.delete") })
           ] })
         ] }, w.id)) })
       ] }) })
     ] }),
-    editingProfile ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ProfileForm, { profile: editingProfile, onSave: saveProfile, onCancel: () => setEditingProfile(null) }) : null,
-    editingWorker ? /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(WorkerForm, { worker: editingWorker, profiles, onSave: saveWorker, onCancel: () => setEditingWorker(null) }) : null
+    editingProfile ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ProfileForm, { profile: editingProfile, onSave: saveProfile, onCancel: () => setEditingProfile(null) }) : null,
+    editingWorker ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(WorkerForm, { worker: editingWorker, profiles, onSave: saveWorker, onCancel: () => setEditingWorker(null) }) : null
   ] });
 }
 function ProfileForm({ profile, onSave, onCancel }) {
-  const [p, setP] = (0, import_react9.useState)(profile);
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "modal-panel", onClick: (e) => e.stopPropagation(), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "modal-close-btn", onClick: onCancel, children: "x" }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: profile.id ? "Edit Network Profile" : "Add Network Profile" }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "form-grid", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Name" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: p.name, onChange: (e) => setP({ ...p, name: e.target.value }) })
+  const { t } = useI18n();
+  const [p, setP] = (0, import_react10.useState)(profile);
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "modal-panel", onClick: (e) => e.stopPropagation(), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "modal-close-btn", onClick: onCancel, children: "x" }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: profile.id ? t("network.editProfile") : t("network.addNetworkProfile") }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "form-grid", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.name") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: p.name, onChange: (e) => setP({ ...p, name: e.target.value }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("select", { value: p.mode, onChange: (e) => setP({ ...p, mode: e.target.value }), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "direct", children: "Direct" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "worker-managed", children: "Worker-managed" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "http-proxy", children: "HTTP Proxy" }),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("option", { value: "socks5", children: "SOCKS5" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.mode") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("select", { value: p.mode, onChange: (e) => setP({ ...p, mode: e.target.value }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "direct", children: "Direct" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "worker-managed", children: "Worker-managed" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "http-proxy", children: "HTTP Proxy" }),
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("option", { value: "socks5", children: "SOCKS5" })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Expected IP" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: p.expectedIp || "", onChange: (e) => setP({ ...p, expectedIp: e.target.value }) })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.expectedIp") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: p.expectedIp || "", onChange: (e) => setP({ ...p, expectedIp: e.target.value }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Proxy URL" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: p.proxyUrl || "", onChange: (e) => setP({ ...p, proxyUrl: e.target.value }), placeholder: "http://..." })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.proxyUrl") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: p.proxyUrl || "", onChange: (e) => setP({ ...p, proxyUrl: e.target.value }), placeholder: "http://..." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Verify IP URL" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: p.verifyIpUrl || "", onChange: (e) => setP({ ...p, verifyIpUrl: e.target.value }), placeholder: "https://api.ipify.org?format=json" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.verifyIpUrl") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: p.verifyIpUrl || "", onChange: (e) => setP({ ...p, verifyIpUrl: e.target.value }), placeholder: "https://api.ipify.org?format=json" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: p.enabled, onChange: (e) => setP({ ...p, enabled: e.target.checked }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Enabled" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "toggle-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "checkbox", checked: p.enabled, onChange: (e) => setP({ ...p, enabled: e.target.checked }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.enabled") })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => onSave(p), children: "Save" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: onCancel, children: "Cancel" })
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => onSave(p), children: t("common.save") }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: onCancel, children: t("common.cancel") })
     ] })
   ] }) });
 }
 function WorkerForm({ worker, profiles, onSave, onCancel }) {
-  const [w, setW] = (0, import_react9.useState)(worker);
-  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "modal-panel", onClick: (e) => e.stopPropagation(), children: [
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { className: "modal-close-btn", onClick: onCancel, children: "x" }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("h3", { children: worker.id ? "Edit Worker" : "Add Worker" }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "form-grid", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Provider ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: w.providerId, onChange: (e) => setW({ ...w, providerId: e.target.value }) })
+  const { t } = useI18n();
+  const [w, setW] = (0, import_react10.useState)(worker);
+  return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { className: "modal-overlay", onClick: onCancel, children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "modal-panel", onClick: (e) => e.stopPropagation(), children: [
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { className: "modal-close-btn", onClick: onCancel, children: "x" }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("h3", { children: worker.id ? t("network.editWorker") : t("network.addWorker") }),
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "form-grid", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "Provider ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: w.providerId, onChange: (e) => setW({ ...w, providerId: e.target.value }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Account ID" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: w.accountId || "", onChange: (e) => setW({ ...w, accountId: e.target.value }), placeholder: "optional" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: "Account ID" }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: w.accountId || "", onChange: (e) => setW({ ...w, accountId: e.target.value }), placeholder: t("common.optional") })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Base URL" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: w.baseUrl, onChange: (e) => setW({ ...w, baseUrl: e.target.value }), placeholder: "http://localhost:3001" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.baseUrl") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: w.baseUrl, onChange: (e) => setW({ ...w, baseUrl: e.target.value }), placeholder: "http://localhost:3001" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Network Profile" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("select", { value: w.networkProfileId, onChange: (e) => setW({ ...w, networkProfileId: e.target.value }), children: profiles.map((p) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("option", { value: p.id, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.networkProfile") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("select", { value: w.networkProfileId, onChange: (e) => setW({ ...w, networkProfileId: e.target.value }), children: profiles.map((p) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("option", { value: p.id, children: [
           p.name,
           " (",
           p.id,
           ")"
         ] }, p.id)) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Max Concurrent Runs" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "number", value: w.maxConcurrentRuns, onChange: (e) => setW({ ...w, maxConcurrentRuns: Number(e.target.value) }), min: 1 })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.maxConcurrentRuns") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "number", value: w.maxConcurrentRuns, onChange: (e) => setW({ ...w, maxConcurrentRuns: Number(e.target.value) }), min: 1 })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Expected IP" }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { value: w.expectedIp || "", onChange: (e) => setW({ ...w, expectedIp: e.target.value }) })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.expectedIp") }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { value: w.expectedIp || "", onChange: (e) => setW({ ...w, expectedIp: e.target.value }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("label", { className: "toggle-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("input", { type: "checkbox", checked: w.enabled, onChange: (e) => setW({ ...w, enabled: e.target.checked }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { children: "Enabled" })
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("label", { className: "toggle-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("input", { type: "checkbox", checked: w.enabled, onChange: (e) => setW({ ...w, enabled: e.target.checked }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { children: t("label.enabled") })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { className: "action-row", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: () => onSave(w), children: "Save" }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("button", { onClick: onCancel, children: "Cancel" })
+    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)("div", { className: "action-row", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: () => onSave(w), children: t("common.save") }),
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("button", { onClick: onCancel, children: t("common.cancel") })
     ] })
   ] }) });
 }
 
 // frontend/src/App.tsx
-var import_jsx_runtime11 = __toESM(require_jsx_runtime());
+var import_jsx_runtime12 = __toESM(require_jsx_runtime());
 function App() {
-  return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Routes, { children: [
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Layout, {}), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { index: true, element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Dashboard, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "dashboard", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Dashboard, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "providers", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Providers, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "proxy", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ProxyPage, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "models", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Models, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "sessions", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Sessions, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "runs", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Runs, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "network", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(NetworkProfiles, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "logs", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Logs, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "settings", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Settings, {}) })
+  return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(I18nProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Routes, { children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Layout, {}), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { index: true, element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Dashboard, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "dashboard", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Dashboard, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "providers", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Providers, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "proxy", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ProxyPage, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "models", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Models, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "sessions", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Sessions, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "runs", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Runs, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "network", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(NetworkProfiles, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "logs", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Logs, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "settings", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Settings, {}) })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Route, { path: "*", element: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Navigate, { to: "/", replace: true }) })
-  ] });
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Route, { path: "*", element: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Navigate, { to: "/", replace: true }) })
+  ] }) });
 }
 
 // frontend/src/main.tsx
-var import_jsx_runtime12 = __toESM(require_jsx_runtime());
+var import_jsx_runtime13 = __toESM(require_jsx_runtime());
 var root = (0, import_client.createRoot)(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(import_react10.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(App, {}) }) })
+  /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(import_react11.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(App, {}) }) })
 );
 /*! Bundled license information:
 

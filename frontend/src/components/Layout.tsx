@@ -1,19 +1,22 @@
 import React from 'react';
 import {NavLink, Outlet} from 'react-router-dom';
+import {useI18n} from '../i18n';
 
 const navItems = [
-  {to: '/dashboard', label: 'Dashboard'},
-  {to: '/providers', label: 'Providers'},
-  {to: '/proxy', label: 'Proxy'},
-  {to: '/models', label: 'Models'},
-  {to: '/sessions', label: 'Sessions'},
-  {to: '/runs', label: 'Runs'},
-  {to: '/network', label: 'Network'},
-  {to: '/logs', label: 'Logs'},
-  {to: '/settings', label: 'Settings'}
+  {to: '/dashboard', labelKey: 'nav.dashboard'},
+  {to: '/providers', labelKey: 'nav.providers'},
+  {to: '/proxy', labelKey: 'nav.proxy'},
+  {to: '/models', labelKey: 'nav.models'},
+  {to: '/sessions', labelKey: 'nav.sessions'},
+  {to: '/runs', labelKey: 'nav.runs'},
+  {to: '/network', labelKey: 'nav.network'},
+  {to: '/logs', labelKey: 'nav.logs'},
+  {to: '/settings', labelKey: 'nav.settings'}
 ];
 
 export default function Layout() {
+  const {t} = useI18n();
+
   return (
     <div className="app-root">
       <header className="header" role="navigation" aria-label="Primary">
@@ -23,7 +26,7 @@ export default function Layout() {
             {navItems.map((item) => (
               <li key={item.to}>
                 <NavLink to={item.to} className={({isActive}) => isActive ? 'active nav-link' : 'nav-link'}>
-                  {item.label}
+                  {t(item.labelKey)}
                 </NavLink>
               </li>
             ))}
@@ -33,7 +36,7 @@ export default function Layout() {
 
       <div className="main">
         <header className="topbar">
-          <h1 className="page-title">Luna Proxy Manager</h1>
+          <h1 className="page-title">{t('app.title')}</h1>
         </header>
         <main className="content" tabIndex={-1}>
           <Outlet />

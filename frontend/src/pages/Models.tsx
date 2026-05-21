@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type ModelItem = {
   id: string;
@@ -12,6 +13,7 @@ type ModelItem = {
 };
 
 export default function Models() {
+  const {t} = useI18n();
   const [models, setModels] = useState<ModelItem[]>([]);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ export default function Models() {
       setModels(items);
       setUpdatedAt(data?.updatedAt || null);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to load models');
+      setMessage(error instanceof Error ? error.message : t('models.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,7 @@ export default function Models() {
 
   async function refreshModels() {
     setRefreshing(true);
-    setMessage('Refreshing from built-in Qwen catalog...');
+    setMessage(t('models.refreshingCatalog'));
     try {
       const res = await fetch('/api/models/refresh', {
         method: 'POST',
@@ -49,13 +51,13 @@ export default function Models() {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setMessage(data?.error || 'Failed to refresh models');
+        setMessage(data?.error || t('models.refreshFailed'));
         return;
       }
-      setMessage(`Loaded ${data.count} models from built-in Qwen catalog`);
+      setMessage(t('models.loadedCatalog', {count: data.count}));
       await loadModels();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to refresh models');
+      setMessage(error instanceof Error ? error.message : t('models.refreshFailed'));
     } finally {
       setRefreshing(false);
     }
@@ -65,24 +67,24 @@ export default function Models() {
     <section aria-labelledby="models-title" className="page-panel models-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Provider catalog</p>
-          <h2 id="models-title">Models</h2>
+          <p className="eyebrow">{t('models.eyebrow')}</p>
+          <h2 id="models-title">{t('nav.models')}</h2>
         </div>
-        <span className="status-pill status-alive">{models.length} models</span>
+        <span className="status-pill status-alive">{t('models.count', {count: models.length})}</span>
       </div>
 
       <div className="surface-card">
-        <p className="muted">Provider: Qwen AI (International). Source: built-in catalog.</p>
+        <p className="muted">{t('models.providerSource')}</p>
         <div className="action-row">
         <button onClick={refreshModels} disabled={refreshing || loading}>
-          {refreshing ? 'Refreshing...' : 'Refresh catalog'}
+          {refreshing ? t('models.refreshing') : t('models.refreshCatalog')}
         </button>
-        {updatedAt ? <span className="muted">Updated: {new Date(updatedAt).toLocaleString()}</span> : null}
+        {updatedAt ? <span className="muted">{t('common.updated')}: {new Date(updatedAt).toLocaleString()}</span> : null}
         </div>
       </div>
       {message ? <p className="muted">{message}</p> : null}
-      {loading ? <p className="muted">Loading models...</p> : null}
-      {!loading && models.length === 0 ? <p className="muted">No models loaded yet.</p> : null}
+      {loading ? <p className="muted">{t('models.loading')}</p> : null}
+      {!loading && models.length === 0 ? <p className="muted">{t('models.empty')}</p> : null}
 
       <ul className="model-grid">
         {models.map((m) => (
@@ -97,7 +99,7 @@ export default function Models() {
           >
             <div className="model-name">{m.name}</div>
             <div className="model-meta muted">{m.id}</div>
-            {m.maxContextLength ? <div className="model-meta muted">Context: {m.maxContextLength}</div> : null}
+            {m.maxContextLength ? <div className="model-meta muted">{t('models.context')}: {m.maxContextLength}</div> : null}
           </li>
         ))}
       </ul>
@@ -105,9 +107,9 @@ export default function Models() {
       {selectedModel ? (
         <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="model-detail-title">
           <aside className="detail-panel">
-            <button className="modal-close-btn" aria-label="Close model detail" onClick={() => setSelectedModel(null)}>×</button>
+            <button className="modal-close-btn" aria-label={t('common.close')} onClick={() => setSelectedModel(null)}>×</button>
             <div className="detail-heading">
-              <p className="eyebrow">Model detail</p>
+              <p className="eyebrow">{t('models.detail')}</p>
               <h3 id="model-detail-title">{selectedModel.name}</h3>
               <p className="muted">{selectedModel.id}</p>
             </div>
@@ -115,11 +117,11 @@ export default function Models() {
             <div className="detail-content" style={{marginTop: 16}}>
               {selectedModel.description ? <p style={{marginTop: 0}}>{selectedModel.description}</p> : null}
               <dl className="detail-grid">
-                <dt>Maximum context length</dt><dd>{selectedModel.maxContextLength || '-'}</dd>
-                <dt>Max summary generation length</dt><dd>{selectedModel.maxSummaryGenerationLength || '-'}</dd>
-                <dt>Maximum generation length</dt><dd>{selectedModel.maxGenerationLength || '-'}</dd>
-                <dt>Max thinking generation length</dt><dd>{selectedModel.maxThinkingGenerationLength || '-'}</dd>
-                <dt>Modality</dt><dd>{selectedModel.modality?.join(', ') || '-'}</dd>
+                <dt>{t('models.maxContext')}</dt><dd>{selectedModel.maxContextLength || '-'}</dd>
+                <dt>{t('models.maxSummary')}</dt><dd>{selectedModel.maxSummaryGenerationLength || '-'}</dd>
+                <dt>{t('models.maxGeneration')}</dt><dd>{selectedModel.maxGenerationLength || '-'}</dd>
+                <dt>{t('models.maxThinking')}</dt><dd>{selectedModel.maxThinkingGenerationLength || '-'}</dd>
+                <dt>{t('models.modality')}</dt><dd>{selectedModel.modality?.join(', ') || '-'}</dd>
               </dl>
             </div>
           </aside>

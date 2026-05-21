@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type LogItem = {level: string; message: string; timestamp: number};
 type DetailTab = 'metrics' | 'requestHeaders' | 'responseHeaders' | 'response' | 'prompt';
@@ -37,6 +38,7 @@ function formatLogText(value: unknown): string {
 }
 
 export default function Logs() {
+  const {t} = useI18n();
   const [logs, setLogs] = useState<LogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'info' | 'error'>('all');
@@ -60,7 +62,7 @@ export default function Logs() {
       setLogs(data);
     } catch (error) {
       setLogs([]);
-      setMessage(error instanceof Error ? error.message : 'Failed to load logs');
+      setMessage(error instanceof Error ? error.message : `${t('common.loadFailed')} ${t('nav.logs')}`);
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ export default function Logs() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setLogs([]);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to delete logs');
+      setMessage(error instanceof Error ? error.message : `${t('common.deleteFailed')} ${t('nav.logs')}`);
     } finally {
       setDeleting(false);
     }
@@ -166,34 +168,34 @@ export default function Logs() {
     <section aria-labelledby="logs-title" className="page-panel logs-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Runtime events</p>
-          <h2 id="logs-title">Logs</h2>
+          <p className="eyebrow">{t('logs.eyebrow')}</p>
+          <h2 id="logs-title">{t('nav.logs')}</h2>
         </div>
         <div className="action-row">
-          <select value={filter} onChange={(e) => setFilter(e.target.value as any)} aria-label="Filter logs">
-            <option value="all">All levels</option>
+          <select value={filter} onChange={(e) => setFilter(e.target.value as any)} aria-label={t('logs.filter')}>
+            <option value="all">{t('logs.allLevels')}</option>
             <option value="info">Info</option>
             <option value="error">Error</option>
           </select>
-          <button onClick={loadLogs} disabled={loading}>{loading ? 'Loading...' : 'Refresh'}</button>
-          <button className="danger" onClick={deleteLogs} disabled={deleting}>{deleting ? 'Deleting...' : 'Xóa'}</button>
+          <button onClick={loadLogs} disabled={loading}>{loading ? t('common.loading') : t('common.refresh')}</button>
+          <button className="danger" onClick={deleteLogs} disabled={deleting}>{deleting ? t('common.deleting') : t('common.delete')}</button>
         </div>
       </div>
 
       {message ? <p className="muted">{message}</p> : null}
-      {!loading && visibleLogs.length === 0 ? <p className="muted">No logs found.</p> : null}
+      {!loading && visibleLogs.length === 0 ? <p className="muted">{t('logs.empty')}</p> : null}
 
       <div className="table-wrap list-scroll" onScroll={handleListScroll}>
         <table className="data-table logs-table">
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Level</th>
-              <th>Path</th>
-              <th>Status</th>
-              <th>Model</th>
-              <th>Prompt / Message</th>
-              <th>Latency</th>
+              <th>{t('label.time')}</th>
+              <th>{t('label.level')}</th>
+              <th>{t('label.path')}</th>
+              <th>{t('label.status')}</th>
+              <th>{t('label.model')}</th>
+              <th>{t('logs.promptMessage')}</th>
+              <th>{t('logs.latency')}</th>
             </tr>
           </thead>
           <tbody>
@@ -223,66 +225,66 @@ export default function Logs() {
         </table>
       </div>
       {visibleLogs.length > renderedLogs.length ? (
-        <p className="muted list-lazy-status">Showing {renderedLogs.length} of {visibleLogs.length}. Scroll to load more.</p>
+        <p className="muted list-lazy-status">{t('common.showingOf', {shown: renderedLogs.length, total: visibleLogs.length})}</p>
       ) : null}
 
       {selectedLog && selectedMeta ? (
         <div className="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="log-detail-title">
           <aside className="detail-panel">
-            <button className="modal-close-btn" aria-label="Close log detail" onClick={() => setSelectedLog(null)}>×</button>
+            <button className="modal-close-btn" aria-label={t('common.close')} onClick={() => setSelectedLog(null)}>×</button>
             <div className="detail-heading">
-              <p className="eyebrow">Request detail</p>
-              <h3 id="log-detail-title">{selectedMeta.path || selectedMeta.message || 'Log entry'}</h3>
+              <p className="eyebrow">{t('logs.detail')}</p>
+              <h3 id="log-detail-title">{selectedMeta.path || selectedMeta.message || t('logs.entry')}</h3>
               <p className="muted">{new Date(selectedLog.timestamp).toLocaleString()}</p>
             </div>
 
-            <div className="detail-tabs" role="tablist" aria-label="Log detail tabs">
-              <button className={activeTab === 'metrics' ? 'tab active' : 'tab'} onClick={() => setActiveTab('metrics')}>Thông số</button>
-              <button className={activeTab === 'requestHeaders' ? 'tab active' : 'tab'} onClick={() => setActiveTab('requestHeaders')}>Request headers</button>
-              <button className={activeTab === 'responseHeaders' ? 'tab active' : 'tab'} onClick={() => setActiveTab('responseHeaders')}>Response headers</button>
-              <button className={activeTab === 'response' ? 'tab active' : 'tab'} onClick={() => setActiveTab('response')}>Response</button>
-              <button className={activeTab === 'prompt' ? 'tab active' : 'tab'} onClick={() => setActiveTab('prompt')}>Prompt</button>
+            <div className="detail-tabs" role="tablist" aria-label={t('logs.tabs')}>
+              <button className={activeTab === 'metrics' ? 'tab active' : 'tab'} onClick={() => setActiveTab('metrics')}>{t('logs.metrics')}</button>
+              <button className={activeTab === 'requestHeaders' ? 'tab active' : 'tab'} onClick={() => setActiveTab('requestHeaders')}>{t('logs.requestHeaders')}</button>
+              <button className={activeTab === 'responseHeaders' ? 'tab active' : 'tab'} onClick={() => setActiveTab('responseHeaders')}>{t('logs.responseHeaders')}</button>
+              <button className={activeTab === 'response' ? 'tab active' : 'tab'} onClick={() => setActiveTab('response')}>{t('logs.response')}</button>
+              <button className={activeTab === 'prompt' ? 'tab active' : 'tab'} onClick={() => setActiveTab('prompt')}>{t('logs.prompt')}</button>
             </div>
 
             <div className="detail-content">
               {activeTab === 'metrics' ? (
                 <dl className="detail-grid">
-                  <dt>Level</dt><dd>{selectedLog.level}</dd>
-                  <dt>Status</dt><dd>{selectedMeta.status || '-'}</dd>
-                  <dt>Model</dt><dd>{selectedMeta.model || '-'}</dd>
-                  <dt>Stream</dt><dd>{String(selectedMeta.stream ?? '-')}</dd>
-                  <dt>Thinking mode</dt><dd>{selectedMeta.thinking_mode || '-'}</dd>
-                  <dt>Reasoning effort</dt><dd>{selectedMeta.reasoning_effort || '-'}</dd>
-                  <dt>Files</dt><dd>{selectedMeta.files ?? '-'}</dd>
-                  <dt>Overflow</dt><dd>{String(selectedMeta.overflow ?? '-')}</dd>
-                  <dt>Sanitized</dt><dd>{selectedMeta.sanitized === undefined ? '-' : String(selectedMeta.sanitized)}</dd>
-                  <dt>Detected client</dt><dd>{selectedMeta.sanitizerMeta?.client || '-'}</dd>
-                  <dt>Response contract</dt><dd>{selectedMeta.sanitizerMeta?.clientResponseContract || '-'}</dd>
-                  <dt>Active task idx</dt><dd>{selectedMeta.sanitizerMeta?.activeTaskMessageIndex ?? '-'}</dd>
-                  <dt>Active task preview</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.textPreview?.slice(0, 100) || '-'}</dd>
-                  <dt>Active task source</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.source || '-'}</dd>
-                  <dt>Active task part index</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.fromPartIndex ?? '-'}</dd>
-                  <dt>Overflow file</dt><dd>{selectedMeta.sanitizerMeta?.overflowFile || '-'}</dd>
-                  <dt>Kept / stripped</dt><dd>{selectedMeta.sanitizerMeta ? `${selectedMeta.sanitizerMeta.keptMessageCount} / ${selectedMeta.sanitizerMeta.strippedMessageCount}` : '-'}</dd>
-                  <dt>Client retry detected</dt><dd>{selectedMeta.sanitizerMeta?.clientRetryDetected === undefined ? '-' : String(selectedMeta.sanitizerMeta.clientRetryDetected)}</dd>
-                  <dt>Client retry source</dt><dd>{selectedMeta.sanitizerMeta?.clientRetrySource || '-'}</dd>
-                  <dt>Snapshot included</dt><dd>{selectedMeta.sanitizerMeta?.projectSnapshotIncluded === undefined ? '-' : String(selectedMeta.sanitizerMeta.projectSnapshotIncluded)}</dd>
-                  <dt>Removed container conf</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.containerConfusion ?? '-'}</dd>
-                  <dt>Removed auto reminder</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.automatedReminder ?? '-'}</dd>
-                  <dt>Removed partial reminder</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.partialAutomatedReminder ?? '-'}</dd>
-                  <dt>Removed assistant fail</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.assistantFailureEcho ?? '-'}</dd>
-                  <dt>Removed dup assistant</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.duplicateAssistant ?? '-'}</dd>
-                  <dt>Partial noise</dt><dd>{selectedMeta.sanitizerMeta?.partialNoise?.length ? selectedMeta.sanitizerMeta.partialNoise.map((p: any) => `msg[${p.messageIndex}]: ${p.reason}`).join('; ') : '-'}</dd>
-                  <dt>Session mode</dt><dd>{selectedMeta.session?.mode || '-'}</dd>
-                  <dt>Session resolve reason</dt><dd>{selectedMeta.session?.resolveReason || '-'}</dd>
-                  <dt>Session explicit</dt><dd>{selectedMeta.session?.explicit === undefined ? '-' : String(selectedMeta.session.explicit)}</dd>
-                  <dt>Session source</dt><dd>{selectedMeta.session?.source || '-'}</dd>
-                  <dt>Session workspace</dt><dd>{selectedMeta.session?.workspace || '-'}</dd>
-                  <dt>Session thread</dt><dd>{selectedMeta.session?.threadId || '-'}</dd>
-                  <dt>Session provider ID</dt><dd>{selectedMeta.session?.providerSessionId || '-'}</dd>
-                  <dt>Dedupe meta</dt><dd>{selectedMeta.sanitizerMeta?.persistSkipped ? `skipped=${selectedMeta.sanitizerMeta.persistSkipped.skipped} persisted=${selectedMeta.sanitizerMeta.persistSkipped.persisted}` : '-'}</dd>
-                  <dt>Latency</dt><dd>{typeof selectedMeta.durationMs === 'number' ? `${selectedMeta.durationMs}ms` : '-'}</dd>
-                  <dt>Prompt</dt><dd>{formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message)}</dd>
+                  <dt>{t('label.level')}</dt><dd>{selectedLog.level}</dd>
+                  <dt>{t('label.status')}</dt><dd>{selectedMeta.status || '-'}</dd>
+                  <dt>{t('label.model')}</dt><dd>{selectedMeta.model || '-'}</dd>
+                  <dt>{t('label.stream')}</dt><dd>{String(selectedMeta.stream ?? '-')}</dd>
+                  <dt>{t('logs.thinkingMode')}</dt><dd>{selectedMeta.thinking_mode || '-'}</dd>
+                  <dt>{t('logs.reasoningEffort')}</dt><dd>{selectedMeta.reasoning_effort || '-'}</dd>
+                  <dt>{t('logs.files')}</dt><dd>{selectedMeta.files ?? '-'}</dd>
+                  <dt>{t('label.overflow')}</dt><dd>{String(selectedMeta.overflow ?? '-')}</dd>
+                  <dt>{t('logs.sanitized')}</dt><dd>{selectedMeta.sanitized === undefined ? '-' : String(selectedMeta.sanitized)}</dd>
+                  <dt>{t('logs.detectedClient')}</dt><dd>{selectedMeta.sanitizerMeta?.client || '-'}</dd>
+                  <dt>{t('logs.responseContract')}</dt><dd>{selectedMeta.sanitizerMeta?.clientResponseContract || '-'}</dd>
+                  <dt>{t('logs.activeTaskIdx')}</dt><dd>{selectedMeta.sanitizerMeta?.activeTaskMessageIndex ?? '-'}</dd>
+                  <dt>{t('logs.activeTaskPreview')}</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.textPreview?.slice(0, 100) || '-'}</dd>
+                  <dt>{t('logs.activeTaskSource')}</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.source || '-'}</dd>
+                  <dt>{t('logs.activeTaskPartIndex')}</dt><dd>{selectedMeta.sanitizerMeta?.activeTask?.fromPartIndex ?? '-'}</dd>
+                  <dt>{t('logs.overflowFile')}</dt><dd>{selectedMeta.sanitizerMeta?.overflowFile || '-'}</dd>
+                  <dt>{t('logs.keptStripped')}</dt><dd>{selectedMeta.sanitizerMeta ? `${selectedMeta.sanitizerMeta.keptMessageCount} / ${selectedMeta.sanitizerMeta.strippedMessageCount}` : '-'}</dd>
+                  <dt>{t('logs.clientRetryDetected')}</dt><dd>{selectedMeta.sanitizerMeta?.clientRetryDetected === undefined ? '-' : String(selectedMeta.sanitizerMeta.clientRetryDetected)}</dd>
+                  <dt>{t('logs.clientRetrySource')}</dt><dd>{selectedMeta.sanitizerMeta?.clientRetrySource || '-'}</dd>
+                  <dt>{t('logs.snapshotIncluded')}</dt><dd>{selectedMeta.sanitizerMeta?.projectSnapshotIncluded === undefined ? '-' : String(selectedMeta.sanitizerMeta.projectSnapshotIncluded)}</dd>
+                  <dt>{t('logs.removedContainerConf')}</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.containerConfusion ?? '-'}</dd>
+                  <dt>{t('logs.removedAutoReminder')}</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.automatedReminder ?? '-'}</dd>
+                  <dt>{t('logs.removedPartialReminder')}</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.partialAutomatedReminder ?? '-'}</dd>
+                  <dt>{t('logs.removedAssistantFail')}</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.assistantFailureEcho ?? '-'}</dd>
+                  <dt>{t('logs.removedDupAssistant')}</dt><dd>{selectedMeta.sanitizerMeta?.removedCounts?.duplicateAssistant ?? '-'}</dd>
+                  <dt>{t('logs.partialNoise')}</dt><dd>{selectedMeta.sanitizerMeta?.partialNoise?.length ? selectedMeta.sanitizerMeta.partialNoise.map((p: any) => `msg[${p.messageIndex}]: ${p.reason}`).join('; ') : '-'}</dd>
+                  <dt>{t('logs.sessionMode')}</dt><dd>{selectedMeta.session?.mode || '-'}</dd>
+                  <dt>{t('logs.sessionResolveReason')}</dt><dd>{selectedMeta.session?.resolveReason || '-'}</dd>
+                  <dt>{t('logs.sessionExplicit')}</dt><dd>{selectedMeta.session?.explicit === undefined ? '-' : String(selectedMeta.session.explicit)}</dd>
+                  <dt>{t('logs.sessionSource')}</dt><dd>{selectedMeta.session?.source || '-'}</dd>
+                  <dt>{t('logs.sessionWorkspace')}</dt><dd>{selectedMeta.session?.workspace || '-'}</dd>
+                  <dt>{t('logs.sessionThread')}</dt><dd>{selectedMeta.session?.threadId || '-'}</dd>
+                  <dt>{t('logs.sessionProviderId')}</dt><dd>{selectedMeta.session?.providerSessionId || '-'}</dd>
+                  <dt>{t('logs.dedupeMeta')}</dt><dd>{selectedMeta.sanitizerMeta?.persistSkipped ? `skipped=${selectedMeta.sanitizerMeta.persistSkipped.skipped} persisted=${selectedMeta.sanitizerMeta.persistSkipped.persisted}` : '-'}</dd>
+                  <dt>{t('logs.latency')}</dt><dd>{typeof selectedMeta.durationMs === 'number' ? `${selectedMeta.durationMs}ms` : '-'}</dd>
+                  <dt>{t('logs.prompt')}</dt><dd>{formatLogText(selectedMeta.prompt || selectedMeta.prompt_messages || selectedMeta.error || selectedMeta.message || selectedLog.message)}</dd>
                 </dl>
               ) : null}
               {activeTab === 'prompt' ? (
@@ -306,14 +308,14 @@ export default function Logs() {
                         ))}
                       </div>
                       {visible.length === 0 ? (
-                        <p className="muted">No prompts for selected role.</p>
+                        <p className="muted">{t('logs.noPrompts')}</p>
                       ) : visible.length === 1 ? (
                         <pre className="detail-pre">{visible[0].content}</pre>
                       ) : (
                         <div>
                           {visible.map((v: any, idx: number) => (
                             <div key={idx} style={{marginBottom: 12}}>
-                              <div style={{fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: 6}}>Message {v.index ?? idx}</div>
+                              <div style={{fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: 6}}>{t('common.message')} {v.index ?? idx}</div>
                               <pre className="detail-pre">{v.content}</pre>
                             </div>
                           ))}
@@ -324,13 +326,13 @@ export default function Logs() {
                 })()
               ) : null}
               {activeTab === 'requestHeaders'
-                ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, 'Log này chưa có request headers.')
+                ? renderJsonBlock(selectedMeta.requestHeaders || selectedMeta.request_headers, t('logs.noRequestHeaders'))
                 : null}
               {activeTab === 'responseHeaders'
-                ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, 'Log này chưa có response headers.')
+                ? renderJsonBlock(selectedMeta.responseHeaders || selectedMeta.response_headers, t('logs.noResponseHeaders'))
                 : null}
               {activeTab === 'response'
-                ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, 'Chưa có response body trong log hiện tại. Có thể bổ sung backend capture sau.')
+                ? renderJsonBlock(selectedMeta.response || selectedMeta.responseBody || selectedMeta.error, t('logs.noResponseBody'))
                 : null}
             </div>
           </aside>

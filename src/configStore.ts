@@ -157,6 +157,9 @@ export class ConfigStore {
         defaultMaxOutputTokens: 8192,
         maxOutputTokensCap: 32000,
       },
+      ui: {
+        language: 'en',
+      },
     };
 
     this.save(defaultConfig);
@@ -217,6 +220,10 @@ export class ConfigStore {
         tokenLimits: {
           ...((this.data.settings?.tokenLimits as any) || {}),
           ...((partial.settings.tokenLimits as any) || {}),
+        },
+        ui: {
+          ...((this.data.settings?.ui as any) || {}),
+          ...((partial.settings.ui as any) || {}),
         },
       };
       const rest = {...partial};

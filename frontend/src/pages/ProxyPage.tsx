@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import {useI18n} from '../i18n';
 
 export default function ProxyPage() {
+  const {t} = useI18n();
   const [host, setHost] = useState('127.0.0.1');
   const [port, setPort] = useState(8080);
   const [proxyKey, setProxyKey] = useState('');
@@ -37,9 +39,9 @@ export default function ProxyPage() {
         body: JSON.stringify({proxy: {host, port, key: proxyKey}}),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setMessage('Proxy config saved');
+      setMessage(t('proxy.saved'));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to save proxy config');
+      setMessage(error instanceof Error ? error.message : t('proxy.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -59,7 +61,7 @@ export default function ProxyPage() {
     <section aria-labelledby="proxy-title" className="page-panel proxy-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">OpenAI compatible gateway</p>
+          <p className="eyebrow">{t('proxy.eyebrow')}</p>
           <h2 id="proxy-title">Proxy</h2>
         </div>
         <span className={`status-pill status-${health === 'online' ? 'alive' : health === 'offline' ? 'dead' : 'warn'}`}>
@@ -69,28 +71,28 @@ export default function ProxyPage() {
 
       <form className="surface-card form-grid" onSubmit={(e) => e.preventDefault()} aria-label="Proxy config">
         <label className="field">
-          <span>Host</span>
+          <span>{t('label.host')}</span>
           <input value={host} onChange={(e) => setHost(e.target.value)} />
         </label>
         <label className="field">
-          <span>Port</span>
+          <span>{t('label.port')}</span>
           <input type="number" value={port} onChange={(e) => setPort(Number(e.target.value))} min={1} max={65535} />
         </label>
         <label className="field field-wide">
-          <span>Proxy Key</span>
-          <input type="password" value={proxyKey} onChange={(e) => setProxyKey(e.target.value)} placeholder="Set proxy password/key" />
+          <span>{t('proxy.key')}</span>
+          <input type="password" value={proxyKey} onChange={(e) => setProxyKey(e.target.value)} placeholder={t('proxy.keyPlaceholder')} />
         </label>
         <div className="action-row field-wide">
-          <button type="button" onClick={saveProxyConfig} disabled={saving}>{saving ? 'Saving...' : 'Save Proxy Config'}</button>
-          <button type="button" onClick={checkHealth}>Check Health</button>
+          <button type="button" onClick={saveProxyConfig} disabled={saving}>{saving ? t('common.saving') : t('proxy.save')}</button>
+          <button type="button" onClick={checkHealth}>{t('proxy.checkHealth')}</button>
         </div>
       </form>
 
       <div className="surface-card endpoint-card">
-        <h3>Connection</h3>
+        <h3>{t('proxy.connection')}</h3>
         <p className="muted">Base URL: <code>{baseUrl}</code></p>
-        <p className="muted">OpenAI Endpoint: <code>{baseUrl}/v1/chat/completions</code></p>
-        <p className="muted">Auth Header: <code>Authorization: Bearer &lt;proxy-key&gt;</code> or <code>X-Proxy-Key</code></p>
+        <p className="muted">{t('proxy.endpoint')}: <code>{baseUrl}/v1/chat/completions</code></p>
+        <p className="muted">{t('proxy.authHeader')}: <code>Authorization: Bearer &lt;proxy-key&gt;</code> or <code>X-Proxy-Key</code></p>
       </div>
       {message ? <p className="muted">{message}</p> : null}
     </section>

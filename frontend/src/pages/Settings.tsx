@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import {Language, useI18n} from '../i18n';
 
 export default function Settings() {
+  const {language, setLanguage, t} = useI18n();
   const [overflowEnabled, setOverflowEnabled] = useState(true);
   const [threshold, setThreshold] = useState(10000);
   const [sessionEnabled, setSessionEnabled] = useState(true);
@@ -36,6 +38,8 @@ export default function Settings() {
     try {
       const res = await fetch('/api/config');
       const data = await res.json();
+      const ui = data?.settings?.ui || {};
+      if (ui.language === 'vi' || ui.language === 'en') setLanguage(ui.language);
       const toc = data?.settings?.tokenOverflow || {};
       setOverflowEnabled(toc.enabled !== false);
       setThreshold(Number(toc.threshold || 10000));
@@ -81,6 +85,9 @@ export default function Settings() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           settings: {
+            ui: {
+              language,
+            },
             tokenOverflow: {
               enabled: overflowEnabled,
               threshold: Number(threshold) || 10000,
@@ -117,9 +124,9 @@ export default function Settings() {
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setMessage('Settings saved');
+      setMessage(t('settings.saved'));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Save failed');
+      setMessage(error instanceof Error ? error.message : t('common.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -129,13 +136,29 @@ export default function Settings() {
     <section aria-labelledby="settings-title" className="page-panel settings-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Runtime behavior</p>
-          <h2 id="settings-title">Settings</h2>
+          <p className="eyebrow">{t('settings.eyebrow')}</p>
+          <h2 id="settings-title">{t('settings.title')}</h2>
         </div>
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>
-        <h3>Token Overflow</h3>
+        <h3>{t('settings.ui.title')}</h3>
+        <div className="settings-grid">
+          <label className="field">
+            <span>{t('settings.ui.language')}</span>
+            <select value={language} onChange={(e) => setLanguage(e.target.value as Language)}>
+              <option value="en">{t('settings.ui.english')}</option>
+              <option value="vi">{t('settings.ui.vietnamese')}</option>
+            </select>
+            <p className="field-hint" style={{marginTop: 4, fontSize: '0.85em', color: 'var(--color-text-secondary)'}}>
+              {t('settings.ui.languageHint')}
+            </p>
+          </label>
+        </div>
+      </div>
+
+      <div className="surface-card" style={{marginBottom: 16}}>
+        <h3>{t('settings.tokenOverflow.title')}</h3>
         <div className="settings-grid">
           <label className="toggle-field">
             <input
@@ -143,10 +166,10 @@ export default function Settings() {
               checked={overflowEnabled}
               onChange={(e) => setOverflowEnabled(e.target.checked)}
             />
-            <span>Enable raw overflow file</span>
+            <span>{t('settings.tokenOverflow.enableRawFile')}</span>
           </label>
           <label className="field">
-            <span>Token threshold</span>
+            <span>{t('settings.tokenOverflow.threshold')}</span>
             <input
               type="number"
               value={threshold}
@@ -160,7 +183,7 @@ export default function Settings() {
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>
-        <h3>Session Memory</h3>
+        <h3>{t('settings.session.title')}</h3>
         <div className="settings-grid">
           <label className="toggle-field">
             <input
@@ -168,10 +191,10 @@ export default function Settings() {
               checked={sessionEnabled}
               onChange={(e) => setSessionEnabled(e.target.checked)}
             />
-            <span>Enable session memory</span>
+            <span>{t('settings.session.enable')}</span>
           </label>
           <label className="field">
-            <span>History limit (messages)</span>
+            <span>{t('settings.session.historyLimit')}</span>
             <select value={historyLimit} onChange={(e) => setHistoryLimit(Number(e.target.value))}>
               <option value={1}>1</option>
               <option value={5}>5</option>
@@ -186,10 +209,10 @@ export default function Settings() {
               checked={autoCompact}
               onChange={(e) => setAutoCompact(e.target.checked)}
             />
-            <span>Auto compact</span>
+            <span>{t('settings.session.autoCompact')}</span>
           </label>
           <label className="field">
-            <span>Compact after N messages</span>
+            <span>{t('settings.session.compactAfter')}</span>
             <input
               type="number"
               value={compactAfterMessages}
@@ -199,7 +222,7 @@ export default function Settings() {
             />
           </label>
           <label className="field">
-            <span>Compact keep recent</span>
+            <span>{t('settings.session.keepRecent')}</span>
             <input
               type="number"
               value={compactKeepRecent}
@@ -209,7 +232,7 @@ export default function Settings() {
             />
           </label>
           <label className="field">
-            <span>Compact model</span>
+            <span>{t('settings.session.compactModel')}</span>
             <input
               value={compactModel}
               onChange={(e) => setCompactModel(e.target.value)}
@@ -221,33 +244,33 @@ export default function Settings() {
               checked={requireExplicitId}
               onChange={(e) => setRequireExplicitId(e.target.checked)}
             />
-            <span>Require explicit session ID</span>
+            <span>{t('settings.session.requireExplicitId')}</span>
           </label>
           <label className="toggle-field">
             <input type="checkbox" checked={fileBackedEnabled} onChange={(e) => setFileBackedEnabled(e.target.checked)} />
-            <span>File-backed sessions (create on overflow)</span>
+            <span>{t('settings.session.fileBacked')}</span>
           </label>
           <label className="toggle-field">
             <input type="checkbox" checked={createOnOverflow} onChange={(e) => setCreateOnOverflow(e.target.checked)} />
-            <span>Create on overflow</span>
+            <span>{t('settings.session.createOnOverflow')}</span>
           </label>
           <label className="field">
-            <span>Fallback mode</span>
+            <span>{t('settings.session.fallbackMode')}</span>
             <div>
               <select value={fallbackMode} onChange={(e) => setFallbackMode(e.target.value)}>
-                <option value="file-backed">File-backed (create session on overflow)</option>
-                <option value="stateless">Stateless (no persistent session)</option>
-                <option value="transient">Transient (auto-create)</option>
-                <option value="shared-default">Shared default</option>
+                <option value="file-backed">{t('settings.session.fileBackedOption')}</option>
+                <option value="stateless">{t('settings.session.statelessOption')}</option>
+                <option value="transient">{t('settings.session.transientOption')}</option>
+                <option value="shared-default">{t('settings.session.sharedDefaultOption')}</option>
               </select>
               <p className="field-hint" style={{marginTop: 4, fontSize: '0.85em', color: 'var(--color-text-secondary)'}}>
                 {fallbackMode === 'file-backed'
-                  ? 'Recommended. Sessions are created only when overflow files are generated (i.e., conversation exceeds token threshold). Before overflow, requests are stateless. Once an overflow file is created, a file-backed session anchors the conversation.'
+                  ? t('settings.session.fileBackedHint')
                   : fallbackMode === 'stateless'
-                    ? 'Sessions only exist if the client sends x-luna-session-id. The Sessions page will appear empty for clients without explicit session IDs. Best for stateless API usage.'
+                    ? t('settings.session.statelessHint')
                     : fallbackMode === 'transient'
-                      ? 'A session is auto-created for every request that lacks an explicit ID. Sessions page will show all conversations, but session grouping may not reflect actual logical threads. Best for debugging/diagnostics.'
-                      : 'All requests without explicit session IDs share a single "default" session. Different sources/workspaces still create separate sessions. Use with caution as unrelated conversations mix.'}
+                      ? t('settings.session.transientHint')
+                      : t('settings.session.sharedDefaultHint')}
               </p>
             </div>
           </label>
@@ -255,74 +278,73 @@ export default function Settings() {
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>
-        <h3>Multi-thread</h3>
+        <h3>{t('settings.multiThread.title')}</h3>
         <div className="settings-grid">
           <label className="toggle-field">
             <input type="checkbox" checked={mtEnabled} onChange={(e) => setMtEnabled(e.target.checked)} />
-            <span>Enable multi-thread scheduler</span>
+            <span>{t('settings.multiThread.enable')}</span>
           </label>
           <label className="field">
-            <span>Global max concurrent runs</span>
+            <span>{t('settings.multiThread.globalMax')}</span>
             <input type="number" value={globalMaxConcurrent} onChange={(e) => setGlobalMaxConcurrent(Number(e.target.value))} min={1} />
           </label>
           <label className="field">
-            <span>Provider max concurrent runs</span>
+            <span>{t('settings.multiThread.providerMax')}</span>
             <input type="number" value={providerMaxConcurrent} onChange={(e) => setProviderMaxConcurrent(Number(e.target.value))} min={1} />
           </label>
           <label className="field">
-            <span>Account max concurrent runs</span>
+            <span>{t('settings.multiThread.accountMax')}</span>
             <input type="number" value={accountMaxConcurrent} onChange={(e) => setAccountMaxConcurrent(Number(e.target.value))} min={1} />
           </label>
           <label className="field">
-            <span>Queue timeout (ms)</span>
+            <span>{t('settings.multiThread.queueTimeout')}</span>
             <input type="number" value={queueTimeoutMs} onChange={(e) => setQueueTimeoutMs(Number(e.target.value))} min={5000} step={5000} />
           </label>
           <label className="field">
-            <span>Run timeout (ms)</span>
+            <span>{t('settings.multiThread.runTimeout')}</span>
             <input type="number" value={runTimeoutMs} onChange={(e) => setRunTimeoutMs(Number(e.target.value))} min={10000} step={10000} />
           </label>
         </div>
       </div>
 
       <div className="surface-card" style={{marginBottom: 16}}>
-        <h3>Provider IP Isolation</h3>
+        <h3>{t('settings.egress.title')}</h3>
         <div className="settings-grid">
           <label className="toggle-field">
             <input type="checkbox" checked={egressEnabled} onChange={(e) => setEgressEnabled(e.target.checked)} />
-            <span>Enable IP isolation</span>
+            <span>{t('settings.egress.enable')}</span>
           </label>
           {egressEnabled && (
             <>
               <label className="toggle-field">
                 <input type="checkbox" checked={egressStrict} onChange={(e) => setEgressStrict(e.target.checked)} />
-                <span>Strict mode (no fallback to direct)</span>
+                <span>{t('settings.egress.strict')}</span>
               </label>
               <label className="toggle-field">
                 <input type="checkbox" checked={egressFallback} onChange={(e) => setEgressFallback(e.target.checked)} />
-                <span>Allow fallback to direct</span>
+                <span>{t('settings.egress.fallback')}</span>
               </label>
               <label className="toggle-field">
                 <input type="checkbox" checked={egressVerify} onChange={(e) => setEgressVerify(e.target.checked)} />
-                <span>Verify IP before use</span>
+                <span>{t('settings.egress.verify')}</span>
               </label>
             </>
           )}
         </div>
         <div className="detail-grid" style={{marginTop: 12}}>
-          <dt>Direct IP</dt>
-          <dd>{directIp || 'checking...'} <span className="muted">({directIpSource})</span></dd>
+          <dt>{t('settings.egress.directIp')}</dt>
+          <dd>{directIp || t('settings.egress.checking')} <span className="muted">({directIpSource})</span></dd>
         </div>
         {egressEnabled && (
           <p style={{marginTop: 8, fontSize: '0.85em', padding: '8px 12px', background: 'var(--color-warning-bg)', borderRadius: 4}}>
-            IP isolation requires workers running through VPN/proxy/network namespaces.
-            If strict mode is enabled, Proxy-Luna will not call providers directly when no verified worker is available.
+            {t('settings.egress.warning')}
           </p>
         )}
       </div>
 
       <div className="action-row">
         <button onClick={saveSettings} disabled={saving}>
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? t('common.saving') : t('settings.save')}
         </button>
       </div>
       {message ? <p className="muted">{message}</p> : null}

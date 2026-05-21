@@ -66,6 +66,22 @@ bun run dev
 
 Open the admin UI at `http://127.0.0.1:8080/`, then go to **Providers** and configure your Qwen credentials.
 
+### Setup Provider
+
+Configure the Qwen provider from the built-in admin UI:
+
+![Configure Qwen provider in the LunaProxy admin UI](./Resource/SetupProvider.gif)
+
+### Client Demos
+
+Use LunaProxy from Cline in VS Code:
+
+![LunaProxy demo with Cline in VS Code](./Resource/DemoCline.gif)
+
+Use LunaProxy from Claude Code CLI:
+
+![LunaProxy demo with Claude Code CLI](./Resource/DemoClaudeCode.gif)
+
 Health check:
 
 ```bash

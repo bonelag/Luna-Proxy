@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useI18n} from '../i18n';
 
 type ProviderConfig = { id: string; name?: string; credentials?: Record<string,string>; oauth?: any };
 type ProviderStatus = 'alive' | 'warn' | 'dead';
@@ -8,6 +9,7 @@ const builtinProviders = [
 ];
 
 export default function Providers() {
+  const {t} = useI18n();
   const [providers, setProviders] = useState<ProviderConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
@@ -111,7 +113,7 @@ export default function Providers() {
     setValidationMsg(null);
     setOauthPolling(true);
     try {
-      setValidationMsg('Opening Qwen AI login window. Complete login in Chromium...');
+      setValidationMsg(t('providers.oauthOpening'));
       const resp = await fetch('/api/provider/oauth/capture', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -119,7 +121,7 @@ export default function Providers() {
       });
       const data = await resp.json();
       if (!resp.ok || !data.success) {
-        setValidationMsg(data.error || 'OAuth capture failed');
+        setValidationMsg(data.error || t('providers.oauthFailed'));
         return;
       }
 
@@ -127,10 +129,10 @@ export default function Providers() {
       if (creds.token) setTokenValue(creds.token);
       if (creds.cookies) setCookieValue(creds.cookies);
       await loadConfig();
-      setValidationMsg('OAuth credentials captured and validated');
+      setValidationMsg(t('providers.oauthCaptured'));
     } catch (err) {
       console.error('startOAuth failed', err);
-      setValidationMsg(err instanceof Error ? err.message : 'Failed to start OAuth');
+      setValidationMsg(err instanceof Error ? err.message : t('providers.oauthStartFailed'));
     } finally {
       setOauthPolling(false);
     }
@@ -138,7 +140,7 @@ export default function Providers() {
 
   async function validate() {
     if (!selected) return;
-    setValidationMsg('Checking...');
+    setValidationMsg(t('providers.checking'));
     const creds: any = {};
     const tokenKey = selected.id === 'qwen-ai' ? 'token' : 'ticket';
     const cookieKey = selected.id === 'qwen-ai' ? 'cookies' : 'cookie';
@@ -150,7 +152,7 @@ export default function Providers() {
       creds[cookieKey] = cookieValue.trim();
     }
     if (Object.keys(creds).length === 0) {
-      setValidationMsg(activeTab === 'oauth' ? 'Start OAuth first' : 'Provide token or cookie to validate');
+      setValidationMsg(activeTab === 'oauth' ? t('providers.startFirst') : t('providers.provideCredential'));
       return;
     }
 
@@ -160,11 +162,11 @@ export default function Providers() {
         body: JSON.stringify({ providerId: selected.id, credentials: creds }),
       });
       const data = await resp.json();
-      if (data && data.ok) setValidationMsg('Account valid');
-      else setValidationMsg('Invalid account');
+      if (data && data.ok) setValidationMsg(t('providers.valid'));
+      else setValidationMsg(t('providers.invalid'));
     } catch (err) {
       console.error(err);
-      setValidationMsg('Validation failed');
+      setValidationMsg(t('providers.validationFailed'));
     }
   }
 
@@ -189,7 +191,7 @@ export default function Providers() {
           body: JSON.stringify({providerId: selected.id, credentials}),
         });
       } else {
-        setValidationMsg(activeTab === 'oauth' ? 'Start OAuth first' : 'Nothing to save — provide token or cookie');
+        setValidationMsg(activeTab === 'oauth' ? t('providers.startFirst') : t('providers.nothingToSave'));
         return;
       }
       await loadConfig();
@@ -201,15 +203,15 @@ export default function Providers() {
 
   return (
     <section aria-labelledby="providers-title" className={`providers-section ${showAdd ? 'modal-open' : ''}`}>
-      <h2 id="providers-title">Providers</h2>
+      <h2 id="providers-title">{t('nav.providers')}</h2>
 
       <div style={{display:'flex', justifyContent:'center', gap:16, marginBottom:16}}>
-        <button className="add-button" onClick={openAdd}>Add Provider</button>
+        <button className="add-button" onClick={openAdd}>{t('providers.add')}</button>
       </div>
 
       <div className={`providers-wrapper ${showAdd ? 'modal-open' : ''}`}>
-        {loading ? <div>Loading…</div> : (
-          configured.length === 0 ? <div className="muted">Chưa có provider</div> : (
+        {loading ? <div>{t('common.loading')}</div> : (
+          configured.length === 0 ? <div className="muted">{t('providers.empty')}</div> : (
             configured.map(p => (
               <button key={p.id} className="provider-card provider-card-button" onClick={() => openEditorForProvider(p)}>
                 <div className="provider-card-head">
@@ -226,10 +228,10 @@ export default function Providers() {
       {showAdd && (
         <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal-panel">
-            <button aria-label="Close" className="modal-close-btn" onClick={closeAdd}>×</button>
+            <button aria-label={t('common.close')} className="modal-close-btn" onClick={closeAdd}>×</button>
             <div style={{display:'flex', flexDirection:'column', gap:16}}>
               <div className="available-list">
-                <h3>Available</h3>
+                <h3>{t('providers.available')}</h3>
                 <div className="available-items">
                   {builtinProviders.map(bp => (
                     <button
@@ -244,7 +246,7 @@ export default function Providers() {
 
                 {selected && (
                   <div className="provider-action-row">
-                    <button className={activeTab === 'config' ? 'provider-action-btn active' : 'provider-action-btn'} onClick={() => setActiveTab('config')}>Config</button>
+                    <button className={activeTab === 'config' ? 'provider-action-btn active' : 'provider-action-btn'} onClick={() => setActiveTab('config')}>{t('providers.config')}</button>
                     <button className={activeTab === 'oauth' ? 'provider-action-btn active' : 'provider-action-btn'} onClick={() => setActiveTab('oauth')}>OAuth</button>
                   </div>
                 )}
@@ -252,7 +254,7 @@ export default function Providers() {
 
               <div className="provider-detail-center">
                 {!selected ? (
-                  <div className="muted">Select a provider to configure</div>
+                  <div className="muted">{t('providers.select')}</div>
                 ) : (
                   <div style={{textAlign:'left'}}>
                     <h3 style={{textAlign:'center'}}>{selected.name}</h3>
@@ -260,27 +262,27 @@ export default function Providers() {
                     {activeTab === 'config' ? (
                       <div>
                         <div className="input-area">
-                          <label>Token (paste here)</label>
+                          <label>{t('providers.token')}</label>
                           <input value={tokenValue} onChange={(e) => setTokenValue(e.target.value)} style={{width:'100%'}} />
-                          <p className="muted">Paste token if you have one. Alternatively paste cookie below after login.</p>
+                          <p className="muted">{t('providers.tokenHint')}</p>
                         </div>
 
                         <div className="input-area" style={{marginTop:8}}>
-                          <label>Cookie / Session (paste raw cookie string)</label>
+                          <label>{t('providers.cookie')}</label>
                           <textarea value={cookieValue} onChange={(e)=>setCookieValue(e.target.value)} style={{width:'100%',height:120}} />
                         </div>
 
                         <div style={{marginTop:8}}>
-                          <button onClick={openLoginAndSwitch} className="nav-link">Open login page</button>
-                          <button onClick={startOAuth} className="nav-link" style={{marginLeft:8}}>Start OAuth</button>
+                          <button onClick={openLoginAndSwitch} className="nav-link">{t('providers.openLogin')}</button>
+                          <button onClick={startOAuth} className="nav-link" style={{marginLeft:8}}>{t('providers.startOAuth')}</button>
                         </div>
                       </div>
                     ) : (
                       <div style={{textAlign:'left'}}>
-                        <p className="muted">Open the Qwen AI international login window. After login, Proxy-Luna captures the web token from Local Storage and validates it automatically.</p>
+                        <p className="muted">{t('providers.oauthHint')}</p>
                         <div style={{display:'flex', justifyContent:'center', gap:8, marginTop:12}}>
                           <button onClick={startOAuth} disabled={oauthPolling} className="add-button">
-                            {oauthPolling ? 'Waiting for login...' : 'Start OAuth'}
+                            {oauthPolling ? t('providers.waitLogin') : t('providers.startOAuth')}
                           </button>
                         </div>
                         {(tokenValue || cookieValue) && (
@@ -299,8 +301,8 @@ export default function Providers() {
 
               {selected && (
                 <div className="modal-actions" style={{display:'flex', gap:8, marginTop:12, justifyContent:'flex-end'}}>
-                  <button onClick={validate} className="nav-link">Validate</button>
-                  <button onClick={save} className="add-button">Save Provider</button>
+                  <button onClick={validate} className="nav-link">{t('providers.validate')}</button>
+                  <button onClick={save} className="add-button">{t('providers.save')}</button>
                 </div>
               )}
             </div>
