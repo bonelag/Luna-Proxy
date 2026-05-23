@@ -34,37 +34,66 @@ export function persistSessionMessages(
   const existingMessages = sessionStore.getRecentMessages(sessionId, 1);
   const lastAssistantText = existingMessages.length > 0 && existingMessages[0].role === 'assistant'
     ? extractText(existingMessages[0].content) : null;
+  const overflowFileIds = Array.isArray(overflowResult?.fileIds) ? overflowResult.fileIds : [];
+  const overflowFiles = Array.isArray(overflowResult?.files) ? overflowResult.files : [];
+  const shouldPersistOverflowAnchorOnly = overflowFileIds.length > 0;
 
-  for (const msg of incomingMessages) {
-    if (!msg || !msg.role) continue;
-    const text = extractText(msg.content);
-    if (isProtocolSystemMessage(String(msg.role).toLowerCase(), text)) {
-      skippedMessages++;
-      continue;
-    }
-    if (msg.role === 'assistant') {
-      const cleanedText = stripThinkingBlocks(text);
-      if (isAssistantFailureEcho(cleanedText)) {
-        skippedMessages++;
-        continue;
-      }
-      if (lastAssistantText && messageSimilarity(lastAssistantText, cleanedText, 'normalized-token-jaccard') >= 0.85) {
-        skippedMessages++;
-        continue;
-      }
-    }
+  if (shouldPersistOverflowAnchorOnly) {
+    skippedMessages += Array.isArray(incomingMessages) ? incomingMessages.length : 0;
+    const overflowFileName = overflowResult?.sanitizerMeta?.overflowFile
+      || overflowFiles[0]?.filename
+      || overflowFiles[0]?.file_name
+      || overflowFileIds[0];
+    const preview = overflowResult?.sanitizerMeta?.activeTask?.textPreview || '';
     sessionMessages.push({
       id: crypto.randomUUID(),
-      role: msg.role,
-      content: msg.content,
+      role: 'user',
+      content: [
+        '[overflow prompt stored as file]',
+        `file: ${overflowFileName}`,
+        `file_id: ${overflowFileIds[0]}`,
+        preview ? `latest_user_preview: ${preview}` : '',
+      ].filter(Boolean).join('\n'),
       createdAt: now,
-      tokenEstimate: estimateTokens(text),
+      tokenEstimate: estimateTokens(preview) + 20,
       runId: meta?.runId,
       providerId: meta?.providerId,
       accountId: meta?.accountId,
       workerId: meta?.workerId,
       providerSessionId: meta?.providerSessionId,
     });
+  } else {
+    for (const msg of incomingMessages) {
+      if (!msg || !msg.role) continue;
+      const text = extractText(msg.content);
+      if (isProtocolSystemMessage(String(msg.role).toLowerCase(), text)) {
+        skippedMessages++;
+        continue;
+      }
+      if (msg.role === 'assistant') {
+        const cleanedText = stripThinkingBlocks(text);
+        if (isAssistantFailureEcho(cleanedText)) {
+          skippedMessages++;
+          continue;
+        }
+        if (lastAssistantText && messageSimilarity(lastAssistantText, cleanedText, 'normalized-token-jaccard') >= 0.85) {
+          skippedMessages++;
+          continue;
+        }
+      }
+      sessionMessages.push({
+        id: crypto.randomUUID(),
+        role: msg.role,
+        content: msg.content,
+        createdAt: now,
+        tokenEstimate: estimateTokens(text),
+        runId: meta?.runId,
+        providerId: meta?.providerId,
+        accountId: meta?.accountId,
+        workerId: meta?.workerId,
+        providerSessionId: meta?.providerSessionId,
+      });
+    }
   }
   if (response) {
     const responseText = typeof response === 'string' ? response

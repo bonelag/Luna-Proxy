@@ -10,6 +10,7 @@ import * as path from 'path';
 import {PassThrough} from 'stream';
 import {createParser} from 'eventsource-parser';
 import {Account, Provider} from '../../store/types';
+import {getQwenAiModelMappings} from '../../providers/builtin/qwen-ai';
 import {hasToolUse, parseToolUse} from '../promptToolUse';
 import {parseToolCalls, cleanVisibleText, createStreamState, processStreamChunk} from '../toolcall/toolcall';
 import {inspectStreamForError} from '../../../modules/upstreamErrorHandler';
@@ -144,6 +145,7 @@ export function buildQwenAiHeaders(
 }
 
 export class QwenAiAdapter {
+	private static inFlightChats: Set<string> = new Set();
 	private provider: Provider;
 	private account: Account;
 	private axiosInstance = axios.create({
@@ -153,27 +155,22 @@ export class QwenAiAdapter {
 	});
 	private lastWireDebug: Record<string, any> | null = null;
 
-		// Track chats that currently have an active in-flight completion request.
-		// This prevents concurrent `POST /chat/completions` for the same chatId
-		// and ensures we don't create or switch chat IDs while a chat is pending.
-		private inFlightChats: Set<string> = new Set();
-
 		private async acquireChatLock(chatId: string, maxAttempts = 60, delayMs = 200): Promise<void> {
 			if (!chatId) return; // nothing to lock
 			let attempts = 0;
-			while (this.inFlightChats.has(chatId)) {
+			while (QwenAiAdapter.inFlightChats.has(chatId)) {
 				if (attempts++ >= maxAttempts) {
 					throw new Error(`Timed out waiting for chat ${chatId} to become free`);
 				}
 				await new Promise(res => setTimeout(res, delayMs));
 			}
-			this.inFlightChats.add(chatId);
+			QwenAiAdapter.inFlightChats.add(chatId);
 		}
 
 		private releaseChatLock(chatId: string): void {
 			try {
-				if (chatId && this.inFlightChats.has(chatId)) {
-					this.inFlightChats.delete(chatId);
+				if (chatId && QwenAiAdapter.inFlightChats.has(chatId)) {
+					QwenAiAdapter.inFlightChats.delete(chatId);
 				}
 			} catch (e) {
 				// ignore
@@ -374,6 +371,12 @@ export class QwenAiAdapter {
 				if (key.toLowerCase() === lowerModel) {
 					return String(value);
 				}
+			}
+		}
+
+		for (const [key, value] of Object.entries(getQwenAiModelMappings())) {
+			if (key.toLowerCase() === lowerModel) {
+				return String(value);
 			}
 		}
 
@@ -799,26 +802,20 @@ export class QwenAiAdapter {
 			]))} : {}),
 		};
 
-		// Try sending the chat completion request multiple times but do NOT create
-		// a new chat on retry. Always reuse the same `chatId` (created earlier
-		// or passed via `providerSessionId`). Recompute the request URL each
-		// attempt so query param and body stay in sync.
-
-		// Acquire a per-chat lock to prevent concurrent POSTs to the same chatId.
-		// This ensures we don't change or recreate the chat while a request
-		// is still in progress for that chat.
-		await this.acquireChatLock(chatId);
-
-		const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+		const isChatInProgressText = (text: string) => /The chat is in progress/i.test(text);
 		let response: AxiosResponse | undefined;
 		let lastErrorBody: any = null;
-		try {
+		let finalUrl = '';
+		for (let attempt = 1; attempt <= 2; attempt++) {
+			await this.acquireChatLock(chatId);
+			try {
 			// Single POST attempt (no retry). If the upstream stream immediately
 			// emits an error or reports "chat in progress", abort and surface
 			// the error to the caller.
 			payload.chat_id = chatId;
 			payload.messages[0].parent_id = request.parentMessageId || null;
 			const url = `${QWEN_AI_BASE}/api/v2/chat/completions?chat_id=${chatId}`;
+			finalUrl = url;
 
 			console.log('[QwenAI] Sending request to /api/v2/chat/completions...');
 			console.log('[QwenAI] Request URL:', url);
@@ -846,7 +843,7 @@ export class QwenAiAdapter {
 			}
 
 			this.lastWireDebug = {
-				attempt: 1,
+				attempt,
 				url,
 				payload,
 				requestHeaders: this.maskHeadersForDebug({
@@ -951,7 +948,7 @@ export class QwenAiAdapter {
 				if (peek.text || peek.ended || peek.isError) {
 					this.writeWireLog({
 						timestamp: new Date().toISOString(),
-						attempt: 1,
+						attempt,
 						type: 'stream-peek',
 						url,
 						chatId,
@@ -961,18 +958,55 @@ export class QwenAiAdapter {
 					});
 				}
 
-				if (peek.isError && !peek.text) {
-					console.warn('[QwenAI] Upstream stream ended before first SSE data');
+				if (peek.isError) {
+					try {
+						if (currentResponse.data && typeof currentResponse.data.destroy === 'function') {
+							currentResponse.data.destroy();
+						}
+					} catch {}
+					if (isChatInProgressText(peek.text) && attempt < 2) {
+						this.releaseChatLock(chatId);
+						console.warn('[QwenAI] Chat is in progress; retrying once with a fresh chat');
+						chatId = await this.createChat(modelId, 'OpenAI_API_Chat');
+						continue;
+					}
+					const upstreamError = inspectStreamForError(peek.text) || {
+						statusCode: 502,
+						errorType: 'internal_error',
+						message: peek.text
+							? `Qwen upstream stream error: ${peek.text.slice(0, 500)}`
+							: 'Qwen upstream stream ended before first SSE data',
+						retryable: true,
+						rawError: peek.text.slice(0, 500),
+					};
+					this.releaseChatLock(chatId);
+					throw new Error(
+						`Qwen upstream ${upstreamError.errorType}: ${upstreamError.message}`,
+					);
 				}
 			}
 
 			if (currentResponse.status >= 400) {
+				const bodyText = typeof lastErrorBody === 'string'
+					? lastErrorBody
+					: JSON.stringify(lastErrorBody || {});
+				if (isChatInProgressText(bodyText) && attempt < 2) {
+					this.releaseChatLock(chatId);
+					console.warn('[QwenAI] HTTP chat-in-progress; retrying once with a fresh chat');
+					chatId = await this.createChat(modelId, 'OpenAI_API_Chat');
+					continue;
+				}
 				this.releaseChatLock(chatId);
 				throw new Error(`Qwen chat completion failed: status=${currentResponse.status} body=${JSON.stringify(lastErrorBody || {})}`);
 			}
-		} catch (err) {
-			this.releaseChatLock(chatId);
-			throw err;
+			break;
+			} catch (err) {
+				this.releaseChatLock(chatId);
+				throw err;
+			}
+		}
+		if (!response) {
+			throw new Error('Qwen chat completion failed: missing response');
 		}
 
 		// Ensure the chat lock is released when the stream finishes, closes,
@@ -989,7 +1023,7 @@ export class QwenAiAdapter {
 		// the actual response config URL, and finally fallback to a
 		// constructed URL using the chatId. This prevents mismatches between
 		// the logged URL and the current `chatId` when retries occur.
-		const finalUrl = (this.lastWireDebug && (this.lastWireDebug as any).url)
+		finalUrl = finalUrl || (this.lastWireDebug && (this.lastWireDebug as any).url)
 			|| (response as any)?.config?.url
 			|| `${QWEN_AI_BASE}/api/v2/chat/completions?chat_id=${chatId}`;
 
@@ -1215,6 +1249,120 @@ export class QwenAiStreamHandler {
 		}
 	}
 
+	private escapeXmlText(value: any): string {
+		return String(value ?? '')
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+	}
+
+	private nativeToolCallToClineXml(toolCall: {name: string; arguments: string}): string | null {
+		let args: Record<string, any> = {};
+		try {
+			args = JSON.parse(toolCall.arguments || '{}');
+		} catch {
+			return null;
+		}
+
+		const toolName = toolCall.name;
+
+		if (toolName === 'read_file') {
+			const filePath = args.path || args.file_path || args.filePath;
+			if (!filePath) return null;
+			return `<read_file>\n<path>${this.escapeXmlText(filePath)}</path>\n</read_file>`;
+		}
+
+		if (toolName === 'list_files' || toolName === 'list_dir') {
+			const dirPath = args.path || args.dir || args.directory || '.';
+			const recursive = args.recursive;
+			const recursiveXml = typeof recursive === 'boolean'
+				? `\n<recursive>${recursive ? 'true' : 'false'}</recursive>`
+				: '';
+			return `<list_files>\n<path>${this.escapeXmlText(dirPath)}</path>${recursiveXml}\n</list_files>`;
+		}
+
+		if (toolName === 'execute_command' || toolName === 'run_command') {
+			const command = args.command || args.cmd;
+			if (!command) return null;
+			return `<execute_command>\n<command>${this.escapeXmlText(command)}</command>\n</execute_command>`;
+		}
+
+		if (toolName === 'write_to_file' || toolName === 'write_file') {
+			const filePath = args.path || args.file_path || args.filePath;
+			const content = args.content;
+			if (!filePath || typeof content !== 'string') return null;
+			return `<write_to_file>\n<path>${this.escapeXmlText(filePath)}</path>\n<content>${this.escapeXmlText(content)}</content>\n</write_to_file>`;
+		}
+
+		if (toolName === 'replace_in_file' || toolName === 'edit_file') {
+			const filePath = args.path || args.file_path || args.filePath;
+			const diff = args.diff;
+			if (!filePath || typeof diff !== 'string') return null;
+			return `<replace_in_file>\n<path>${this.escapeXmlText(filePath)}</path>\n<diff>${this.escapeXmlText(diff)}</diff>\n</replace_in_file>`;
+		}
+
+		return null;
+	}
+
+	private isKnownClineXmlStart(content: string): boolean {
+		const text = content.trimStart();
+		return /^<\/?(?:execute_command|read_file|write_to_file|replace_in_file|search_files|list_files|list_code_definition_names|ask_followup_question|attempt_completion)\b/i.test(text);
+	}
+
+	private isProviderToolishContent(content: string): boolean {
+		const text = content.trimStart();
+		if (!text.startsWith('<')) return false;
+		if (this.isKnownClineXmlStart(text)) return false;
+		return (
+			text === '<' ||
+			text.startsWith('<<') ||
+			/^<\/?tool(?:_call|s)?\b/i.test(text) ||
+			/^<web_search\b/i.test(text) ||
+			/^<function\b/i.test(text)
+		);
+	}
+
+	private stripProviderToolishContent(content: string): string {
+		if (!content) return content;
+		if (this.isProviderToolishContent(content)) return '';
+		return content;
+	}
+
+	private sendNativeToolAsClineXml(
+		transStream: PassThrough,
+		toolCalls: Array<{name: string; arguments: string}>,
+		safeWrite: (data: string) => void,
+		safeEnd: (data?: string) => void,
+	): boolean {
+		const xml = toolCalls
+			.map(toolCall => this.nativeToolCallToClineXml(toolCall))
+			.filter((value): value is string => Boolean(value))[0];
+		if (!xml) return false;
+
+		this.toolCallsSent = true;
+		safeWrite(
+			`data: ${JSON.stringify({
+				id: this.responseId || this.chatId,
+				model: this.model,
+				object: 'chat.completion.chunk',
+				choices: [{index: 0, delta: {content: xml}, finish_reason: null}],
+				created: this.created,
+			})}\n\n`,
+		);
+		safeWrite(
+			`data: ${JSON.stringify({
+				id: this.responseId || this.chatId,
+				model: this.model,
+				object: 'chat.completion.chunk',
+				choices: [{index: 0, delta: {}, finish_reason: 'stop'}],
+				created: this.created,
+			})}\n\n`,
+		);
+		safeEnd('data: [DONE]\n\n');
+		if (this.onEnd && this.chatId) this.onEnd(this.chatId);
+		return true;
+	}
+
 	async handleStream(stream: any): Promise<PassThrough> {
 		const transStream = new PassThrough();
 
@@ -1232,6 +1380,9 @@ export class QwenAiStreamHandler {
 		let nativeToolCallSeq = 0;
 		let pendingNativeToolName = '';
 		let pendingNativeToolArgs = '';
+		let pendingAnswerContent = '';
+		let sawNativeProviderTool = false;
+		let suppressedProviderToolText = false;
 
 		const safeWrite = (data: string) => {
 			if (ended) return;
@@ -1250,6 +1401,13 @@ export class QwenAiStreamHandler {
 				else transStream.end();
 			} catch (e) {
 				console.warn('[QwenAI] safeEnd failed', e);
+			}
+			try {
+				if (stream && typeof stream.destroy === 'function' && !stream.destroyed) {
+					stream.destroy();
+				}
+			} catch (e) {
+				console.warn('[QwenAI] upstream destroy after safeEnd failed', e);
 			}
 		};
 
@@ -1271,6 +1429,32 @@ export class QwenAiStreamHandler {
 				safeWrite(initialChunk);
 				initialChunkSent = true;
 				console.log('[QwenAI] Initial chunk written');
+			}
+		};
+
+		const flushPendingAnswerContent = () => {
+			if (!pendingAnswerContent) return;
+			const content = pendingAnswerContent;
+			pendingAnswerContent = '';
+			if (this.isProviderToolishContent(content)) {
+				suppressedProviderToolText = true;
+				console.log('[QwenAI] Suppressed provider-toolish answer content:', content.substring(0, 120));
+				return;
+			}
+			const visibleContent = this.xmlPassthrough
+				? content
+				: processStreamChunk(content, toolStreamState).text;
+			if (visibleContent && !toolStreamState.hasEmittedToolCall) {
+				sawAnswerContent = true;
+				safeWrite(
+					`data: ${JSON.stringify({
+						id: this.responseId || this.chatId,
+						model: this.model,
+						object: 'chat.completion.chunk',
+						choices: [{index: 0, delta: {content: visibleContent}, finish_reason: null}],
+						created: this.created,
+					})}\n\n`,
+				);
 			}
 		};
 
@@ -1306,6 +1490,7 @@ export class QwenAiStreamHandler {
 						const functionCall = delta.function_call;
 
 						if (functionCall?.name || typeof functionCall?.arguments === 'string') {
+							sawNativeProviderTool = true;
 							if (!initialChunkSent) {
 								sendInitialChunk();
 							}
@@ -1325,6 +1510,9 @@ export class QwenAiStreamHandler {
 											name: pendingNativeToolName,
 											arguments: pendingNativeToolArgs,
 										});
+										if (this.sendNativeToolAsClineXml(transStream, nativeToolCalls, safeWrite, safeEnd)) {
+											return;
+										}
 									}
 								} catch {
 									// Qwen streams partial/cumulative arguments; wait for valid JSON.
@@ -1334,13 +1522,13 @@ export class QwenAiStreamHandler {
 
 						const isProviderFunctionLeak =
 							delta.role === 'function' &&
-							/Tool .+ does not exists?\.?/i.test(content);
+							/(?:T|^)ool .+ does not exists?\.?/i.test(content);
 						if (isProviderFunctionLeak) {
 							this.leakDetected = true;
 							this.leakReason = content;
 							if (nativeToolCalls.length > 0) {
 								console.log('[QwenAI] Intercepted native function_call before provider tool leak');
-								this.sendOpenAiToolCalls(transStream, nativeToolCalls);
+								if (this.sendNativeToolAsClineXml(transStream, nativeToolCalls, safeWrite, safeEnd)) return;
 							}
 							return;
 						}
@@ -1457,7 +1645,6 @@ export class QwenAiStreamHandler {
 
 							// Accumulate content for tool call detection
 							this.content += content;
-							sawAnswerContent = sawAnswerContent || !!content;
 
 							// Output token limit check
 							if (this.maxOutputTokens > 0 && content) {
@@ -1482,20 +1669,24 @@ export class QwenAiStreamHandler {
 							}
 
 							if (content) {
-								const visibleContent = this.xmlPassthrough
-									? content
-									: processStreamChunk(content, toolStreamState).text;
-								if (visibleContent && !toolStreamState.hasEmittedToolCall) {
-									console.log('[QwenAI] Sending content chunk:', visibleContent);
-									const chunk = {
-										id: this.responseId || this.chatId,
-										model: this.model,
-										object: 'chat.completion.chunk',
-										choices: [{index: 0, delta: {content: visibleContent}, finish_reason: null}],
-										created: this.created,
-									};
-									safeWrite(`data: ${JSON.stringify(chunk)}\n\n`);
-									console.log('[QwenAI] Content chunk written');
+								pendingAnswerContent += content;
+								if (
+									this.isProviderToolishContent(pendingAnswerContent) &&
+									(
+										pendingAnswerContent.length > 128 ||
+										/<\/tool_call>|<\/web_search>|>\s*$/i.test(pendingAnswerContent)
+									)
+								) {
+									flushPendingAnswerContent();
+								} else if (
+									!this.isProviderToolishContent(pendingAnswerContent) &&
+									(
+										pendingAnswerContent.length > 8 ||
+										/\s/.test(pendingAnswerContent) ||
+										!pendingAnswerContent.startsWith('<')
+									)
+								) {
+									flushPendingAnswerContent();
 								}
 							}
 						} else if (phase === null && content) {
@@ -1527,9 +1718,19 @@ export class QwenAiStreamHandler {
 						) {
 							if (nativeToolCalls.length > 0) {
 								console.log('[QwenAI] Found native function_call stream, sending tool_calls');
-								this.sendOpenAiToolCalls(transStream, nativeToolCalls);
-								return;
+								if (this.sendNativeToolAsClineXml(transStream, nativeToolCalls, safeWrite, safeEnd)) return;
+								sawNativeProviderTool = true;
 							}
+							if (
+								pendingAnswerContent &&
+								this.isProviderToolishContent(pendingAnswerContent) &&
+								(sawNativeProviderTool || nativeToolCalls.length === 0)
+							) {
+								suppressedProviderToolText = true;
+								console.log('[QwenAI] Suppressing partial provider-tool prefix instead of finalizing:', pendingAnswerContent);
+								pendingAnswerContent = '';
+							}
+							flushPendingAnswerContent();
 							// Check for tool calls (both ML_XML and legacy formats)
 							const hasMlxToolCalls = /<ml_tool_calls>[\s\S]*<\/ml_tool_calls>/.test(this.content);
 							const hasLegacyToolUse = hasToolUse(this.content);
@@ -1575,6 +1776,9 @@ export class QwenAiStreamHandler {
 		});
 		const finalizeStream = () => {
 			if (sawAnswerContent) return;
+			if (suppressedProviderToolText) {
+				console.log('[QwenAI] Stream ended after suppressing provider-toolish content');
+			}
 			const fallbackContent = reasoningText || summaryText;
 			if (!fallbackContent) return;
 			if (!initialChunkSent) {
@@ -1682,13 +1886,13 @@ export class QwenAiStreamHandler {
 										const signature = `${pendingNativeToolName}\n${pendingNativeToolArgs}`;
 										if (!nativeToolSignatures.has(signature)) {
 											nativeToolSignatures.add(signature);
-											nativeToolCalls.push({
-												id: `call_qwen_native_${Date.now().toString(36)}_${nativeToolCallSeq++}`,
-												name: pendingNativeToolName,
-												arguments: pendingNativeToolArgs,
-											});
-										}
-									} catch {
+										nativeToolCalls.push({
+											id: `call_qwen_native_${Date.now().toString(36)}_${nativeToolCallSeq++}`,
+											name: pendingNativeToolName,
+											arguments: pendingNativeToolArgs,
+										});
+									}
+								} catch {
 										// Wait for a complete cumulative arguments payload.
 									}
 								}
@@ -1696,7 +1900,7 @@ export class QwenAiStreamHandler {
 
 							if (
 								delta.role === 'function' &&
-								/Tool .+ does not exists?\.?/i.test(content) &&
+								/(?:T|^)ool .+ does not exists?\.?/i.test(content) &&
 								nativeToolCalls.length > 0
 							) {
 								data.choices[0].message.content = null;
@@ -1727,10 +1931,17 @@ export class QwenAiStreamHandler {
 								}
 							} else if (phase === 'answer') {
 								if (content) {
-									data.choices[0].message.content += content;
+									const nextContent = data.choices[0].message.content + content;
+									if (this.isProviderToolishContent(nextContent)) {
+										console.log('[QwenAI] Suppressed provider-toolish non-stream answer content:', nextContent.substring(0, 120));
+										data.choices[0].message.content = '';
+									} else {
+										data.choices[0].message.content = nextContent;
+									}
 								}
 								if (status === 'finished') {
-									const fullContent = data.choices[0].message.content;
+									const fullContent = this.stripProviderToolishContent(data.choices[0].message.content);
+									data.choices[0].message.content = fullContent;
 									const toolCalls = parseToolCalls(fullContent);
 									if (toolCalls.length > 0 && !this.xmlPassthrough) {
 										const cleanContent = cleanVisibleText(fullContent);
@@ -1759,7 +1970,13 @@ export class QwenAiStreamHandler {
 									resolveOnce(data);
 								}
 							} else if (phase === null && content) {
-								data.choices[0].message.content += content;
+								const nextContent = data.choices[0].message.content + content;
+								if (this.isProviderToolishContent(nextContent)) {
+									console.log('[QwenAI] Suppressed provider-toolish non-stream null-phase content:', nextContent.substring(0, 120));
+									data.choices[0].message.content = '';
+								} else {
+									data.choices[0].message.content = nextContent;
+								}
 							}
 
 							if (status === 'finished' && (phase === 'answer' || phase === null)) {
@@ -1778,7 +1995,8 @@ export class QwenAiStreamHandler {
 									resolveOnce(data);
 									return;
 								}
-								const fullContent = data.choices[0].message.content;
+								const fullContent = this.stripProviderToolishContent(data.choices[0].message.content);
+								data.choices[0].message.content = fullContent;
 								const toolCalls = parseToolCalls(fullContent);
 								if (toolCalls.length > 0 && !this.xmlPassthrough) {
 									const cleanContent = cleanVisibleText(fullContent);
@@ -1809,7 +2027,8 @@ export class QwenAiStreamHandler {
 				rejectOnce(err);
 			});
 			stream.once('close', () => {
-				const fullContent = data.choices[0].message.content;
+				const fullContent = this.stripProviderToolishContent(data.choices[0].message.content);
+				data.choices[0].message.content = fullContent;
 				if (nativeToolCalls.length > 0) {
 					data.choices[0].message.content = fullContent || null;
 					data.choices[0].message.tool_calls = nativeToolCalls.map((tc, i) => ({

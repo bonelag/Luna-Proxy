@@ -1364,6 +1364,12 @@ export class SimpleProxyServer {
       const body = ctx.request.body as any;
       const model = body.model || 'Qwen3';
       const messages = body.messages || [];
+      const rawPromptTokenEstimate = Array.isArray(messages)
+        ? messages.reduce((sum: number, msg: any) => {
+            const content = typeof msg?.content === 'string' ? msg.content : JSON.stringify(msg?.content || '');
+            return sum + estimateTokens(content);
+          }, 0)
+        : 0;
 
 
       const capturedPromptMessages: Array<Record<string, any>> = [];
@@ -1392,6 +1398,29 @@ export class SimpleProxyServer {
       const promptPreview = typeof lastUserMessage?.content === 'string'
         ? lastUserMessage.content.slice(0, 180)
         : JSON.stringify(lastUserMessage?.content || '').slice(0, 180);
+
+      const buildLoggedPromptMessages = (forceCompact = false) => {
+        const tokenOverflowThreshold = Number(conf.settings?.tokenOverflow?.threshold || 10000);
+        const shouldCompact = forceCompact || rawPromptTokenEstimate > tokenOverflowThreshold || capturedPromptMessages.length > 40;
+        if (!shouldCompact) return capturedPromptMessages;
+        const truncate = (value: any, max = 500) => {
+          const text = String(value ?? '');
+          return text.length > max ? `${text.slice(0, max)}...[truncated ${text.length - max} chars]` : text;
+        };
+        const head = capturedPromptMessages.slice(0, 3);
+        const tail = capturedPromptMessages.slice(-8);
+        return [
+          {
+            role: 'system',
+            content: `[prompt log compacted] rawPromptTokenEstimate=${rawPromptTokenEstimate}, originalPromptMessages=${capturedPromptMessages.length}`,
+          },
+          ...head.map(item => ({...item, content: truncate(item.content)})),
+          ...(capturedPromptMessages.length > head.length + tail.length
+            ? [{role: 'system', content: `[${capturedPromptMessages.length - head.length - tail.length} prompt messages omitted from log]`}]
+            : []),
+          ...tail.map(item => ({...item, content: truncate(item.content)})),
+        ];
+      };
 
       const availableProviderIds = conf.providers.map(p => p.id);
       const providerId = selectProvider(model, body, ctx.headers as any, availableProviderIds);
@@ -1497,11 +1526,15 @@ export class SimpleProxyServer {
 
       // ---- INPUT TOKEN GUARD ----
       const tokenLimitsCfg = conf.settings?.tokenLimits || {};
+      const preGuardOverflowCfg = conf.settings?.tokenOverflow || {};
+      const preGuardOverflowEnabled = preGuardOverflowCfg.enabled !== false;
+      const preGuardOverflowThreshold = Number(preGuardOverflowCfg.threshold || 10000);
       if (tokenLimitsCfg.enabled !== false) {
         const maxInput = Number(tokenLimitsCfg.maxInputTokens) || 128000;
         const warnInput = Number(tokenLimitsCfg.warnInputTokens) || 100000;
         const inputValidation = validateInputSize(combinedMessages, maxInput, warnInput);
-        if (!inputValidation.ok) {
+        const willUseOverflowFile = preGuardOverflowEnabled && rawPromptTokenEstimate > preGuardOverflowThreshold;
+        if (!inputValidation.ok && !willUseOverflowFile) {
           ctx.status = 400;
           ctx.body = { error: { message: inputValidation.suggestion || 'Input exceeds maximum token limit', type: 'token_limit', totalTokens: inputValidation.totalTokens, maxInputTokens: inputValidation.maxInputTokens } };
           configStore.addLog('error', JSON.stringify({ path: '/v1/chat/completions', status: 400, model, stream: !!body.stream, error: inputValidation.suggestion, totalTokens: inputValidation.totalTokens, maxInputTokens: inputValidation.maxInputTokens, durationMs: Date.now() - startedAt }));
@@ -1521,8 +1554,11 @@ export class SimpleProxyServer {
         ? Math.min(requestedMaxTokens, maxOutputCap)
         : defaultMaxOutput;
 
+      const tokenOverflowCfg = conf.settings?.tokenOverflow || {};
+      const tokenOverflowThreshold = Number(tokenOverflowCfg.threshold || 10000);
+      const overflowInputMessages = rawPromptTokenEstimate > tokenOverflowThreshold ? messages : combinedMessages;
       const overflowResult = await applyTokenOverflowPolicy(
-        combinedMessages,
+        overflowInputMessages,
         conf.settings || {},
         token,
         cookies,
@@ -1935,7 +1971,7 @@ export class SimpleProxyServer {
                   persistSessionMessages(currentSession.id, messages, parsed, overflowResult, { runId: currentRun.id, providerId, accountId: account.id, providerSessionId: chatId });
                 } finally { releaseSessionWriteLock(currentSession.id); }
               }
-              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(parsed?.choices?.[0]?.message?.content), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: parsed, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, rawPromptTokenEstimate, clineOutput: analyzeResponseXml(parsed?.choices?.[0]?.message?.content), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: parsed, prompt_messages: buildLoggedPromptMessages((overflowResult.fileIds || []).length > 0), sessionId: currentSession?.id });
               await finalizeRun('completed', { providerChatId: chatId });
             } catch (err) {
               await ensureSessionAfterResponse(capturedResponse);
@@ -1945,7 +1981,7 @@ export class SimpleProxyServer {
                   persistSessionMessages(currentSession.id, messages, capturedResponse, overflowResult, { runId: currentRun.id, providerId, accountId: account.id, providerSessionId: chatId });
                 } finally { releaseSessionWriteLock(currentSession.id); }
               }
-              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(capturedResponse), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: capturedResponse, responseParseError: err instanceof Error ? err.message : String(err), prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+              buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, rawPromptTokenEstimate, clineOutput: analyzeResponseXml(capturedResponse), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: capturedResponse, responseParseError: err instanceof Error ? err.message : String(err), prompt_messages: buildLoggedPromptMessages((overflowResult.fileIds || []).length > 0), sessionId: currentSession?.id });
               await finalizeRun('completed', { providerChatId: chatId });
             }
           };
@@ -1980,7 +2016,7 @@ export class SimpleProxyServer {
           ctx.set('x-luna-thread-id', currentSession.threadId);
           if (chatId) ctx.set('x-luna-provider-session-id', chatId);
         }
-        buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, clineOutput: analyzeResponseXml(resultContent), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: result, prompt_messages: capturedPromptMessages, sessionId: currentSession?.id });
+        buildLogEntry('info', { status: 200, thinking_mode: body.thinking_mode || '', reasoning_effort: body.reasoning_effort || '', files: (overflowResult.files || []).length + (Array.isArray(body.file_ids) ? body.file_ids.length : 0), overflow: (overflowResult.fileIds || []).length > 0, sanitized: overflowResult.sanitized, sanitizerMeta: overflowResult.sanitizerMeta, rawPromptTokenEstimate, clineOutput: analyzeResponseXml(resultContent), providerToolMode: 'disabled', xmlPassthroughContract: promptContractInjected, responseXmlPassthrough: responseXmlPassthroughEnabled, response: result, prompt_messages: buildLoggedPromptMessages((overflowResult.fileIds || []).length > 0), sessionId: currentSession?.id });
         await finalizeRun('completed', { providerChatId: chatId });
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
