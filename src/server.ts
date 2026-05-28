@@ -144,10 +144,10 @@ function buildQwenMessagesForToolPrompt(messages: any[]): any[] {
   const chatMessages: any[] = [];
   if (systemContent) chatMessages.push({ role: 'system', content: systemContent });
   if (nonSystem.length > 0) {
-    chatMessages.push({
-      role: 'user',
-      content: nonSystem.map(m => `${m.role}:${m.content || ''}`).join(';'),
-    });
+    const userContent = nonSystem.length === 1
+      ? (nonSystem[0].content || '')
+      : nonSystem.map(m => `${m.role}:${m.content || ''}`).join(';');
+    chatMessages.push({ role: 'user', content: userContent });
   }
   return chatMessages.length > 0 ? chatMessages : [{ role: 'user', content: 'Hello' }];
 }
